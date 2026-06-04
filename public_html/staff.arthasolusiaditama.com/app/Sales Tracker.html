@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tambah Project</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-overlay: rgba(15, 15, 20, 0.45);
+    --surface: #FFFFFF;
+    --surface-2: #F7F7F8;
+    --border: #E4E4E7;
+    --border-focus: #3B6FE8;
+    --text-primary: #18181B;
+    --text-secondary: #71717A;
+    --text-muted: #A1A1AA;
+    --text-hint: #52525B;
+    --accent: #1B5E3B;
+    --accent-hover: #174F32;
+    --accent-light: #EBF5EF;
+    --danger: #DC2626;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #EEF0F5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* fake page bg */
+  .page-bg {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #dde3f0 0%, #e8eaf2 50%, #d8dff0 100%);
+    z-index: 0;
+  }
+
+  /* overlay */
+  .overlay {
+    position: fixed; inset: 0;
+    background: var(--bg-overlay);
+    backdrop-filter: blur(3px);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* Modal */
+  .modal {
+    background: var(--surface);
+    border-radius: 14px;
+    box-shadow: var(--shadow-modal);
+    width: 100%;
+    max-width: 460px;
+    overflow: hidden;
+    animation: modalIn 0.22s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Modal header */
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .modal-icon {
+    width: 34px; height: 34px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .btn-close {
+    width: 30px; height: 30px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn-close:hover { background: var(--surface-2); color: var(--text-primary); }
+
+  /* Modal body */
+  .modal-body {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* Field group */
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+
+  /* Two-column field row */
+  .field-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  @media (max-width: 420px) {
+    .field-row-2 { grid-template-columns: 1fr; }
+  }
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .field-label .required {
+    color: var(--danger);
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .field-label .optional {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+
+  /* Input */
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-wrap .input-icon {
+    position: absolute;
+    left: 11px;
+    color: var(--text-muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    padding: 0 12px;
+  }
+
+  input[type="text"].has-icon,
+  input[type="number"].has-icon {
+    padding-left: 34px;
+  }
+
+  input::placeholder { color: var(--text-muted); }
+
+  input:focus,
+  select:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(59,111,232,0.12);
+  }
+
+  /* Rp prefix */
+  .input-prefix {
+    display: flex;
+    align-items: center;
+  }
+
+  .prefix-tag {
+    height: 40px;
+    padding: 0 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .prefix-tag + input {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  /* Customer row: dropdown + button */
+  .customer-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .select-wrap {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .select-wrap .input-icon {
+    position: absolute;
+    left: 11px;
+    color: var(--text-muted);
+    font-size: 16px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .select-wrap .chevron {
+    position: absolute;
+    right: 10px;
+    color: var(--text-muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  .select-wrap select {
+    padding: 0 32px 0 34px;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .btn-customer {
+    height: 40px;
+    padding: 0 14px;
+    background: var(--text-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+  .btn-customer:hover { opacity: 0.82; }
+
+  /* Status select standalone */
+  .status-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .status-wrap select {
+    padding: 0 32px 0 12px;
+    width: 100%;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .status-wrap .chevron {
+    position: absolute;
+    right: 10px;
+    color: var(--text-muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  /* Status badge pill inside select area */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 99px;
+    margin-left: 6px;
+  }
+  .status-badge.prospect { background: #EEF2FF; color: #4338CA; }
+  .status-badge.active   { background: var(--accent-light); color: var(--accent); }
+  .status-badge.closed   { background: #FEF2F2; color: #DC2626; }
+
+  /* Hint text */
+  .field-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    line-height: 1.4;
+  }
+  .field-hint i { font-size: 13px; margin-top: 1px; flex-shrink: 0; }
+
+  /* Divider */
+  .modal-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 -22px;
+  }
+
+  /* Footer */
+  .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 22px;
+    background: var(--surface-2);
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-batal {
+    height: 38px;
+    padding: 0 18px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn-batal:hover { background: var(--border); color: var(--text-primary); }
+
+  .btn-simpan {
+    height: 38px;
+    padding: 0 20px;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .btn-simpan:hover { background: var(--accent-hover); }
+</style>
+</head>
+<body>
+
+<div class="page-bg"></div>
+
+<div class="overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon">
+          <i class="ti ti-folder-plus"></i>
+        </div>
+        <span class="modal-title" id="modal-title">Tambah Project</span>
+      </div>
+      <button class="btn-close" aria-label="Tutup">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <!-- Nama Project -->
+      <div class="field-group">
+        <label class="field-label" for="nama-project">
+          Nama Project <span class="required">*</span>
+        </label>
+        <div class="input-wrap">
+          <i class="ti ti-pencil input-icon"></i>
+          <input
+            type="text"
+            id="nama-project"
+            class="has-icon"
+            placeholder="Masukkan nama project"
+          >
+        </div>
+      </div>
+
+      <!-- Two-col row: No. QO + Nama PT -->
+      <div class="field-row-2">
+
+        <!-- No. QO -->
+        <div class="field-group">
+          <label class="field-label" for="no-qo">
+            No. QO <span class="optional">(opsional)</span>
+          </label>
+          <div class="input-wrap">
+            <i class="ti ti-file-invoice input-icon"></i>
+            <input
+              type="text"
+              id="no-qo"
+              class="has-icon"
+              placeholder="Contoh: QO-2026-001"
+            >
+          </div>
+          <div class="field-hint">
+            <i class="ti ti-info-circle"></i>
+            Nomor Quotation terkait project.
+          </div>
+        </div>
+
+        <!-- Nama PT -->
+        <div class="field-group">
+          <label class="field-label" for="nama-pt">
+            Nama PT <span class="optional">(opsional)</span>
+          </label>
+          <div class="input-wrap">
+            <i class="ti ti-building input-icon"></i>
+            <input
+              type="text"
+              id="nama-pt"
+              class="has-icon"
+              placeholder="Nama perusahaan"
+            >
+          </div>
+          <div class="field-hint">
+            <i class="ti ti-info-circle"></i>
+            Nama PT / badan usaha terkait.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pilih Customer -->
+      <div class="field-group">
+        <label class="field-label" for="pilih-customer">
+          Pilih Customer <span class="required">*</span>
+        </label>
+        <div class="customer-row">
+          <div class="select-wrap">
+            <i class="ti ti-user input-icon"></i>
+            <i class="ti ti-chevron-down chevron"></i>
+            <select id="pilih-customer">
+              <option value="">-- Pilih customer --</option>
+              <option value="1">PT Maju Bersama</option>
+              <option value="2">CV Sejahtera Jaya</option>
+              <option value="3">UD Karya Mandiri</option>
+            </select>
+          </div>
+          <button class="btn-customer">
+            <i class="ti ti-user-plus" style="font-size:14px"></i>
+            Customer
+          </button>
+        </div>
+        <div class="field-hint">
+          <i class="ti ti-info-circle"></i>
+          Pilih customer yang sudah ditambahkan di menu Accounts → Customer.
+        </div>
+      </div>
+
+      <!-- Status Awal -->
+      <div class="field-group">
+        <label class="field-label" for="status-awal">
+          Status Awal <span class="required">*</span>
+        </label>
+        <div class="status-wrap">
+          <i class="ti ti-chevron-down chevron"></i>
+          <select id="status-awal">
+            <option value="prospect">Prospect</option>
+            <option value="active">Active</option>
+            <option value="on-hold">On Hold</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div class="field-hint">
+          <i class="ti ti-info-circle"></i>
+          Pilih status sesuai kondisi project saat ini. Field di bawah akan menyesuaikan.
+        </div>
+      </div>
+
+      <!-- Nominal Estimasi -->
+      <div class="field-group">
+        <label class="field-label" for="nominal-estimasi">
+          Nominal Estimasi
+          <span class="optional">(opsional)</span>
+        </label>
+        <div class="input-prefix">
+          <span class="prefix-tag">
+            <i class="ti ti-currency-rupiah" style="font-size:14px;margin-right:2px"></i> Rp
+          </span>
+          <input
+            type="number"
+            id="nominal-estimasi"
+            placeholder="0"
+            min="0"
+          >
+        </div>
+        <div class="field-hint">
+          <i class="ti ti-info-circle"></i>
+          Perkiraan nilai project sebelum deal.
+        </div>
+      </div>
+
+    </div><!-- /modal-body -->
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn-batal">
+        <i class="ti ti-x" style="font-size:13px;margin-right:4px"></i>
+        Batal
+      </button>
+      <button class="btn-simpan">
+        <i class="ti ti-device-floppy" style="font-size:14px"></i>
+        Simpan
+      </button>
+    </div>
+
+  </div><!-- /modal -->
+</div><!-- /overlay -->
+
+<script>
+  // Close on overlay click
+  document.querySelector('.overlay').addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
+  document.querySelector('.btn-close').addEventListener('click', () => {
+    document.querySelector('.overlay').style.display = 'none';
+  });
+  document.querySelector('.btn-batal').addEventListener('click', () => {
+    document.querySelector('.overlay').style.display = 'none';
+  });
+</script>
+</body>
+</html>
