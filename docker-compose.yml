@@ -1,0 +1,187 @@
+version: '3.8'
+
+# ============================================
+# ARTHA SOLUSI ADITAMA - Docker Development Environment
+# Isolated environment untuk IT baru
+# ============================================
+
+services:
+  # ==========================================
+  # MySQL Database (Development)
+  # ==========================================
+  mysql:
+    image: mysql:8.0
+    container_name: asa_mysql_dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_dev
+      MYSQL_DATABASE: arth_staff_dev
+      MYSQL_USER: asa_dev_user
+      MYSQL_PASSWORD: asa_dev_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - asa_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # PHPMyAdmin (Database Management)
+  # ==========================================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: asa_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: asa_dev_user
+      PMA_PASSWORD: asa_dev_pass
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - asa_network
+
+  # ==========================================
+  # PHP Apache (Staff Portal)
+  # ==========================================
+  staff_portal:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: asa_staff_portal
+    restart: unless-stopped
+    volumes:
+      - ./public_html/staff.arthasolusiaditama.com:/var/www/html
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - asa_network
+    environment:
+      DB_HOST: mysql
+      DB_NAME: arth_staff_dev
+      DB_USERNAME: asa_dev_user
+      DB_PASSWORD: asa_dev_pass
+
+  # ==========================================
+  # Node.js Backend (Sales System)
+  # ==========================================
+  sales_backend:
+    build:
+      context: ./public_html/sales.arthasolusiaditama.com/backend
+      dockerfile: ../../../docker/node/Dockerfile
+    container_name: asa_sales_backend
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./public_html/sales.arthasolusiaditama.com/backend:/app
+      - /app/node_modules
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+    networks:
+      - asa_network
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DB_STAFF_HOST: mysql
+      DB_STAFF_PORT: 3306
+      DB_STAFF_NAME: arth_staff_dev
+      DB_STAFF_USER: asa_dev_user
+      DB_STAFF_PASS: asa_dev_pass
+      DB_SALES_HOST: mysql
+      DB_SALES_PORT: 3306
+      DB_SALES_NAME: asasystem_sales_dev
+      DB_SALES_USER: asa_dev_user
+      DB_SALES_PASS: asa_dev_pass
+      JWT_SECRET: dev_jwt_secret_key_for_testing_only
+      FRONTEND_URL: http://localhost:5173
+    command: npm run dev
+
+  # ==========================================
+  # React Frontend (Sales System)
+  # ==========================================
+  sales_frontend:
+    build:
+      context: ./public_html/sales.arthasolusiaditama.com/frontend
+      dockerfile: ../../../docker/node/Dockerfile
+    container_name: asa_sales_frontend
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./public_html/sales.arthasolusiaditama.com/frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - asa_network
+    environment:
+      VITE_API_URL: http://localhost:5000/api
+    command: npm run dev -- --host
+
+  # ==========================================
+  # React Frontend (Report System)
+  # ==========================================
+  report_system:
+    build:
+      context: ./public_html/report.arthasolusiaditama.com
+      dockerfile: ../../docker/node/Dockerfile
+    container_name: asa_report_system
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./public_html/report.arthasolusiaditama.com:/app
+      - /app/node_modules
+    ports:
+      - "5174:5173"
+    networks:
+      - asa_network
+    command: npm run dev -- --host
+
+  # ==========================================
+  # Socket.IO Server (Chat System)
+  # ==========================================
+  socket_server:
+    build:
+      context: ./public_html/staff.arthasolusiaditama.com/socket-server
+      dockerfile: ../../../docker/node/Dockerfile
+    container_name: asa_socket_server
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./public_html/staff.arthasolusiaditama.com/socket-server:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - asa_network
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+    command: node server.js
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  asa_network:
+    driver: bridge
+
+# ==========================================
+# Volumes (Persistent Data)
+# ==========================================
+volumes:
+  mysql_data:
+    driver: local

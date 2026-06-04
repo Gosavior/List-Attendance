@@ -1,0 +1,12 @@
+<?php
+/**
+ * Koneksi database Sales (projects, RAB, dll.)
+ * Salin ke database_sales.php dan sesuaikan credential.
+ *
+ *   cp database_sales.php.example database_sales.php
+ */
+
+$host = getenv('DB_SALES_HOST') ?: 'mysql';
+$dbname = getenv('DB_SALES_NAME') ?: 'asasystem_sales_dev';
+$username = getenv('DB_SALES_USER') ?: 'asa_dev_user';
+$password = getenv('DB_SALES_PASS') ?: 'asa_dev_pass';

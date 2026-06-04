@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mysql: {}
+
+  phpmyadmin:
+    ports:
+      - "127.0.0.1:15080:80"
+
+  staff_portal:
+    ports:
+      - "127.0.0.1:15081:80"
+
+  sales_backend:
+    ports:
+      - "127.0.0.1:15000:5000"
+
+  sales_frontend:
+    ports:
+      - "127.0.0.1:15073:5173"
+
+  report_system:
+    ports:
+      - "127.0.0.1:15074:5173"
+
+  socket_server:
+    ports:
+      - "127.0.0.1:13000:3000"

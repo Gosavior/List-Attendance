@@ -1,0 +1,14 @@
+{
+  "name": "asa-chat-server",
+  "version": "1.0.0",
+  "description": "Socket.IO chat server for PT. Artha Solusi Aditama",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.7.4",
+    "mysql2": "^3.9.1"
+  }
+}

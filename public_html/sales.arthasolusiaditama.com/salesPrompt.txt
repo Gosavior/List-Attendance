@@ -1,0 +1,60 @@
+nah jadi sistem sales ku bakal seperti ini, jadi tolong sesuaikan databasenya:
+
+1. User tambah project pada page #file:Project.jsx seharusnya belum ada nominal QO / nominal projectnya. hanya
+> Nama Customer
+> No HP Customer
+> Alamat Email Customer
+2. Setelah itu project tersebut akan masuk ke page #file:SalesTracker.jsx dengan status "Prospect"
+3. Ketika user sudah mendapatkan kejelasan dari pihak Customer maka selanjutnya user diharuskan update kembali project dengan status prospect tersebut pada page #file:SalesTracker.jsx yang perlu dimasukkan adalah
+> Nominal QO atau Nominal Project
+> File QO dimana nama file ini haruslah ada Number QOnya dan syste otomatis mengambil nama file tersebut sebagai Number QO.
+Setelah diupdate project tersebut selanjutnya akan masuk ke #file:Project.jsx dengan status "Nearest".
+Atau jika tidak ada kejelasan dari customer maka sales dapat membuat statusnya menjadi Lost dan diharuskan memasukkan alasan dari lostnya project tersebut.
+4. Setelah menjadi "Nearest" Selanjutnya sales mengupdate project tersebut dan memasukkan:
+> File AO untuk numbernya sama seperti QO diambil dari nama File yang diupload, *Biasanya semua file berupa PDF ataupun word excel dan lainnya.
+> RAB, nah untuk RAB mereka diharuskan buat sendiri, Dimana mereka menekan buat RAB dan akan diarahkan ke #file:CreateRAB.jsx tapi di halaman baru, setelah selesai akan di kembalikan ke halaman sebelumnya dengan rab yang sudah dibuat tersebut, dan RAB itu bisa diedit.
+5. Setelah itu Project akan berstatus "On Going" atau sedang berjalan sekarang ini.
+6. kalau sudah selesai Sales akan mengupdate project tersebut dan diharuskan memasukkan:
+> File Report berupa PDF
+> Invoice File
+dan status Project akan menjadi "Done"
+
+Yang artinya sudah selesai rangkaian alur sales.
+
+Mohon sesuaikan seperti yang dibuat diatas mohon dipahami dahulu dan analisis lalu di implementasikan sesuai dengan design yang ada sekarang juga.
+
+
+
+
+
+
+Langkah 1: Hidupkan SSH Tunnel
+Buka terminal/PowerShell, jalankan:
+ssh -o StrictHostKeyChecking=no -L 3307:127.0.0.1:3306 root@145.79.8.194 -N
+
+cek tunnel:
+Start-Sleep -Seconds 3; (Test-NetConnection -ComputerName 127.0.0.1 -Port 3307 -WarningAction SilentlyContinue).TcpTestSucceeded
+
+Ini menghubungkan database lokal (port 3307) ke database di server. Biarkan terminal ini tetap terbuka.
+
+Langkah 2: Jalankan Backend
+Buka terminal baru, masuk ke folder backend:
+cd c:\Users\it-pt\Documents\sales.arthasolusiaditama.com\backend
+node server.js
+Kalau berhasil, akan muncul: Server running on port 5000. Biarkan terminal ini tetap terbuka.
+
+Langkah 3: Jalankan Frontend
+Buka terminal baru lagi, masuk ke folder frontend:
+cd c:\Users\it-pt\Documents\sales.arthasolusiaditama.com\frontend
+npm run dev
+Kalau berhasil, akan muncul URL: http://localhost:5173. Biarkan terminal ini tetap terbuka.
+
+Langkah 4: Buka Website
+Buka browser, ketik: http://localhost:5173
+
+Langkah 5: Login
+Gunakan salah satu akun:
+Username	Password	Role
+admin	password	Administrator
+sales	sales123	Sales
+Total: 3 terminal harus tetap terbuka (SSH tunnel, backend, frontend). Kalau salah satu ditutup, website tidak bisa jalan.

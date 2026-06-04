@@ -1,0 +1,15 @@
+{
+    "name": "asa/staff-portal",
+    "description": "Staff Portal Artha Solusi Aditama",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "phpoffice/phpspreadsheet": "^1.29"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

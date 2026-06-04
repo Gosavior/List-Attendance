@@ -1,0 +1,47 @@
+/var/www/
+└── staff.arthasolusiaditama.com/
+    │
+    ├─── index.php
+    ├─── login.php
+    ├─── logout.php
+    ├─── dashboard.php
+    │
+    ├── public/              ← Untuk asset, foto ataupun lainnya.
+    │   ├── assets/
+    │   │   ├── css/
+    │   │   ├── js/
+    │   │   └── images/
+    │   │
+    │   ├── robots.txt
+    │   └── .htaccess
+    │
+    ├── src/                 ← Tailwindcss (Khusus)
+    │   ├── input.css
+    │   ├── output.css
+    │
+    │
+    ├── app/                 ← APPLICATION LOGIC (tidak public)
+    │   ├── Controllers/
+    │   ├── Services/
+    │   ├── Middleware/
+    │   │   ├── Auth.php
+    │   │   └── Role.php
+    │   │
+    │   ├── Actions/
+    │   │   ├── LoginAction.php
+    │   │   ├── ForgotPassword.php
+    │   │   └── LogoutAction.php
+    │   │
+    │   └── Helpers/
+    │
+    ├── config/              ← CONFIG (TIDAK PUBLIK)
+    │   ├── database.php
+    │   ├── app.php
+    │   └── security.php
+    │
+    ├── storage/             ← Data Upload-an avatar atau apapun User
+    │   ├── logs/
+    │   ├── sessions/
+    │   └── uploads/
+    │
+    └── vendor/              ← Composer

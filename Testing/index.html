@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rute Pengantaran - Pemilihan Toko</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-main: #34d399;
+            --green-light: #ecfdf5;
+            --green-text: #059669;
+            --orange-main: #fb923c;
+            --orange-light: #fff7ed;
+            --orange-text: #c2410c;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --text-light-gray: #9ca3af;
+            --bg-gray: #f3f4f6;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #374151; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .modal {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 24px 24px 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            border-radius: 12px;
+            padding: 16px;
+            background-color: #ffffff;
+            position: relative;
+            transition: opacity 0.3s, filter 0.3s;
+        }
+
+        .card.dimmed {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(80%);
+        }
+
+        .card-green {
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--green-main);
+            box-shadow: 0 4px 6px -1px rgba(52, 211, 153, 0.1);
+        }
+        .card-green .badge { background-color: var(--green-light); color: var(--green-text); }
+        .card-green .check-active svg circle { fill: var(--green-main); }
+
+        .card-orange {
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--orange-main);
+            box-shadow: 0 4px 6px -1px rgba(251, 146, 60, 0.1);
+        }
+        .card-orange .badge { background-color: var(--orange-light); color: var(--orange-text); }
+        .card-orange .check-active svg circle { fill: var(--orange-main); }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .card-top h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-info { font-size: 12px; font-weight: 500; color: var(--text-gray); }
+
+        .material-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .material-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .mat-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .location-info {
+            font-size: 13px;
+            color: var(--text-gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .action-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+            position: relative; 
+        }
+
+        .input-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            background-color: #ffffff;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .input-box:hover { border-color: var(--text-light-gray); }
+
+        .input-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        #dropdown-icon { transition: transform 0.3s ease; }
+
+        .dropdown-menu {
+            display: none; 
+            position: absolute;
+            top: 55px; 
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            list-style: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show { display: block; }
+
+        .dropdown-menu li {
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dropdown-menu li:last-child { border-bottom: none; }
+        .dropdown-menu li:hover { background-color: var(--bg-gray); }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-light-gray);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+            background-color: transparent;
+        }
+
+        .custom-checkbox.active {
+            background-color: var(--text-dark);
+            border-color: var(--text-dark);
+        }
+
+        .custom-checkbox svg { display: none; }
+        .custom-checkbox.active svg { display: block; }
+
+        .modal-footer {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-ambil-utama {
+            background-color: #111827;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-ambil-utama:hover { background-color: #374151; }
+        .btn-ambil-utama:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Rute Pengantaran</h2>
+        </div>
+
+        <div class="modal-body">
+            <div class="card card-green" id="card-toko-a">
+                <div class="card-top">
+                    <h3>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="12" height="14" rx="2"/><path d="M15 8h4a2 2 0 0 1 2 2v5h-6"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/></svg>
+                        Toko A
+                    </h3>
+                    <div class="date-info">Tanggal: 12 Feb 2026</div>
+                </div>
+
+                <ul class="material-list">
+                    <li>
+                        <div class="mat-name">
+                            <span class="check-active"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l3 3 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></span>
+                            Semen Portland
+                        </div>
+                        <span class="badge">10 sak</span>
+                    </li>
+                    <li>
+                        <div class="mat-name">
+                            <span class="check-active"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l3 3 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></span>
+                            Pasir Bangunan
+                        </div>
+                        <span class="badge">5 m³</span>
+                    </li>
+                </ul>
+
+                <div class="location-info">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-top: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Lokasi: Jl. Merdeka No. 12, Bandung (4.2 km)
+                </div>
+            </div>
+
+            <div class="card card-orange" id="card-toko-b">
+                <div class="card-top">
+                    <h3>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="12" height="14" rx="2"/><path d="M15 8h4a2 2 0 0 1 2 2v5h-6"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/></svg>
+                        Toko B
+                    </h3>
+                    <div class="date-info">Tanggal: 12 Feb 2026</div>
+                </div>
+
+                <ul class="material-list">
+                    <li>
+                        <div class="mat-name">
+                            <span class="check-active"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l3 3 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></span>
+                            Cat Tembok 5L
+                        </div>
+                        <span class="badge">8 pail</span>
+                    </li>
+                    <li>
+                        <div class="mat-name">
+                            <span class="check-active"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l3 3 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></span>
+                            Kuas Roller
+                        </div>
+                        <span class="badge">12 pcs</span>
+                    </li>
+                </ul>
+
+                <div class="location-info">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-top: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Lokasi: Jl. Asia Afrika No. 88, Bandung (7.8 km)
+                </div>
+            </div>
+
+            <div class="action-inputs">
+                <div class="input-box" id="btn-dropdown">
+                    <span class="input-text" id="text-dropdown">Pemilihan Toko</span>
+                    <svg id="dropdown-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+
+                <ul class="dropdown-menu" id="menu-dropdown">
+                    <li data-target="toko-a">Toko A</li>
+                    <li data-target="toko-b">Toko B</li>
+                </ul>
+
+                <div class="input-box" id="btn-ambil-semua">
+                    <span class="input-text">Ambil Semua</span>
+                    <div class="custom-checkbox" id="checkbox-semua">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-ambil-utama">Ambil</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const btnDropdown = document.getElementById('btn-dropdown');
+            const menuDropdown = document.getElementById('menu-dropdown');
+            const textDropdown = document.getElementById('text-dropdown');
+            const dropdownIcon = document.getElementById('dropdown-icon');
+            
+            const btnAmbilSemua = document.getElementById('btn-ambil-semua');
+            const checkboxSemua = document.getElementById('checkbox-semua');
+            
+            const cardTokoA = document.getElementById('card-toko-a');
+            const cardTokoB = document.getElementById('card-toko-b');
+            const dropdownItems = menuDropdown.querySelectorAll('li');
+            const btnAmbilUtama = document.querySelector('.btn-ambil-utama');
+
+            let pilihanToko = []; 
+
+            function resetCards() {
+                cardTokoA.classList.remove('dimmed');
+                cardTokoB.classList.remove('dimmed');
+            }
+
+            btnDropdown.addEventListener('click', function(event) {
+                event.stopPropagation();
+                menuDropdown.classList.toggle('show');
+                dropdownIcon.style.transform = menuDropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    textDropdown.innerText = this.innerText;
+                    menuDropdown.classList.remove('show');
+                    dropdownIcon.style.transform = 'rotate(0deg)';
+                    checkboxSemua.classList.remove('active');
+                    resetCards();
+
+                    const target = this.getAttribute('data-target');
+                    if (target === 'toko-a') {
+                        pilihanToko = ['A'];
+                        cardTokoB.classList.add('dimmed');
+                    } else if (target === 'toko-b') {
+                        pilihanToko = ['B'];
+                        cardTokoA.classList.add('dimmed');
+                    }
+                });
+            });
+
+            btnAmbilSemua.addEventListener('click', function() {
+                checkboxSemua.classList.toggle('active');
+                if (checkboxSemua.classList.contains('active')) {
+                    textDropdown.innerText = "Semua Toko Dipilih";
+                    pilihanToko = ['A', 'B'];
+                    resetCards(); 
+                } else {
+                    textDropdown.innerText = "Pemilihan Toko";
+                    pilihanToko = [];
+                }
+            });
+
+            window.addEventListener('click', function(event) {
+                if (!btnDropdown.contains(event.target) && !menuDropdown.contains(event.target)) {
+                    menuDropdown.classList.remove('show');
+                    dropdownIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            btnAmbilUtama.addEventListener('click', function() {
+                if (pilihanToko.length === 0) {
+                    alert("Silakan pilih toko pengantaran terlebih dahulu!");
+                    return;
+                }
+                localStorage.setItem('dataPengantaran', JSON.stringify(pilihanToko));
+                window.location.href = 'pengantaran.html'; 
+            });
+        });
+    </script>
+</body>
+</html>

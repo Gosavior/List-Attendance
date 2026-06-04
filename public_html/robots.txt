@@ -1,0 +1,70 @@
+# robots.txt - PT. Artha Solusi Aditama
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://arthasolusiaditama.com/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /administrator/
+Disallow: /backup/
+Disallow: /cgi-bin/
+Disallow: /config/
+Disallow: /includes/
+Disallow: /install/
+Disallow: /logs/
+Disallow: /phpmyadmin/
+Disallow: /private/
+Disallow: /src/auth/
+Disallow: /tmp/
+Disallow: /upload/
+Disallow: /staff.arthasolusiaditama.com/
+Disallow: /sales.arthasolusiaditama.com/
+
+# Disallow query strings
+Disallow: /*?*
+Disallow: /*&
+
+# Allow specific file types
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.webp$
+Allow: /*.ico$
+
+# Specific bots
+User-agent: Googlebot
+Allow: /
+Allow: /src/output.css
+Disallow: /login
+Disallow: /src/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /login
+Disallow: /src/
+
+User-agent: Yandex
+Allow: /
+Disallow: /login
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: masscan
+Disallow: /
+
+User-agent: sqlmap
+Disallow: /

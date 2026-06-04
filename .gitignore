@@ -1,0 +1,182 @@
+# ============================================
+# ARTHA SOLUSI ADITAMA - Git Ignore
+# Proteksi File Sensitif & Credentials
+# ============================================
+
+# ==========================================
+# 1. CREDENTIALS & SECRETS (CRITICAL)
+# ==========================================
+.env
+.env.*
+!.env.example
+*.env.local
+*.env.production
+*.env.development
+
+# Database Configurations
+**/config/database.php
+**/config/database_sales.php
+**/config/db.js
+**/config/config.php
+database.php
+db.js
+
+# Authentication & Security
+jwt_secret*
+session_secret*
+api_keys*
+credentials*
+secrets*
+
+# ==========================================
+# 2. BACKUP & ARCHIVES (SENSITIVE DATA)
+# ==========================================
+*.tar.gz
+*.zip
+*.rar
+*.7z
+*.sql
+*.sql.gz
+*.dump
+*.backup
+backup/
+backups/
+.tmp.driveupload/
+
+# ==========================================
+# 3. UPLOADED FILES & USER DATA
+# ==========================================
+**/storage/
+**/uploads/
+**/public/uploads/
+**/public/storage/
+**/public/photos/
+**/public/documents/
+
+# Kecuali folder structure (keep empty folders)
+!**/storage/.gitkeep
+!**/uploads/.gitkeep
+
+# ==========================================
+# 4. DEPENDENCIES (LARGE FILES)
+# ==========================================
+node_modules/
+vendor/
+bower_components/
+jspm_packages/
+
+# ==========================================
+# 5. BUILD & COMPILED FILES
+# ==========================================
+dist/
+build/
+.cache/
+*.min.js
+*.min.css
+public_html/dist/
+**/dist/styles.css
+src/output.css
+
+# Kecuali production builds yang sudah final
+!public_html/sales.arthasolusiaditama.com/frontend/dist/
+!public_html/report.arthasolusiaditama.com/dist/
+
+# ==========================================
+# 6. LOGS & TEMPORARY FILES
+# ==========================================
+*.log
+logs/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# 7. IDE & EDITOR FILES
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+*.code-workspace
+
+# Kecuali shared settings
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ==========================================
+# 8. SYSTEM FILES
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ==========================================
+# 9. DEPLOYMENT & SERVER CONFIGS
+# ==========================================
+.htaccess
+*.conf
+!*.conf.example
+deploy_*.ps1
+deploy_*.sh
+install_composer_server.ps1
+
+# ==========================================
+# 10. DEVELOPMENT & TESTING
+# ==========================================
+.phpunit.result.cache
+coverage/
+.nyc_output/
+*.test.js
+*.spec.js
+
+# ==========================================
+# 11. BUSINESS LOGIC SENSITIVE (OPTIONAL)
+# ==========================================
+# Uncomment jika ingin protect business logic
+# **/controllers/payroll*.php
+# **/controllers/rab*.php
+# **/action/calculate*.php
+# **/routes/pricing*.js
+
+# ==========================================
+# 12. KILO CONFIG (OPTIONAL)
+# ==========================================
+.kilo/
+.kilocode/
+
+# ==========================================
+# 13. DOCUMENTATION / PANDUAN (generated)
+# ==========================================
+PANDUAN_*.md
+PERBAIKAN_*.md
+QUICK_REFERENCE_*.md
+RANGKUMAN_*.md
+RINGKASAN_*.md
+GITHUB_SETUP_GUIDE.md
+OWNER_CHECKLIST.md
+CONTRIBUTING.md
+SECURITY.md
+**/QUICKSTART.md
+**/LABOR_COST_DOCUMENTATION.md
+
+# ==========================================
+# WHITELIST - Files yang HARUS di-track
+# ==========================================
+!.env.example
+!.gitignore
+!.gitattributes
+!README.md
+!docker-compose.yml
+!package.json
+!composer.json

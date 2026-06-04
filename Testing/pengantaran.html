@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Pengantaran - UI Konsisten</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================================
+           VARIABEL & BASE CSS
+           ======================================================== */
+        :root {
+            --green-main: #34d399;
+            --green-light: #ecfdf5;
+            --green-text: #059669;
+            --orange-main: #fb923c;
+            --orange-light: #fff7ed;
+            --orange-text: #c2410c;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --text-light-gray: #9ca3af;
+            --bg-gray: #f3f4f6;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #374151; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .modal {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER DENGAN TOMBOL KEMBALI */
+        .modal-header {
+            padding: 24px 24px 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding-right: 8px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .modal-body::-webkit-scrollbar { width: 4px; }
+        .modal-body::-webkit-scrollbar-track { background: transparent; }
+        .modal-body::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+        /* ========================================================
+           STYLE KARTU TOKO
+           ======================================================== */
+        .card {
+            border-radius: 12px;
+            padding: 16px;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        .card-green {
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--green-main);
+            box-shadow: 0 4px 6px -1px rgba(52, 211, 153, 0.1);
+        }
+        .card-green .badge { background-color: var(--green-light); color: var(--green-text); }
+        .card-green .check-active svg circle { fill: var(--green-main); }
+
+        .card-orange {
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--orange-main);
+            box-shadow: 0 4px 6px -1px rgba(251, 146, 60, 0.1);
+        }
+        .card-orange .badge { background-color: var(--orange-light); color: var(--orange-text); }
+        .card-orange .check-active svg circle { fill: var(--orange-main); }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .card-top h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-info { font-size: 12px; font-weight: 500; color: var(--text-gray); }
+
+        .material-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .material-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .mat-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .location-info {
+            font-size: 13px;
+            color: var(--text-gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        /* ========================================================
+           AREA INPUT (FOTO & ESTIMASI DROPDOWN)
+           ======================================================== */
+        .action-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 16px;
+        }
+
+        /* Kotak Khusus Upload Foto */
+        .foto-box {
+            border: 1.5px dashed var(--text-light-gray);
+            border-radius: 10px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+            background-color: #fafafa;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .foto-box:hover {
+            border-color: var(--text-gray);
+            background-color: var(--bg-gray);
+        }
+
+        .foto-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-gray);
+            z-index: 2;
+        }
+
+        .foto-content span { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+        #input-foto { display: none; }
+
+        #preview-container {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* --- STYLING UNTUK DROPDOWN ESTIMASI --- */
+        .dropdown-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            background-color: #ffffff;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .input-box:hover { border-color: var(--text-light-gray); }
+
+        .input-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        #icon-estimasi { transition: transform 0.3s ease; }
+
+        /* Menu dropdown terbuka ke ATAS */
+        .dropdown-menu {
+            display: none; 
+            position: absolute;
+            bottom: calc(100% + 4px); /* Posisikan persis di atas input */
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 -4px 15px -3px rgba(0, 0, 0, 0.1); /* Bayangan ke atas */
+            list-style: none;
+            z-index: 20;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show { display: block; }
+
+        .dropdown-menu li {
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dropdown-menu li:last-child { border-bottom: none; }
+        .dropdown-menu li:hover { background-color: var(--bg-gray); }
+
+        /* ========================================================
+           FOOTER & TOMBOL
+           ======================================================== */
+        .modal-footer {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-ambil-utama {
+            background-color: #111827;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-ambil-utama:hover { background-color: #374151; }
+        .btn-ambil-utama:active { transform: scale(0.98); }
+
+    </style>
+</head>
+<body>
+
+    <div class="modal">
+        <!-- Header -->
+        <div class="modal-header">
+            <a href="index.html" class="btn-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+            <h2>Rute Pengantaran</h2>
+        </div>
+
+        <div class="modal-body">
+            
+            <!-- Tempat Data Render Dinamis -->
+            <div id="dynamic-content" style="display: flex; flex-direction: column; gap: 16px;"></div>
+
+            <!-- Area Upload Foto dan Estimasi -->
+            <div class="action-inputs">
+                
+                <!-- Box Upload Foto -->
+                <div class="foto-box" onclick="document.getElementById('input-foto').click()">
+                    <div id="preview-container"></div>
+                    
+                    <div class="foto-content" id="default-foto-content">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <span>Upload Foto</span>
+                    </div>
+                </div>
+                <input type="file" id="input-foto" accept="image/*" onchange="previewFile(event)">
+
+                <!-- Box Dropdown Estimasi -->
+                <div class="dropdown-wrapper">
+                    <div class="input-box" id="btn-estimasi">
+                        <span class="input-text" id="text-estimasi">Pilih Estimasi Waktu</span>
+                        <svg id="icon-estimasi" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+
+                    <!-- Pilihan Estimasi Tersembunyi (Sesuai Gambar) -->
+                    <ul class="dropdown-menu" id="menu-estimasi">
+                        <li>5 - 10 menit</li>
+                        <li>15 - 20 menit</li>
+                        <li>25 - 30 menit</li>
+                        <li>35 - 40 menit</li>
+                        <li>45 - 50 menit</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-ambil-utama" onclick="alert('Data Estimasi yang dipilih: ' + document.getElementById('text-estimasi').innerText)">Antar</button>
+        </div>
+    </div>
+
+    <!-- LOGIKA JAVASCRIPT -->
+    <script>
+        // Data Dummy
+        const databaseToko = {
+            'A': {
+                id: 'card-toko-a',
+                kelasTema: 'card-green',
+                judul: 'Toko A',
+                tanggal: '12 Feb 2026',
+                material: [
+                    { nama: 'Semen Portland', qty: '10 sak' },
+                    { nama: 'Pasir Bangunan', qty: '5 m³' },
+                    { nama: 'Besi Beton 8mm', qty: '20 btg' }
+                ],
+                lokasi: 'Jl. Merdeka No. 12, Bandung (4.2 km)'
+            },
+            'B': {
+                id: 'card-toko-b',
+                kelasTema: 'card-orange',
+                judul: 'Toko B',
+                tanggal: '12 Feb 2026',
+                material: [
+                    { nama: 'Cat Tembok 5L', qty: '8 pail' },
+                    { nama: 'Kuas Roller', qty: '12 pcs' },
+                    { nama: 'Tiner', qty: '1 kaleng' }
+                ],
+                lokasi: 'Jl. Asia Afrika No. 88, Bandung (7.8 km)'
+            }
+        };
+
+        // Render Halaman (Sama dengan sebelumnya)
+        function renderPage(pilihanTokoArray) {
+            const container = document.getElementById('dynamic-content');
+            container.innerHTML = ''; 
+
+            pilihanTokoArray.forEach(idToko => {
+                const data = databaseToko[idToko];
+                if (!data) return;
+
+                let listHTML = '';
+                data.material.forEach(item => {
+                    listHTML += `
+                        <li>
+                            <div class="mat-name">
+                                <span class="check-active">
+                                    <svg width="16" height="16" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M8 12.5l3 3 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+                                    </svg>
+                                </span>
+                                ${item.nama}
+                            </div>
+                            <span class="badge">${item.qty}</span>
+                        </li>
+                    `;
+                });
+
+                const cardHTML = `
+                    <div class="card ${data.kelasTema}" id="${data.id}">
+                        <div class="card-top">
+                            <h3>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="12" height="14" rx="2"/><path d="M15 8h4a2 2 0 0 1 2 2v5h-6"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/></svg>
+                                ${data.judul}
+                            </h3>
+                            <div class="date-info">Tanggal: ${data.tanggal}</div>
+                        </div>
+                        <ul class="material-list">${listHTML}</ul>
+                        <div class="location-info">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-top: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Lokasi: ${data.lokasi}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+        }
+
+        // Fitur Preview Gambar
+        function previewFile(event) {
+            const file = event.target.files[0];
+            const previewContainer = document.getElementById('preview-container');
+            const defaultContent = document.getElementById('default-foto-content');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContainer.style.backgroundImage = `url(${e.target.result})`;
+                    previewContainer.style.opacity = '1';
+                    defaultContent.style.display = 'none';
+                    document.querySelector('.foto-box').style.borderStyle = 'solid';
+                    document.querySelector('.foto-box').style.borderColor = 'var(--border-color)';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Logika Dropdown Estimasi
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup Dropdown Estimasi
+            const btnEstimasi = document.getElementById('btn-estimasi');
+            const menuEstimasi = document.getElementById('menu-estimasi');
+            const textEstimasi = document.getElementById('text-estimasi');
+            const iconEstimasi = document.getElementById('icon-estimasi');
+            const estimasiItems = menuEstimasi.querySelectorAll('li');
+
+            // Toggle Dropdown saat diklik
+            btnEstimasi.addEventListener('click', function(event) {
+                event.stopPropagation(); // Cegah klik bocor
+                menuEstimasi.classList.toggle('show');
+                // Putar ikon chevron
+                iconEstimasi.style.transform = menuEstimasi.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+
+            // Saat salah satu opsi estimasi dipilih
+            estimasiItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Update teks dengan nilai yang dipilih
+                    textEstimasi.innerText = this.innerText;
+                    textEstimasi.style.color = '#111827'; // Ubah warna jadi gelap (aktif)
+                    
+                    // Tutup menu
+                    menuEstimasi.classList.remove('show');
+                    iconEstimasi.style.transform = 'rotate(0deg)';
+                });
+            });
+
+            // Tutup dropdown kalau user klik di luar kotak
+            window.addEventListener('click', function(event) {
+                if (!btnEstimasi.contains(event.target) && !menuEstimasi.contains(event.target)) {
+                    menuEstimasi.classList.remove('show');
+                    iconEstimasi.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Handle Render Data Halaman
+            const savedData = localStorage.getItem('dataPengantaran');
+            if (savedData) {
+                const pilihanToko = JSON.parse(savedData);
+                renderPage(pilihanToko);
+            } else {
+                document.getElementById('dynamic-content').innerHTML = `
+                    <div style="text-align:center; padding: 40px 0;">
+                        <h3 style="color:var(--text-dark); margin-bottom:8px;">Data Tidak Ditemukan</h3>
+                        <p style="font-size:14px; color:var(--text-gray);">Silakan pilih toko dari halaman sebelumnya.</p>
+                        <a href="index.html" style="display:inline-block; margin-top:20px; padding:10px 24px; background:var(--text-dark); color:white; text-decoration:none; border-radius:10px; font-size:14px; font-weight:600;">Kembali</a>
+                    </div>
+                `;
+                document.querySelector('.action-inputs').style.display = 'none';
+                document.querySelector('.modal-footer').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

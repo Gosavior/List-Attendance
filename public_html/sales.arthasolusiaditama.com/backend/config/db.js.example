@@ -1,0 +1,31 @@
+const mysql = require('mysql2/promise');
+
+const staffPool = mysql.createPool({
+  host: process.env.DB_STAFF_HOST || 'localhost',
+  port: Number(process.env.DB_STAFF_PORT || 3306),
+  user: process.env.DB_STAFF_USER,
+  password: process.env.DB_STAFF_PASS,
+  database: process.env.DB_STAFF_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  timezone: '+07:00',
+});
+
+const salesPool = mysql.createPool({
+  host: process.env.DB_SALES_HOST || 'localhost',
+  port: Number(process.env.DB_SALES_PORT || 3306),
+  user: process.env.DB_SALES_USER,
+  password: process.env.DB_SALES_PASS,
+  database: process.env.DB_SALES_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  timezone: '+07:00',
+});
+
+async function testConnections() {
+  await staffPool.query('SELECT 1');
+  await salesPool.query('SELECT 1');
+  console.log('✅ Staff & Sales database connected');
+}
+
+module.exports = { staffPool, salesPool, testConnections };
