@@ -3,605 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Project Modal</title>
+<title>Detail Project Modal - Tailwind</title>
+<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<!-- Tailwind CSS (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-  :root {
-    --bg: #f8fafc;
-    --surface: #ffffff;
-    --border: #e2e8f0;
-    --border-md: #cbd5e1;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
-    --indigo: #4f46e5;
-    --blue: #2563eb;
-    --blue-bg: #eff6ff;
-    --red: #dc2626;
-    --gray-bg: #f1f5f9;
-    --radius: 8px;
-    --header-bg: #4c4845;
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #e2e8f0; /* Gray background to simulate modal overlay */
-    color: var(--text-primary);
-    min-height: 100vh;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  /* ── Modal Container ── */
-  .modal-container {
-    background: var(--surface);
-    width: 100%;
-    max-width: 900px;
-    height: 90vh; /* Fixed height for modal */
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-
-  /* ── Header ── */
-  .modal-header {
-    background: var(--header-bg);
-    color: #ffffff;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .modal-title-group .title {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-  }
-  .modal-title-group .subtitle {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.8);
-  }
-
-  .status-badge {
-    background: #e0e7ff;
-    color: var(--indigo);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 4px;
-  }
-
-  /* ── Tabs ── */
-  .modal-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    padding: 0 16px;
-    overflow-x: auto;
-  }
-  .tab-btn {
-    padding: 14px 20px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-    transition: all 0.2s;
-  }
-  .tab-btn:hover { color: var(--text-secondary); }
-  .tab-btn.active {
-    color: var(--text-primary);
-    border-bottom-color: var(--text-primary);
-  }
-
-  /* ── Content Area ── */
-  .modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px;
-    background: var(--surface);
-  }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
-
-  /* ── Shared Card Styles ── */
-  .detail-card {
-    border: 1px solid var(--border-md);
-    border-radius: var(--radius);
-    margin-bottom: 20px;
-    overflow: hidden;
-  }
-  .detail-card-header {
-    background: var(--surface);
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border-md);
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .detail-card-header i { font-size: 16px; width: 20px; text-align: center; }
-  .detail-card-body { padding: 16px; background: var(--surface); }
-
-  /* ── Grid Layouts ── */
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-  
-  .field-group { margin-bottom: 16px; }
-  .field-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-  }
-  .field-value {
-    font-size: 14px;
-    color: var(--text-primary);
-    font-weight: 500;
-  }
-
-  /* Specific elements */
-  .file-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #e0f2fe;
-    color: #0284c7;
-    border: 1px solid #bae6fd;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.2s;
-  }
-  .file-btn:hover { background: #bae6fd; }
-
-  .action-link {
-    color: var(--text-secondary);
-    font-size: 13px;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  /* Catatan Lines */
-  .notes-lines {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .notes-line {
-    border-bottom: 1px solid var(--border);
-    height: 20px;
-  }
-
-  /* ── Dokumentasi Tab ── */
-  .doc-card-wrapper {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
-  }
-  .doc-stack {
-    position: relative;
-    width: 100%;
-    max-width: 300px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .doc-stack:hover { transform: translateY(-5px); }
-  .doc-stack::before, .doc-stack::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    z-index: 1;
-    pointer-events: none;
-  }
-  .doc-stack::before { transform: translateY(6px) scale(0.97); z-index: 2; }
-  .doc-stack::after { transform: translateY(12px) scale(0.94); z-index: 1; }
-
-  .doc-card {
-    position: relative;
-    z-index: 3;
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    background: var(--surface);
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-  }
-  .doc-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 12px;
-  }
-  .doc-author { font-weight: 700; color: var(--text-primary); }
-  .doc-date { color: var(--text-muted); }
-  .doc-note { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
-  
-  .doc-photo-box {
-    border: 1.5px dashed var(--blue);
-    border-radius: 8px;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-primary);
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    background: #fafaf9;
-    cursor: pointer; /* Indikator bisa diklik */
-    transition: opacity 0.2s, transform 0.2s;
-  }
-  
-  .doc-photo-box:hover {
-    opacity: 0.8;
-  }
-
-  /* REVISI: Tombol Kiri-Kanan */
-  .doc-actions {
-    display: flex;
-    flex-direction: row; /* Ubah ke baris */
-    gap: 8px;
-  }
-  .doc-btn {
-    flex: 1; /* Agar tombol sama besar ke samping */
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    border: none;
-  }
-  .doc-btn.edit { background: var(--blue); color: #fff; }
-  .doc-btn.hapus { background: var(--red); color: #fff; }
-
-  /* ── Gallery Modal ── */
-  .gallery-modal {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    backdrop-filter: blur(4px);
-    animation: lbFadeIn 0.2s ease;
-  }
-  .gallery-modal.active { display: flex; }
-  .gallery-modal-content {
-    background: var(--bg);
-    width: 100%;
-    max-width: 800px;
-    max-height: 90vh;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  }
-  .gallery-header {
-    background: var(--surface);
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 700;
-    font-size: 16px;
-  }
-  .gallery-close {
-    background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);
-  }
-  .gallery-close:hover { color: var(--text-primary); }
-  .gallery-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-  }
-  
-  @keyframes lbFadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  /* ── Image Preview Modal (Baru ditambahkan) ── */
-  .image-preview-modal {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 10000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    backdrop-filter: blur(4px);
-    animation: lbFadeIn 0.2s ease;
-  }
-  .image-preview-modal.active { display: flex; }
-  .image-preview-content {
-    position: relative;
-    max-width: 90%;
-    max-height: 90vh;
-  }
-  /* Dummy styling saat belum ada gambar asli (Bisa diganti `img` tag nantinya) */
-  .image-preview-content .img-placeholder {
-    width: 600px;
-    height: 400px;
-    background: #fafaf9;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: var(--text-muted);
-    font-weight: bold;
-    border: 2px dashed var(--blue);
-    max-width: 100%;
-  }
-  .image-preview-close {
-    position: absolute;
-    top: -40px;
-    right: 0;
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 30px;
-    cursor: pointer;
-  }
-
-  /* ── Report Tab ── */
-  .report-upload-area {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    font-weight: 500;
-  }
-  .report-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-  }
-  .report-card {
-    border: 1px solid var(--border-md);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .report-card-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: #fafafa;
-    border-bottom: 1px solid var(--border);
-    font-size: 11px;
-    color: var(--text-primary);
-    font-weight: 600;
-  }
-  .report-card-body {
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-  .report-title {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    color: var(--text-secondary);
-  }
-  .report-meta {
-    font-size: 10px;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-  .download-icon {
-    color: var(--text-secondary);
-    font-size: 18px;
-    cursor: pointer;
-  }
-
-  /* ── Footer ── */
-  .modal-footer {
-    background: #d1d5db;
-    padding: 12px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--border-md);
-  }
-  .footer-info {
-    display: flex;
-    gap: 16px;
-    font-size: 11px;
-    color: #4b5563;
-  }
-  .footer-info span {
-    position: relative;
-  }
-  .footer-info span:not(:last-child)::after {
-    content: "|";
-    position: absolute;
-    right: -10px;
-    color: #9ca3af;
-  }
-  .btn-tutup {
-    background: #4b5563;
-    color: #fff;
-    border: none;
-    padding: 8px 24px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-
-  /* ── Responsive adjustments ── */
-  @media (max-width: 640px) {
-    .modal-container {
-      height: 100vh;
-      border-radius: 0;
-      max-width: 100%;
-    }
-    .grid-3 { grid-template-columns: 1fr; gap: 0; }
-    .grid-2 { grid-template-columns: 1fr; gap: 0; }
-    .field-group { margin-bottom: 16px; }
+<style type="text/tailwindcss">
+  @layer utilities {
+    /* Handle Tab & Modal visibility */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
     
-    .modal-footer {
-      flex-direction: column;
-      gap: 12px;
-      align-items: stretch;
-      padding: 16px;
+    .tab-btn.active { 
+      @apply text-slate-900 border-slate-900; 
     }
-    .footer-info {
-      flex-direction: column;
-      gap: 4px;
+    
+    .gallery-modal.active, .image-preview-modal.active { 
+      display: flex; 
+      animation: lbFadeIn 0.2s ease; 
     }
-    .footer-info span:not(:last-child)::after { display: none; }
+  }
+
+  /* Keyframe Animations */
+  @keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(5px); } 
+    to { opacity: 1; transform: none; } 
+  }
+  @keyframes lbFadeIn { 
+    from { opacity: 0; } 
+    to { opacity: 1; } 
   }
 </style>
 </head>
-<body>
+<body class="font-['Inter'] bg-slate-200 text-slate-900 min-h-screen text-sm flex items-center justify-center p-5">
 
-<div class="modal-container">
+<div class="bg-white w-full max-w-[900px] h-screen sm:h-[90vh] sm:rounded-xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
   
   <!-- Header -->
-  <div class="modal-header">
-    <div class="modal-title-group">
-      <div class="title">DETAIL PROJECT</div>
-      <div class="subtitle">Nama Project</div>
+  <div class="bg-[#4c4845] text-white py-4 px-6 flex justify-between items-start">
+    <div>
+      <div class="text-[18px] font-semibold tracking-wide mb-0.5">DETAIL PROJECT</div>
+      <div class="text-[12px] text-white/80">Nama Project</div>
     </div>
-    <div class="status-badge">Ongoing</div>
+    <div class="bg-indigo-100 text-indigo-600 text-[12px] font-semibold py-1 px-3 rounded">Ongoing</div>
   </div>
 
   <!-- Tabs -->
-  <div class="modal-tabs">
-    <div class="tab-btn active" onclick="switchTab('detail', this)"><i class="fas fa-file-alt"></i> Detail</div>
-    <div class="tab-btn" onclick="switchTab('dokumentasi', this)"><i class="fas fa-camera"></i> Dokumentasi</div>
-    <div class="tab-btn" onclick="switchTab('report', this)"><i class="fas fa-file-invoice"></i> Report</div>
+  <div class="flex border-b border-slate-200 bg-white px-4 overflow-x-auto">
+    <div class="tab-btn active px-5 py-3.5 text-[13px] font-semibold text-slate-400 cursor-pointer border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition-colors duration-200 hover:text-slate-600" onclick="switchTab('detail', this)">
+      <i class="fas fa-file-alt"></i> Detail
+    </div>
+    <div class="tab-btn px-5 py-3.5 text-[13px] font-semibold text-slate-400 cursor-pointer border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition-colors duration-200 hover:text-slate-600" onclick="switchTab('dokumentasi', this)">
+      <i class="fas fa-camera"></i> Dokumentasi
+    </div>
+    <div class="tab-btn px-5 py-3.5 text-[13px] font-semibold text-slate-400 cursor-pointer border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition-colors duration-200 hover:text-slate-600" onclick="switchTab('report', this)">
+      <i class="fas fa-file-invoice"></i> Report
+    </div>
   </div>
 
   <!-- Body -->
-  <div class="modal-body">
+  <div class="flex-1 overflow-y-auto p-6 bg-white">
     
     <!-- TAB 1: Detail -->
     <div id="tab-detail" class="tab-content active">
       
-      <div class="detail-card">
-        <div class="detail-card-header"><i class="fas fa-user"></i> Informasi Proyek & Kontak</div>
-        <div class="detail-card-body">
-          <div class="grid-3">
-            <div class="field-group">
-              <div class="field-label">Nama Customer</div>
-              <div class="field-value">TDK</div>
+      <!-- Card 1 -->
+      <div class="border border-slate-300 rounded-lg mb-5 overflow-hidden">
+        <div class="bg-white px-4 py-3 border-b border-slate-300 font-semibold text-[14px] text-slate-600 flex items-center gap-2.5">
+          <i class="fas fa-user w-5 text-center textbase"></i> Informasi Proyek & Kontak
+        </div>
+        <div class="p-4 bg-white">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-5 mb-4 sm:mb-5">
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">Nama Customer</div>
+              <div class="text-[14px] text-slate-900 font-medium">TDK</div>
             </div>
-            <div class="field-group">
-              <div class="field-label">Sales Lead</div>
-              <div class="field-value">sales</div>
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">Sales Lead</div>
+              <div class="text-[14px] text-slate-900 font-medium">sales</div>
             </div>
-            <div class="field-group">
-              <div class="field-label">No Hp Customer</div>
-              <div class="field-value">08976562222</div>
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">No Hp Customer</div>
+              <div class="text-[14px] text-slate-900 font-medium">08976562222</div>
             </div>
           </div>
-          <div class="field-group" style="margin-bottom:0">
-            <div class="field-label">Email Customer</div>
-            <div class="field-value">tes@gmail.com</div>
+          <div>
+            <div class="text-[11px] text-slate-400 mb-1">Email Customer</div>
+            <div class="text-[14px] text-slate-900 font-medium">tes@gmail.com</div>
           </div>
         </div>
       </div>
 
-      <div class="detail-card">
-        <div class="detail-card-header"><i class="fas fa-file-invoice-dollar"></i> Dokumen & Keuangan (QO & PO)</div>
-        <div class="detail-card-body">
-          <div class="grid-3">
-            <div class="field-group">
-              <div class="field-label">Nominal QO</div>
-              <div class="field-value">Rp 2.000.000</div>
-            </div>
-            <div class="field-group">
-              <div class="field-label">Number QO</div>
-              <div class="field-value">QO-12-2000</div>
-            </div>
-            <div class="field-group">
-              <div class="field-label">File QO</div>
-              <a href="#" class="file-btn"><i class="far fa-file-alt"></i> QO-12-2000</a>
-            </div>
-          </div>
-          <div class="grid-3">
-            <div class="field-group" style="margin-bottom:0">
-              <div class="field-label">Number PO</div>
-              <div class="field-value">PO-99-2026</div>
-            </div>
-            <div class="field-group" style="margin-bottom:0">
-              <div class="field-label">File PO</div>
-              <a href="#" class="file-btn"><i class="far fa-file-alt"></i> PO-12-2000</a>
-            </div>
-          </div>
+      <!-- Card 2 -->
+      <div class="border border-slate-300 rounded-lg mb-5 overflow-hidden">
+        <div class="bg-white px-4 py-3 border-b border-slate-300 font-semibold text-[14px] text-slate-600 flex items-center gap-2.5">
+          <i class="fas fa-file-invoice-dollar w-5 text-center text-base"></i> Dokumen & Keuangan (QO & PO)
         </div>
-      </div>
-
-      <div class="detail-card">
-        <div class="detail-card-header"><i class="fas fa-chart-bar"></i> Anggaran & Administrasi (RAB/AO)</div>
-        <div class="detail-card-body">
-          <div class="grid-3">
-            <div class="field-group">
-              <div class="field-label">No. RAB</div>
-              <div class="field-value">Rp 2.000.000</div>
+        <div class="p-4 bg-white">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-5 mb-4 sm:mb-5">
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">Nominal QO</div>
+              <div class="text-[14px] text-slate-900 font-medium">Rp 2.000.000</div>
             </div>
-            <div class="field-group">
-              <div class="field-label">Total RAB</div>
-              <div class="field-value">QO-12-2000</div>
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">Number QO</div>
+              <div class="text-[14px] text-slate-900 font-medium">QO-12-2000</div>
             </div>
-            <div class="field-group">
-              <div class="field-label">Aksi</div>
-              <a href="#" class="action-link">Lihat / Edit RAB</a>
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">File QO</div>
+              <a href="#" class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-600 border border-sky-200 py-1.5 px-3 rounded text-[12px] font-semibold no-underline transition-colors hover:bg-sky-200">
+                <i class="far fa-file-alt"></i> QO-12-2000
+              </a>
             </div>
           </div>
-          <div class="grid-3">
-            <div class="field-group" style="margin-bottom:0">
-              <div class="field-label">Number AO</div>
-              <div class="field-value">PO-99-2026</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-5">
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">Number PO</div>
+              <div class="text-[14px] text-slate-900 font-medium">PO-99-2026</div>
             </div>
-            <div class="field-group" style="margin-bottom:0">
-              <div class="field-label">File AO</div>
-              <a href="#" class="file-btn"><i class="far fa-file-alt"></i> AO-12-2000</a>
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">File PO</div>
+              <a href="#" class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-600 border border-sky-200 py-1.5 px-3 rounded text-[12px] font-semibold no-underline transition-colors hover:bg-sky-200">
+                <i class="far fa-file-alt"></i> PO-12-2000
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="detail-card">
-        <div class="detail-card-header"><i class="fas fa-pencil-alt"></i> Catatan Sales (Noted Sales)</div>
-        <div class="detail-card-body">
-          <div class="notes-lines">
-            <div class="notes-line"></div>
-            <div class="notes-line"></div>
-            <div class="notes-line"></div>
-            <div class="notes-line"></div>
-            <div class="notes-line"></div>
+      <!-- Card 3 -->
+      <div class="border border-slate-300 rounded-lg mb-5 overflow-hidden">
+        <div class="bg-white px-4 py-3 border-b border-slate-300 font-semibold text-[14px] text-slate-600 flex items-center gap-2.5">
+          <i class="fas fa-chart-bar w-5 text-center text-base"></i> Anggaran & Administrasi (RAB/AO)
+        </div>
+        <div class="p-4 bg-white">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-5 mb-4 sm:mb-5">
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">No. RAB</div>
+              <div class="text-[14px] text-slate-900 font-medium">Rp 2.000.000</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">Total RAB</div>
+              <div class="text-[14px] text-slate-900 font-medium">QO-12-2000</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">Aksi</div>
+              <a href="#" class="text-slate-600 text-[13px] no-underline font-medium hover:text-slate-800">Lihat / Edit RAB</a>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-5">
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">Number AO</div>
+              <div class="text-[14px] text-slate-900 font-medium">PO-99-2026</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400 mb-1">File AO</div>
+              <a href="#" class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-600 border border-sky-200 py-1.5 px-3 rounded text-[12px] font-semibold no-underline transition-colors hover:bg-sky-200">
+                <i class="far fa-file-alt"></i> AO-12-2000
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="border border-slate-300 rounded-lg mb-5 overflow-hidden">
+        <div class="bg-white px-4 py-3 border-b border-slate-300 font-semibold text-[14px] text-slate-600 flex items-center gap-2.5">
+          <i class="fas fa-pencil-alt w-5 text-center text-base"></i> Catatan Sales (Noted Sales)
+        </div>
+        <div class="p-4 bg-white">
+          <div class="flex flex-col gap-3">
+            <div class="border-b border-slate-200 h-5"></div>
+            <div class="border-b border-slate-200 h-5"></div>
+            <div class="border-b border-slate-200 h-5"></div>
+            <div class="border-b border-slate-200 h-5"></div>
+            <div class="border-b border-slate-200 h-5"></div>
           </div>
         </div>
       </div>
@@ -610,63 +189,74 @@
 
     <!-- TAB 2: Dokumentasi -->
     <div id="tab-dokumentasi" class="tab-content">
-      <div class="doc-card-wrapper">
-        <div class="doc-stack" onclick="openGalleryModal()">
-          <div class="doc-card">
-            <div class="doc-header">
-              <span class="doc-author">Richard.C</span>
-              <span class="doc-date">9 Apr 2026 <i class="fas fa-times" style="margin-left:6px;cursor:pointer;color:var(--text-muted)"></i></span>
+      <div class="flex justify-center py-5">
+        <div class="relative w-full max-w-[300px] cursor-pointer transition-transform duration-200 hover:-translate-y-1.5" onclick="openGalleryModal()">
+          
+          <!-- Stack Effect (Bottom & Middle layer) -->
+          <div class="absolute inset-0 bg-white border border-slate-200 rounded-[10px] shadow-sm translate-y-3 scale-90 z-0"></div>
+          <div class="absolute inset-0 bg-white border border-slate-200 rounded-[10px] shadow-sm translate-y-1.5 scale-95 z-10"></div>
+          
+          <!-- Main Card (Top layer) -->
+          <div class="relative z-20 w-full border border-slate-200 rounded-[10px] p-4 bg-white shadow-sm">
+            <div class="flex justify-between items-center mb-2.5 text-[12px]">
+              <span class="font-bold text-slate-900">Richard.C</span>
+              <span class="text-slate-400">9 Apr 2026 <i class="fas fa-times ml-1.5 cursor-pointer text-slate-400"></i></span>
             </div>
-            <div class="doc-note">Note: Dokumentasi Lapangan</div>
-            <div class="doc-photo-box" style="flex-direction:column; text-align:center;">
-              <i class="fas fa-images" style="font-size:32px; color:var(--text-muted); margin-bottom:8px"></i>
+            <div class="text-[12px] text-slate-600 mb-3">Note: Dokumentasi Lapangan</div>
+            
+            <div class="border-[1.5px] border-dashed border-blue-600 rounded-lg h-[200px] flex flex-col items-center justify-center text-slate-900 text-[13px] font-semibold mb-4 bg-stone-50 transition-opacity duration-200 hover:opacity-80">
+              <i class="fas fa-images text-[32px] text-slate-400 mb-2"></i>
               <span>5 Foto Tersedia</span>
             </div>
-            <div class="doc-actions" style="display:flex; flex-direction:column;">
-              <button class="doc-btn lihat" style="background:var(--gray-bg); color:var(--text-primary);">Buka Folder Foto</button>
+            
+            <div class="flex flex-col gap-2">
+              <button class="w-full bg-slate-100 text-slate-900 py-2.5 px-3 rounded-md text-[12px] font-semibold text-center cursor-pointer border-none">Buka Folder Foto</button>
             </div>
           </div>
+
         </div>
       </div>
     </div>
 
     <!-- TAB 3: Report -->
     <div id="tab-report" class="tab-content">
-      <div class="detail-card">
-        <div class="detail-card-body">
-          <div class="report-upload-area">Upload File</div>
+      <div class="border border-slate-300 rounded-lg overflow-hidden mb-5">
+        <div class="p-4 bg-white">
+          <div class="text-[12px] text-slate-600 mb-4 font-medium">Upload File</div>
           
-          <div class="report-grid">
+          <div class="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
             
-            <div class="report-card">
-              <div class="report-card-header">
+            <!-- Report 1 -->
+            <div class="border border-slate-300 rounded-lg overflow-hidden">
+              <div class="flex justify-between py-2 px-3 bg-neutral-50 border-b border-slate-200 text-[11px] text-slate-900 font-semibold">
                 <span>Richard C</span>
                 <span>09 Apr 2026</span>
               </div>
-              <div class="report-card-body">
+              <div class="p-3 flex justify-between items-end bg-white">
                 <div>
-                  <div class="report-title">Service Report</div>
-                  <div class="report-meta">
+                  <div class="text-[13px] font-bold mb-4 text-slate-600">Service Report</div>
+                  <div class="text-[10px] text-slate-400 leading-relaxed">
                     Number AO :<br>
                   </div>
                 </div>
-                <i class="fas fa-download download-icon"></i>
+                <i class="fas fa-download text-[18px] text-slate-600 cursor-pointer hover:text-slate-800"></i>
               </div>
             </div>
 
-            <div class="report-card">
-              <div class="report-card-header">
+            <!-- Report 2 -->
+            <div class="border border-slate-300 rounded-lg overflow-hidden">
+              <div class="flex justify-between py-2 px-3 bg-neutral-50 border-b border-slate-200 text-[11px] text-slate-900 font-semibold">
                 <span>Richard C</span>
                 <span></span>
               </div>
-              <div class="report-card-body">
+              <div class="p-3 flex justify-between items-end bg-white">
                 <div>
-                  <div class="report-title">Chiler Log Sheet</div>
-                  <div class="report-meta">
+                  <div class="text-[13px] font-bold mb-4 text-slate-600">Chiler Log Sheet</div>
+                  <div class="text-[10px] text-slate-400 leading-relaxed">
                     Number AO :<br>
                   </div>
                 </div>
-                <i class="fas fa-download download-icon"></i>
+                <i class="fas fa-download text-[18px] text-slate-600 cursor-pointer hover:text-slate-800"></i>
               </div>
             </div>
 
@@ -678,100 +268,111 @@
   </div>
 
   <!-- Footer -->
-  <div class="modal-footer">
-    <div class="footer-info">
-      <span>Last Update: 9 Apr 2026</span>
-      <span>Last Activity: Richard C (9 Apr 2026)</span>
-      <span>Note: </span>
+  <div class="bg-gray-300 py-3 px-6 flex flex-col sm:flex-row justify-between items-stretch sm:items-center border-t border-slate-300 gap-3 sm:gap-0">
+    <div class="flex flex-col sm:flex-row gap-1 sm:gap-4 text-[11px] text-gray-600">
+      <span class="relative max-sm:after:hidden after:content-['|'] after:absolute after:-right-2.5 after:text-gray-400 last:after:content-none">Last Update: 9 Apr 2026</span>
+      <span class="relative max-sm:after:hidden after:content-['|'] after:absolute after:-right-2.5 after:text-gray-400 last:after:content-none">Last Activity: Richard C (9 Apr 2026)</span>
+      <span class="relative max-sm:after:hidden after:content-['|'] after:absolute after:-right-2.5 after:text-gray-400 last:after:content-none">Note: </span>
     </div>
-    <button class="btn-tutup">Tutup</button>
+    <button class="bg-gray-600 text-white border-none py-2 px-6 rounded text-[12px] font-medium cursor-pointer hover:bg-gray-700 transition-colors">Tutup</button>
   </div>
 
 </div>
 
 <!-- Gallery Modal -->
-<div class="gallery-modal" id="galleryModal">
-  <div class="gallery-modal-content">
-    <div class="gallery-header">
+<div class="gallery-modal hidden fixed inset-0 bg-black/60 z-[9999] items-center justify-center p-5 backdrop-blur-sm" id="galleryModal">
+  <div class="bg-slate-50 w-full max-w-[800px] max-h-[90vh] rounded-xl flex flex-col overflow-hidden shadow-2xl">
+    <div class="bg-white py-4 px-6 border-b border-slate-200 flex justify-between items-center font-bold text-[16px]">
       <div>Dokumentasi Project - Richard.C</div>
-      <button class="gallery-close" onclick="closeGalleryModal()"><i class="fas fa-times"></i></button>
+      <button class="bg-transparent border-none text-[20px] cursor-pointer text-slate-400 hover:text-slate-900 transition-colors" onclick="closeGalleryModal()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
-    <div class="gallery-body">
+    
+    <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5">
+      
       <!-- Item 1 -->
-      <div class="doc-card">
-        <div class="doc-header">
-          <span class="doc-author">Foto 1</span>
-          <span class="doc-date">9 Apr 2026</span>
+      <div class="w-full border border-slate-200 rounded-[10px] p-4 bg-white shadow-sm">
+        <div class="flex justify-between items-center mb-2.5 text-[12px]">
+          <span class="font-bold text-slate-900">Foto 1</span>
+          <span class="text-slate-400">9 Apr 2026</span>
         </div>
-        <div class="doc-note">Note: Tampak Depan</div>
-        <div class="doc-photo-box" onclick="viewImage('Preview: Foto 1 - Tampak Depan')">Foto 1</div>
-        <div class="doc-actions">
-          <button class="doc-btn edit">Edit</button>
-          <button class="doc-btn hapus">Hapus</button>
+        <div class="text-[12px] text-slate-600 mb-3">Note: Tampak Depan</div>
+        <div class="border-[1.5px] border-dashed border-blue-600 rounded-lg h-[200px] flex items-center justify-center text-slate-900 text-[13px] font-semibold mb-4 bg-stone-50 cursor-pointer transition-opacity duration-200 hover:opacity-80" onclick="viewImage('Preview: Foto 1 - Tampak Depan')">Foto 1</div>
+        <div class="flex flex-row gap-2">
+          <button class="flex-1 py-2.5 px-2 bg-blue-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-blue-700 transition-colors">Edit</button>
+          <button class="flex-1 py-2.5 px-2 bg-red-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-red-700 transition-colors">Hapus</button>
         </div>
       </div>
+      
       <!-- Item 2 -->
-      <div class="doc-card">
-        <div class="doc-header">
-          <span class="doc-author">Foto 2</span>
-          <span class="doc-date">9 Apr 2026</span>
+      <div class="w-full border border-slate-200 rounded-[10px] p-4 bg-white shadow-sm">
+        <div class="flex justify-between items-center mb-2.5 text-[12px]">
+          <span class="font-bold text-slate-900">Foto 2</span>
+          <span class="text-slate-400">9 Apr 2026</span>
         </div>
-        <div class="doc-note">Note: Tampak Samping</div>
-        <div class="doc-photo-box" onclick="viewImage('Preview: Foto 2 - Tampak Samping')">Foto 2</div>
-        <div class="doc-actions">
-          <button class="doc-btn edit">Edit</button>
-          <button class="doc-btn hapus">Hapus</button>
+        <div class="text-[12px] text-slate-600 mb-3">Note: Tampak Samping</div>
+        <div class="border-[1.5px] border-dashed border-blue-600 rounded-lg h-[200px] flex items-center justify-center text-slate-900 text-[13px] font-semibold mb-4 bg-stone-50 cursor-pointer transition-opacity duration-200 hover:opacity-80" onclick="viewImage('Preview: Foto 2 - Tampak Samping')">Foto 2</div>
+        <div class="flex flex-row gap-2">
+          <button class="flex-1 py-2.5 px-2 bg-blue-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-blue-700 transition-colors">Edit</button>
+          <button class="flex-1 py-2.5 px-2 bg-red-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-red-700 transition-colors">Hapus</button>
         </div>
       </div>
+      
       <!-- Item 3 -->
-      <div class="doc-card">
-        <div class="doc-header">
-          <span class="doc-author">Foto 3</span>
-          <span class="doc-date">9 Apr 2026</span>
+      <div class="w-full border border-slate-200 rounded-[10px] p-4 bg-white shadow-sm">
+        <div class="flex justify-between items-center mb-2.5 text-[12px]">
+          <span class="font-bold text-slate-900">Foto 3</span>
+          <span class="text-slate-400">9 Apr 2026</span>
         </div>
-        <div class="doc-note">Note: Tampak Dalam</div>
-        <div class="doc-photo-box" onclick="viewImage('Preview: Foto 3 - Tampak Dalam')">Foto 3</div>
-        <div class="doc-actions">
-          <button class="doc-btn edit">Edit</button>
-          <button class="doc-btn hapus">Hapus</button>
+        <div class="text-[12px] text-slate-600 mb-3">Note: Tampak Dalam</div>
+        <div class="border-[1.5px] border-dashed border-blue-600 rounded-lg h-[200px] flex items-center justify-center text-slate-900 text-[13px] font-semibold mb-4 bg-stone-50 cursor-pointer transition-opacity duration-200 hover:opacity-80" onclick="viewImage('Preview: Foto 3 - Tampak Dalam')">Foto 3</div>
+        <div class="flex flex-row gap-2">
+          <button class="flex-1 py-2.5 px-2 bg-blue-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-blue-700 transition-colors">Edit</button>
+          <button class="flex-1 py-2.5 px-2 bg-red-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-red-700 transition-colors">Hapus</button>
         </div>
       </div>
+      
       <!-- Item 4 -->
-      <div class="doc-card">
-        <div class="doc-header">
-          <span class="doc-author">Foto 4</span>
-          <span class="doc-date">9 Apr 2026</span>
+      <div class="w-full border border-slate-200 rounded-[10px] p-4 bg-white shadow-sm">
+        <div class="flex justify-between items-center mb-2.5 text-[12px]">
+          <span class="font-bold text-slate-900">Foto 4</span>
+          <span class="text-slate-400">9 Apr 2026</span>
         </div>
-        <div class="doc-note">Note: Kondisi Alat</div>
-        <div class="doc-photo-box" onclick="viewImage('Preview: Foto 4 - Kondisi Alat')">Foto 4</div>
-        <div class="doc-actions">
-          <button class="doc-btn edit">Edit</button>
-          <button class="doc-btn hapus">Hapus</button>
+        <div class="text-[12px] text-slate-600 mb-3">Note: Kondisi Alat</div>
+        <div class="border-[1.5px] border-dashed border-blue-600 rounded-lg h-[200px] flex items-center justify-center text-slate-900 text-[13px] font-semibold mb-4 bg-stone-50 cursor-pointer transition-opacity duration-200 hover:opacity-80" onclick="viewImage('Preview: Foto 4 - Kondisi Alat')">Foto 4</div>
+        <div class="flex flex-row gap-2">
+          <button class="flex-1 py-2.5 px-2 bg-blue-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-blue-700 transition-colors">Edit</button>
+          <button class="flex-1 py-2.5 px-2 bg-red-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-red-700 transition-colors">Hapus</button>
         </div>
       </div>
+
       <!-- Item 5 -->
-      <div class="doc-card">
-        <div class="doc-header">
-          <span class="doc-author">Foto 5</span>
-          <span class="doc-date">9 Apr 2026</span>
+      <div class="w-full border border-slate-200 rounded-[10px] p-4 bg-white shadow-sm">
+        <div class="flex justify-between items-center mb-2.5 text-[12px]">
+          <span class="font-bold text-slate-900">Foto 5</span>
+          <span class="text-slate-400">9 Apr 2026</span>
         </div>
-        <div class="doc-note">Note: Selesai Pengerjaan</div>
-        <div class="doc-photo-box" onclick="viewImage('Preview: Foto 5 - Selesai Pengerjaan')">Foto 5</div>
-        <div class="doc-actions">
-          <button class="doc-btn edit">Edit</button>
-          <button class="doc-btn hapus">Hapus</button>
+        <div class="text-[12px] text-slate-600 mb-3">Note: Selesai Pengerjaan</div>
+        <div class="border-[1.5px] border-dashed border-blue-600 rounded-lg h-[200px] flex items-center justify-center text-slate-900 text-[13px] font-semibold mb-4 bg-stone-50 cursor-pointer transition-opacity duration-200 hover:opacity-80" onclick="viewImage('Preview: Foto 5 - Selesai Pengerjaan')">Foto 5</div>
+        <div class="flex flex-row gap-2">
+          <button class="flex-1 py-2.5 px-2 bg-blue-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-blue-700 transition-colors">Edit</button>
+          <button class="flex-1 py-2.5 px-2 bg-red-600 text-white rounded-md text-[12px] font-semibold text-center cursor-pointer border-none hover:bg-red-700 transition-colors">Hapus</button>
         </div>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- Image Preview Modal (BARU) -->
-<div class="image-preview-modal" id="imagePreviewModal">
-  <div class="image-preview-content">
-    <button class="image-preview-close" onclick="closeImagePreview()"><i class="fas fa-times"></i></button>
+<!-- Image Preview Modal -->
+<div class="image-preview-modal hidden fixed inset-0 bg-black/85 z-[10000] items-center justify-center p-5 backdrop-blur-sm" id="imagePreviewModal">
+  <div class="relative max-w-[90%] max-h-[90vh]">
+    <button class="absolute -top-10 right-0 bg-transparent border-none text-white text-[30px] cursor-pointer hover:text-gray-300 transition-colors" onclick="closeImagePreview()">
+      <i class="fas fa-times"></i>
+    </button>
     <!-- Placeholder, bisa diganti dengan tag <img> nantinya jika ada path gambar -->
-    <div class="img-placeholder" id="previewImageText">Foto Preview</div>
+    <div class="w-[600px] h-[400px] bg-stone-50 rounded-lg flex items-center justify-center text-[24px] text-slate-400 font-bold border-2 border-dashed border-blue-600 max-w-full" id="previewImageText">Foto Preview</div>
   </div>
 </div>
 
