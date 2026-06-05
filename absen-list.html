@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Absen Staff</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --surface-3: #f1f5f9;
+    --border: #e2e8f0;
+    --border-md: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --green-dark: #065f46;
+    --amber: #d97706;
+    --amber-bg: #fef3c7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --blue: #2563eb;
+    --blue-bg: #dbeafe;
+    --indigo: #4f46e5;
+    --indigo-bg: #eef2ff;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --orange: #ea580c;
+    --orange-bg: #ffedd5;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-2: #162032;
+    --surface-3: #0f172a;
+    --border: #334155;
+    --border-md: #475569;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --green-bg: #052e16;
+    --green: #4ade80;
+    --amber-bg: #451a03;
+    --red-bg: #450a0a;
+    --blue-bg: #1e3a8a;
+    --indigo-bg: #1e1b4b;
+    --purple-bg: #2e1065;
+    --orange-bg: #431407;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0; bottom: 0; left: 0;
+    overflow-y: auto;
+    z-index: 50;
+  }
+
+  .sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 15px; color: var(--text-primary);
+  }
+
+  .sidebar-logo .logo-icon {
+    width: 34px; height: 34px;
+    background: var(--indigo);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px;
+  }
+
+  .sidebar-section { padding: 6px 12px; }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 8px 8px 4px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-xs);
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.12s, color 0.12s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover { background: var(--surface-3); color: var(--text-primary); }
+  .nav-item.active { background: var(--indigo-bg); color: var(--indigo); }
+  .nav-item i { width: 18px; text-align: center; font-size: 14px; }
+
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    display: flex; flex-direction: column;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 40;
+  }
+
+  .topbar-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+  .theme-btn {
+    width: 34px; height: 34px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: background 0.15s;
+  }
+  .theme-btn:hover { background: var(--surface-3); }
+
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 12px 5px 6px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .user-avatar {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--indigo);
+    color: #fff;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .content { padding: 24px; }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .toolbar input[type="text"],
+  .toolbar input[type="date"] {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    background: var(--surface-2);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .toolbar input:focus { border-color: var(--indigo); }
+
+  .btn {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: var(--radius-xs);
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-green  { background: #16a34a; color: #fff; }
+  .btn-blue   { background: #2563eb; color: #fff; }
+  .btn-gray   { background: #64748b; color: #fff; }
+  .btn-indigo { background: var(--indigo); color: #fff; }
+  .btn-emerald { background: #059669; color: #fff; }
+
+  /* ── Info banner ── */
+  .info-banner {
+    font-size: 13px;
+    color: #4338ca;
+    margin-bottom: 16px;
+  }
+
+  /* ── Attendance Card (renderAttendanceCardsList) ── */
+  .absen-card-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow 0.15s;
+  }
+  .absen-card-wrap:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.09); }
+
+  .absen-card-wrap.border-green  { border-left: 4px solid #16a34a; }
+  .absen-card-wrap.border-yellow { border-left: 4px solid #d97706; }
+  .absen-card-wrap.border-blue   { border-left: 4px solid #2563eb; }
+  .absen-card-wrap.border-red    { border-left: 4px solid #dc2626; }
+  .absen-card-wrap.border-slate  { border-left: 4px solid #94a3b8; }
+
+  /* card top row */
+  .absen-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+
+  .absen-card-user { display: flex; align-items: center; gap: 12px; }
+
+  .absen-initials {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--blue-bg);
+    color: var(--blue);
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .absen-name { font-size: 14px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
+  .absen-date { font-size: 12px; color: var(--text-secondary); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+
+  .absen-card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .duration-chip {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    background: var(--indigo-bg);
+    color: var(--indigo);
+    font-size: 11px; font-weight: 500;
+    border: 1px solid #c7d2fe;
+  }
+
+  /* badge */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 11px; font-weight: 700;
+  }
+  .badge-green  { background: var(--green-bg);  color: var(--green-dark); }
+  .badge-yellow { background: var(--amber-bg);  color: #78350f; }
+  .badge-red    { background: var(--red-bg);    color: #991b1b; }
+  .badge-blue   { background: var(--blue-bg);   color: #1e40af; }
+  .badge-blue2  { background: #bfdbfe;          color: #1e3a8a; }
+  .badge-purple { background: var(--purple-bg); color: #5b21b6; }
+  .badge-indigo { background: var(--indigo-bg); color: var(--indigo); }
+  .badge-orange { background: var(--orange-bg); color: #9a3412; }
+  .badge-gray   { background: #f1f5f9;          color: #475569; }
+
+  /* time grid */
+  .absen-time-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+  }
+
+  .time-col {
+    padding: 14px 16px;
+    border-right: 1px solid var(--border);
+  }
+  .time-col:last-child { border-right: none; }
+
+  .time-col-label {
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: 5px;
+    margin-bottom: 8px;
+  }
+
+  /* ── FOTO DI SAMPING JAM ── */
+  .time-col-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .time-val {
+    font-size: 32px; font-weight: 900;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  .time-val.late { color: #d97706; }
+  .time-val.empty { color: var(--text-muted); font-size: 24px; }
+
+  /* Foto thumbnail */
+  .absen-photo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .absen-photo-thumb {
+    width: 52px; height: 52px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: block;
+  }
+
+  .absen-photo-thumb:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .absen-photo-lihat {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #1e40af;
+    background: #dbeafe;
+    padding: 2px 7px;
+    border-radius: 99px;
+    cursor: pointer;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+
+  .absen-photo-lihat:hover { background: #bfdbfe; }
+
+  .no-photo {
+    width: 52px; height: 52px;
+    border-radius: 8px;
+    border: 1.5px dashed var(--border-md);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* plan col */
+  .plan-label { font-size: 13px; font-weight: 500; color: var(--text-primary); display: flex; align-items: flex-start; gap: 6px; }
+  .plan-label i { color: var(--text-muted); margin-top: 2px; font-size: 13px; flex-shrink: 0; }
+
+  /* footer */
+  .absen-card-footer {
+    padding: 10px 16px;
+    background: var(--surface-2);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .footer-note {
+    display: flex; align-items: flex-start; gap: 6px;
+    font-size: 12px; color: var(--text-secondary);
+    flex: 1;
+  }
+  .footer-note i { color: var(--text-muted); margin-top: 1px; font-size: 13px; flex-shrink: 0; }
+
+  .footer-photos {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+
+  .footer-photo-thumb {
+    width: 32px; height: 32px;
+    border-radius: 5px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .footer-photo-thumb:hover { transform: scale(1.1); }
+
+  /* ── Staff today card (mini) ── */
+  .staff-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    cursor: pointer;
+    transition: box-shadow 0.15s;
+  }
+  .staff-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+
+  .staff-avatar {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .staff-name { font-size: 13px; font-weight: 600; color: var(--indigo); }
+  .staff-role { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .staff-times { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; font-size: 12px; }
+  .staff-time-label { color: var(--text-secondary); margin-bottom: 1px; }
+  .staff-time-val { font-weight: 700; color: var(--indigo); }
+
+  /* ── Calendar ── */
+  .cal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .cal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+  }
+  .cal-head-title { font-weight: 700; font-size: 14px; color: var(--text-primary); }
+  .cal-head-controls { display: flex; align-items: center; gap: 6px; }
+
+  .cal-head select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    background: var(--surface-2);
+    outline: none;
+  }
+
+  .cal-head button {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 4px 10px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    background: var(--surface-2);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .cal-table { width: 100%; border-collapse: collapse; }
+  .cal-table th {
+    font-size: 11px; color: var(--text-muted);
+    font-weight: 600; padding: 6px 4px; text-align: center;
+  }
+  .cal-table td { padding: 4px; text-align: center; }
+
+  .cal-day {
+    border-radius: 8px;
+    min-height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.12s;
+  }
+  .cal-day:hover { opacity: 0.82; }
+  .cal-present { background: #dcfce7; color: #065f46; }
+  .cal-leave   { background: #fef9c3; color: #a16207; }
+  .cal-alpha   { background: #f1f5f9; color: #64748b; }
+  .cal-empty   { color: #cbd5e1; }
+  .cal-selected { outline: 2px solid var(--indigo); outline-offset: 1px; }
+
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 11px; color: var(--text-secondary); }
+  .cal-legend-dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 4px; vertical-align: middle; }
+
+  /* ── Section containers ── */
+  .section-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .section-title { font-size: 14px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .section-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  .shift-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-xs);
+    margin-bottom: 12px; margin-top: 8px;
+    font-size: 13px; font-weight: 700;
+  }
+  .shift-day   { background: #fef3c7; color: #78350f; }
+  .shift-night { background: #eef2ff; color: #3730a3; }
+  .shift-count { font-size: 11px; font-weight: 500; background: rgba(255,255,255,0.6); padding: 2px 8px; border-radius: 99px; margin-left: auto; }
+
+  .role-label {
+    font-size: 12px; font-weight: 700; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 10px; margin-top: 14px;
+  }
+  .role-count { font-size: 11px; background: var(--indigo-bg); color: var(--indigo); padding: 2px 7px; border-radius: 99px; font-weight: 600; }
+
+  /* ── Lightbox ── */
+  .absen-lightbox {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    backdrop-filter: blur(5px);
+    animation: lbFadeIn 0.18s ease;
+  }
+  @keyframes lbFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .absen-lightbox.active { display: flex; }
+
+  .absen-lightbox img {
+    max-width: min(95vw, 1000px);
+    max-height: 85vh;
+    border-radius: 12px;
+    object-fit: contain;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    animation: lbSlideUp 0.2s ease;
+  }
+  @keyframes lbSlideUp { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .absen-lightbox-caption {
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    display: flex; align-items: center; gap: 7px;
+    font-weight: 500;
+  }
+
+  .absen-lightbox-close {
+    position: fixed; top: 18px; right: 20px;
+    width: 38px; height: 38px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    color: #fff; font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .absen-lightbox-close:hover { background: rgba(255,255,255,0.28); }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .absen-time-grid { grid-template-columns: 1fr 1fr; }
+    .absen-time-grid .time-col:nth-child(3) {
+      grid-column: 1 / -1;
+      border-top: 1px solid var(--border);
+      border-right: none;
+    }
+    .toolbar { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-building"></i></div>
+      MyApp
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Menu Utama</div>
+      <a href="#" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="#" class="nav-item active"><i class="fas fa-calendar-check"></i> Absensi</a>
+      <a href="#" class="nav-item"><i class="fas fa-user-clock"></i> Laporan Harian</a>
+      <a href="#" class="nav-item"><i class="fas fa-briefcase"></i> Projects</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Akun</div>
+      <a href="#" class="nav-item"><i class="fas fa-user"></i> Profil Saya</a>
+      <a href="#" class="nav-item"><i class="fas fa-cog"></i> Pengaturan</a>
+      <a href="#" class="nav-item"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title"><i class="fas fa-calendar-check" style="color:var(--indigo);margin-right:8px"></i>Daftar Absen Staff</div>
+      <div class="topbar-right">
+        <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+        <div class="user-chip">
+          <div class="user-avatar">SU</div>
+          Staff User
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <input type="text" placeholder="Cari nama staff..." style="min-width:180px">
+        <input type="date" value="2026-06-05">
+        <a href="#" class="btn btn-green"><i class="fas fa-file-excel"></i> Download Excel Jun 2026</a>
+        <a href="#" class="btn btn-blue"><i class="fas fa-table"></i> Summary Presence Jun 2026</a>
+        <button class="btn btn-gray"><i class="fas fa-cog"></i> Setting Summary</button>
+      </div>
+
+      <!-- Info banner -->
+      <div class="info-banner">
+        Menampilkan seluruh absen untuk nama:
+      </div>
+
+      <!-- Calendar -->
+      <div class="cal-card">
+        <div class="cal-head">
+          <div class="cal-head-title">Kalender Absensi Saya</div>
+          <div class="cal-head-controls">
+            <select>
+              <option>June</option>
+            </select>
+            <select>
+              <option>2026</option>
+            </select>
+            <button>Tampilkan</button>
+          </div>
+        </div>
+
+        <table class="cal-table">
+          <thead>
+            <tr>
+              <th>Min</th>
+              <th>Sen</th>
+              <th>Sel</th>
+              <th>Rab</th>
+              <th>Kam</th>
+              <th>Jum</th>
+              <th>Sab</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day cal-leave block no-underline">1</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day cal-leave block no-underline">2</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day cal-present cal-selected block no-underline">3</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day cal-present block no-underline">4</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">5</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">6</a></td>
+            </tr>
+            <tr>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">7</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">8</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">9</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">10</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">11</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">12</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">13</a></td>
+            </tr>
+            <tr>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">14</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">15</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">16</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">17</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">18</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">19</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">20</a></td>
+            </tr>
+            <tr>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">21</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">22</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">23</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">24</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">25</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">26</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">27</a></td>
+            </tr>
+            <tr>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">28</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">29</a></td>
+              <td><a href="#" onclick="selectCalDay(event, this)" class="cal-day block no-underline">30</a></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="cal-legend">
+          <div><span class="cal-legend-dot cal-present"></span> Hadir (Tepat Waktu/Terlambat)</div>
+          <div><span class="cal-legend-dot cal-leave"></span> Izin/Sakit/Cuti/Not Checked Out</div>
+          <div><span class="cal-legend-dot cal-alpha"></span> Alpha</div>
+          <div><span class="cal-legend-dot" style="border: 1px dashed var(--border-md);"></span> Kosong</div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           SECTION: ABSENSI SAYA (renderAttendanceCardsList)
+           ════════════════════════════════════════════ -->
+      <div class="section-box">
+        <div class="section-header">
+          <div>
+            <div class="section-title"><i class="fas fa-user-check" style="color:var(--indigo)"></i> Absensi Saya</div>
+            <div class="section-subtitle" id="absensiDateText">Kamis, 05 Juni 2026</div>
+          </div>
+          <a href="#" class="btn btn-emerald"><i class="fas fa-external-link-alt"></i> Buka halaman Absen</a>
+        </div>
+
+        <div id="attendanceCardsContainer">
+          <!-- Card 1: Hadir -->
+          <div class="absen-card-wrap border-green">
+            <div class="absen-card-top">
+              <div class="absen-card-user">
+                <div class="absen-initials">SU</div>
+                <div>
+                  <div class="absen-name">Staff User</div>
+                  <div class="absen-date"><i class="far fa-calendar-alt"></i> Kamis, 05 Jun 2026</div>
+                </div>
+              </div>
+              <div class="absen-card-meta">
+                <div class="duration-chip"><i class="far fa-clock"></i> 9 jam 3 menit</div>
+                <span class="badge badge-green"><i class="fas fa-check-circle"></i> Hadir</span>
+              </div>
+            </div>
+            <div class="absen-time-grid">
+              <div class="time-col">
+                <div class="time-col-label"><i class="fas fa-sign-in-alt" style="color:#16a34a"></i> Masuk</div>
+                <div class="time-col-inner">
+                  <div class="time-val">08:02</div>
+                  <div class="absen-photo-wrap">
+                    <img class="absen-photo-thumb" src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=160&h=160&fit=crop" onclick="absenOpenLightbox(this.src, 'Foto Masuk')">
+                  </div>
+                </div>
+              </div>
+              <div class="time-col">
+                <div class="time-col-label"><i class="fas fa-sign-out-alt" style="color:#ea580c"></i> Pulang</div>
+                <div class="time-col-inner">
+                  <div class="time-val">17:05</div>
+                  <div class="absen-photo-wrap">
+                    <img class="absen-photo-thumb" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=160&h=160&fit=crop" onclick="absenOpenLightbox(this.src, 'Foto Pulang')">
+                  </div>
+                </div>
+              </div>
+              <div class="time-col">
+                <div class="time-col-label"><i class="fas fa-tasks" style="color:#2563eb"></i> Rencana Kerja</div>
+                <div class="plan-label"><i class="fas fa-check-circle"></i> Survey lokasi proyek A</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /section-box absensi saya -->
+
+      <!-- ════════════════════════════════════════════
+           SECTION: Absensi Staff Hari Ini
+           ════════════════════════════════════════════ -->
+      <div class="section-box">
+        <div class="section-header">
+          <div>
+            <div class="section-title"><i class="fas fa-users" style="color:var(--indigo)"></i> Absensi Staff Hari Ini</div>
+            <div class="section-subtitle">Kamis, 05 Juni 2026</div>
+          </div>
+        </div>
+
+        <!-- Shift Siang -->
+        <div class="shift-header shift-day">
+          <i class="fas fa-sun"></i> Absen Siang
+          <span class="shift-count">3 Staff</span>
+        </div>
+
+        <!-- Role: Teknisi -->
+        <div class="role-label">
+          <i class="fas fa-users" style="color:var(--indigo)"></i>
+          Teknisi
+          <span class="role-count">2</span>
+        </div>
+
+        <div class="staff-card">
+          <img class="staff-avatar" src="https://i.pravatar.cc/80?img=11" alt="avatar">
+          <div style="flex:1;min-width:0">
+            <div class="staff-name">Budi Santoso</div>
+            <div class="staff-role">Teknisi • Hari Ini</div>
+            <div class="staff-times">
+              <div><div class="staff-time-label">Masuk</div><div class="staff-time-val">07:55</div></div>
+              <div><div class="staff-time-label">Pulang</div><div class="staff-time-val">17:00</div></div>
+            </div>
+            <div style="margin-top:6px;font-size:11px;color:var(--text-secondary)"><span style="color:var(--text-muted)">Plan:</span> Pemasangan panel listrik lt.3</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer" onclick="absenOpenLightbox(this.src,'Foto Masuk — Budi Santoso 07:55')">
+            <img src="https://images.unsplash.com/photo-1497366412874-3415097a27e7?w=80&h=80&fit=crop" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer" onclick="absenOpenLightbox(this.src,'Foto Pulang — Budi Santoso 17:00')">
+          </div>
+          <span class="badge badge-green" style="align-self:flex-start"><i class="fas fa-check-circle"></i> Hadir</span>
+        </div>
+
+        <div class="staff-card">
+          <img class="staff-avatar" src="https://i.pravatar.cc/80?img=22" alt="avatar">
+          <div style="flex:1;min-width:0">
+            <div class="staff-name">Agus Triyono</div>
+            <div class="staff-role">Teknisi • Hari Ini</div>
+            <div class="staff-times">
+              <div><div class="staff-time-label">Masuk</div><div class="staff-time-val" style="color:#d97706">08:32</div></div>
+              <div><div class="staff-time-label">Pulang</div><div class="staff-time-val">-</div></div>
+            </div>
+            <div style="margin-top:6px;font-size:11px;color:var(--text-secondary)"><span style="color:var(--text-muted)">Plan:</span> Cek panel utama, ganti MCB</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=80&h=80&fit=crop" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer" onclick="absenOpenLightbox(this.src,'Foto Masuk — Agus 08:32')">
+            <div style="width:52px;height:52px;border-radius:8px;border:1.5px dashed var(--border-md);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-camera-slash"></i></div>
+          </div>
+          <span class="badge badge-yellow" style="align-self:flex-start"><i class="fas fa-clock"></i> Terlambat</span>
+        </div>
+
+        <!-- Role: Driver -->
+        <div class="role-label">
+          <i class="fas fa-users" style="color:var(--indigo)"></i>
+          Driver
+          <span class="role-count">1</span>
+        </div>
+
+        <div class="staff-card">
+          <img class="staff-avatar" src="https://i.pravatar.cc/80?img=33" alt="avatar">
+          <div style="flex:1;min-width:0">
+            <div class="staff-name">Dedi Kurniawan</div>
+            <div class="staff-role">Driver • Hari Ini</div>
+            <div class="staff-times">
+              <div><div class="staff-time-label">Masuk</div><div class="staff-time-val">07:45</div></div>
+              <div><div class="staff-time-label">Pulang</div><div class="staff-time-val">17:30</div></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=80&h=80&fit=crop" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer" onclick="absenOpenLightbox(this.src,'Foto Masuk — Dedi 07:45')">
+            <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=80&h=80&fit=crop" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer" onclick="absenOpenLightbox(this.src,'Foto Pulang — Dedi 17:30')">
+          </div>
+          <span class="badge badge-green" style="align-self:flex-start"><i class="fas fa-check-circle"></i> Hadir</span>
+        </div>
+
+        <!-- Shift Malam -->
+        <div class="shift-header shift-night" style="margin-top:20px">
+          <i class="fas fa-moon"></i> Absen Malam
+          <span class="shift-count" style="background:rgba(255,255,255,0.5)">1 Staff</span>
+        </div>
+
+        <div class="role-label">
+          <i class="fas fa-users" style="color:var(--indigo)"></i>
+          Teknisi
+          <span class="role-count">1</span>
+        </div>
+
+        <div class="staff-card">
+          <img class="staff-avatar" src="https://i.pravatar.cc/80?img=44" alt="avatar">
+          <div style="flex:1;min-width:0">
+            <div class="staff-name">Rudi Hermawan</div>
+            <div class="staff-role">Teknisi • <span style="color:var(--indigo);font-weight:600">Shift Malam</span></div>
+            <div class="staff-times">
+              <div><div class="staff-time-label">Masuk</div><div class="staff-time-val">19:00</div></div>
+              <div><div class="staff-time-label">Pulang</div><div class="staff-time-val">05:00</div></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <img src="https://images.unsplash.com/photo-1565106430482-8f6e74349ca1?w=80&h=80&fit=crop" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer" onclick="absenOpenLightbox(this.src,'Foto Masuk — Rudi (Shift Malam) 19:00')">
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=80&h=80&fit=crop" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer" onclick="absenOpenLightbox(this.src,'Foto Pulang — Rudi (Shift Malam) 05:00')">
+          </div>
+          <span class="badge badge-indigo" style="align-self:flex-start"><i class="fas fa-moon"></i> Lembur</span>
+        </div>
+
+      </div><!-- /staff hari ini -->
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ── Lightbox ── -->
+<div class="absen-lightbox" id="absenLightbox">
+  <button class="absen-lightbox-close" onclick="document.getElementById('absenLightbox').classList.remove('active')">
+    <i class="fas fa-times"></i>
+  </button>
+  <img id="absenLightboxImg" src="" alt="">
+  <div class="absen-lightbox-caption" id="absenLightboxCaption">
+    <i class="fas fa-camera"></i>
+    <span></span>
+  </div>
+</div>
+
+<script>
+  /* ── Lightbox ── */
+  function absenOpenLightbox(src, caption) {
+    // Force high resolution for the lightbox if it's an Unsplash URL with size parameters
+    let hdSrc = src.replace(/w=\d+&h=\d+/, 'w=1200&h=1200');
+    document.getElementById('absenLightboxImg').src = hdSrc;
+    document.querySelector('#absenLightboxCaption span').textContent = caption || '';
+    document.getElementById('absenLightbox').classList.add('active');
+  }
+
+  document.getElementById('absenLightbox').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('active');
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.getElementById('absenLightbox').classList.remove('active');
+  });
+
+  /* ── Dark mode ── */
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+  }
+</script>
+<script>
+  const dummyRecords = {
+    '1': [
+      { name: 'Staff User', initials: 'SU', date: 'Senin, 01 Jun 2026', dur: '-', status: 'Izin', badge: 'badge-blue', border: 'border-blue', in: '--:--', out: '--:--', plan: 'Keperluan keluarga', type: 'izin' }
+    ],
+    '2': [
+      { name: 'Staff User', initials: 'SU', date: 'Selasa, 02 Jun 2026', dur: '-', status: 'Sakit', badge: 'badge-blue', border: 'border-blue', in: '--:--', out: '--:--', plan: 'Sakit demam', type: 'izin' }
+    ],
+    '3': [
+      { name: 'Staff User', initials: 'SU', date: 'Rabu, 03 Jun 2026', dur: '8 jam 23 menit', status: 'Terlambat', badge: 'badge-yellow', border: 'border-yellow', in: '08:47', out: '17:10', plan: 'Meeting klien', late: true, type: 'hadir', imgIn: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=160&h=160&fit=crop', imgOut: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=160&h=160&fit=crop', imgPlan: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=160&h=160&fit=crop' }
+    ],
+    '4': [
+      { name: 'Staff User', initials: 'SU', date: 'Kamis, 04 Jun 2026', dur: '9 jam 3 menit', status: 'Hadir', badge: 'badge-green', border: 'border-green', in: '08:02', out: '17:05', plan: 'Survey lokasi proyek A', late: false, type: 'hadir', imgIn: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=160&h=160&fit=crop', imgOut: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=160&h=160&fit=crop', imgPlan: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=160&h=160&fit=crop' }
+    ]
+  };
+
+  function selectCalDay(e, el) {
+    e.preventDefault();
+    // Remove .cal-selected from all days
+    document.querySelectorAll('.cal-day').forEach(day => {
+      day.classList.remove('cal-selected');
+    });
+    // Add .cal-selected to the clicked one
+    el.classList.add('cal-selected');
+
+    let dayNum = el.innerText.trim();
+    let records = dummyRecords[dayNum] || [];
+    
+    let container = document.getElementById('attendanceCardsContainer');
+    let dateText = document.getElementById('absensiDateText');
+    if (dateText) {
+      dateText.innerText = (dayNum.length === 1 ? '0'+dayNum : dayNum) + ' Juni 2026';
+    }
+
+    if (records.length === 0) {
+      container.innerHTML = '<div class="empty-state">Tidak ada data absensi pada tanggal ini.</div>';
+      return;
+    }
+
+    let html = '';
+    records.forEach(r => {
+      if (r.type === 'izin') {
+        html += `
+        <div class="absen-card-wrap ${r.border}">
+          <div class="absen-card-top">
+            <div class="absen-card-user">
+              <div class="absen-initials" style="background:var(--blue-bg);color:var(--blue)">${r.initials}</div>
+              <div>
+                <div class="absen-name">${r.name}</div>
+                <div class="absen-date"><i class="far fa-calendar-alt"></i> ${r.date}</div>
+              </div>
+            </div>
+            <div class="absen-card-meta">
+              <span class="badge ${r.badge}"><i class="fas fa-info-circle"></i> ${r.status}</span>
+            </div>
+          </div>
+          <div style="padding:14px 16px;background:var(--surface-2)">
+            <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Alasan</div>
+            <div style="font-size:13px;color:var(--text-primary)">${r.plan}</div>
+          </div>
+        </div>`;
+      } else {
+        html += `
+        <div class="absen-card-wrap ${r.border}">
+          <div class="absen-card-top">
+            <div class="absen-card-user">
+              <div class="absen-initials">${r.initials}</div>
+              <div>
+                <div class="absen-name">${r.name}</div>
+                <div class="absen-date"><i class="far fa-calendar-alt"></i> ${r.date}</div>
+              </div>
+            </div>
+            <div class="absen-card-meta">
+              <div class="duration-chip"><i class="far fa-clock"></i> ${r.dur}</div>
+              <span class="badge ${r.badge}"><i class="fas ${r.status === 'Hadir' ? 'fa-check-circle' : 'fa-clock'}"></i> ${r.status}</span>
+            </div>
+          </div>
+          <div class="absen-time-grid">
+            <div class="time-col">
+              <div class="time-col-label"><i class="fas fa-sign-in-alt" style="color:#16a34a"></i> Masuk</div>
+              <div class="time-col-inner">
+                <div class="time-val ${r.late ? 'late' : ''}">${r.in}</div>
+                <div class="absen-photo-wrap">
+                  ${r.imgIn ? '<img class="absen-photo-thumb" src="'+r.imgIn+'" onclick="absenOpenLightbox(this.src,\'Foto Masuk\')">' : '<div class="no-photo" style="width:52px;height:52px;font-size:12px"><i class="fas fa-camera-slash"></i></div>'}
+                </div>
+              </div>
+            </div>
+            <div class="time-col">
+              <div class="time-col-label"><i class="fas fa-sign-out-alt" style="color:#ea580c"></i> Pulang</div>
+              <div class="time-col-inner">
+                <div class="time-val">${r.out}</div>
+                <div class="absen-photo-wrap">
+                  ${r.imgOut ? '<img class="absen-photo-thumb" src="'+r.imgOut+'" onclick="absenOpenLightbox(this.src,\'Foto Pulang\')">' : '<div class="no-photo" style="width:52px;height:52px;font-size:12px"><i class="fas fa-camera-slash"></i></div>'}
+                </div>
+              </div>
+            </div>
+            <div class="time-col">
+              <div class="time-col-label"><i class="fas fa-tasks" style="color:#2563eb"></i> Rencana Kerja</div>
+              <div class="time-col-inner">
+                <div class="plan-label" style="flex:1; margin:0;"><i class="fas fa-check-circle"></i> ${r.plan}</div>
+                <div class="absen-photo-wrap">
+                  ${r.imgPlan ? '<img class="absen-photo-thumb" src="'+r.imgPlan+'" onclick="absenOpenLightbox(this.src,\'Foto Rencana Kerja\')">' : '<div class="no-photo" style="width:52px;height:52px;font-size:12px"><i class="fas fa-camera-slash"></i></div>'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }
+    });
+    container.innerHTML = html;
+  }
+</script>
+</body>
+</html>
