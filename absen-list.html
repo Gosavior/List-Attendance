@@ -177,7 +177,7 @@
             <div class="grid grid-cols-2 md:grid-cols-[1fr_1fr_2fr]">
               <div class="p-3.5 border-r border-slate-200 dark:border-slate-700">
                 <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2"><i class="fas fa-sign-in-alt text-green-600 dark:text-green-500"></i> Masuk</div>
-                <div class="flex items-center gap-2.5">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center gap-2.5 mt-1 lg:mt-0">
                   <div class="text-[32px] font-black font-mono leading-none">08:02</div>
                   <div class="flex flex-col items-center gap-1">
                     <img class="w-[52px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0 hover:scale-105 hover:shadow-lg transition-transform block" src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=160&h=160&fit=crop" onclick="absenOpenLightbox(this.src, 'Foto Masuk')">
@@ -186,7 +186,7 @@
               </div>
               <div class="p-3.5 md:border-r border-slate-200 dark:border-slate-700">
                 <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2"><i class="fas fa-sign-out-alt text-orange-600 dark:text-orange-500"></i> Pulang</div>
-                <div class="flex items-center gap-2.5">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center gap-2.5 mt-1 lg:mt-0">
                   <div class="text-[32px] font-black font-mono leading-none">17:05</div>
                   <div class="flex flex-col items-center gap-1">
                     <img class="w-[52px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0 hover:scale-105 hover:shadow-lg transition-transform block" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=160&h=160&fit=crop" onclick="absenOpenLightbox(this.src, 'Foto Pulang')">
@@ -221,40 +221,54 @@
           <span class="text-[11px] bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-full font-semibold">2</span>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 flex items-start gap-3 mb-2.5 shadow-sm hover:shadow-md cursor-pointer transition-shadow">
-          <img class="w-[46px] h-[46px] rounded-full object-cover border-[1.5px] border-slate-200 dark:border-slate-600 shrink-0" src="https://i.pravatar.cc/80?img=11" alt="avatar">
-          <div class="flex-1 min-w-0">
-            <div class="text-[13px] font-semibold text-indigo-600 dark:text-indigo-400">Budi Santoso</div>
-            <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Teknisi • Hari Ini</div>
-            <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
-              <div><div class="text-slate-500 mb-px">Masuk</div><div class="font-bold text-indigo-600 dark:text-indigo-400">07:55</div></div>
-              <div><div class="text-slate-500 mb-px">Pulang</div><div class="font-bold text-indigo-600 dark:text-indigo-400">17:00</div></div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-2.5 shadow-sm hover:shadow-md cursor-pointer transition-shadow">
+          <div class="flex items-start gap-3 w-full sm:w-auto sm:flex-1 min-w-0">
+            <img class="w-[46px] h-[46px] rounded-full object-cover border-[1.5px] border-slate-200 dark:border-slate-600 shrink-0" src="https://i.pravatar.cc/80?img=11" alt="avatar">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <div class="text-[13px] font-semibold text-indigo-600 dark:text-indigo-400">Budi Santoso</div>
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Teknisi • Hari Ini</div>
+                </div>
+                <span class="sm:hidden self-start inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400 shrink-0"><i class="fas fa-check-circle"></i> Hadir</span>
+              </div>
+              <div class="flex gap-5 sm:gap-6 mt-2.5 text-xs">
+                <div><div class="text-slate-500 mb-0.5">Masuk</div><div class="font-bold text-indigo-600 dark:text-indigo-400">07:55</div></div>
+                <div><div class="text-slate-500 mb-0.5">Pulang</div><div class="font-bold text-indigo-600 dark:text-indigo-400">17:00</div></div>
+              </div>
+              <div class="mt-2.5 text-[11px] text-slate-500 leading-relaxed"><span class="text-slate-400 font-medium">Plan:</span> Pemasangan panel listrik lt.3</div>
             </div>
-            <div class="mt-1.5 text-[11px] text-slate-500"><span class="text-slate-400">Plan:</span> Pemasangan panel listrik lt.3</div>
           </div>
-          <div class="flex flex-col gap-1.5">
-            <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop" class="w-[100px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer" onclick="absenOpenLightbox(this.src,'Foto Masuk — Budi Santoso 07:55')">
-            <img src="https://images.unsplash.com/photo-1497366412874-3415097a27e7?w=80&h=80&fit=crop" class="w-[100px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer" onclick="absenOpenLightbox(this.src,'Foto Pulang — Budi Santoso 17:00')">
+          <div class="flex flex-row sm:flex-col gap-2 pl-[58px] sm:pl-0 w-full sm:w-auto">
+            <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=80&h=80&fit=crop" class="w-[80px] sm:w-[100px] h-[48px] sm:h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0" onclick="absenOpenLightbox(this.src,'Foto Masuk — Budi Santoso 07:55')">
+            <img src="https://images.unsplash.com/photo-1497366412874-3415097a27e7?w=80&h=80&fit=crop" class="w-[80px] sm:w-[100px] h-[48px] sm:h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0" onclick="absenOpenLightbox(this.src,'Foto Pulang — Budi Santoso 17:00')">
           </div>
-          <span class="self-start inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400"><i class="fas fa-check-circle"></i> Hadir</span>
+          <span class="hidden sm:inline-flex self-start items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400 shrink-0"><i class="fas fa-check-circle"></i> Hadir</span>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 flex items-start gap-3 mb-2.5 shadow-sm hover:shadow-md cursor-pointer transition-shadow">
-          <img class="w-[46px] h-[46px] rounded-full object-cover border-[1.5px] border-slate-200 dark:border-slate-600 shrink-0" src="https://i.pravatar.cc/80?img=22" alt="avatar">
-          <div class="flex-1 min-w-0">
-            <div class="text-[13px] font-semibold text-indigo-600 dark:text-indigo-400">Agus Triyono</div>
-            <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Teknisi • Hari Ini</div>
-            <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
-              <div><div class="text-slate-500 mb-px">Masuk</div><div class="font-bold text-amber-600">08:32</div></div>
-              <div><div class="text-slate-500 mb-px">Pulang</div><div class="font-bold text-indigo-600 dark:text-indigo-400">-</div></div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-2.5 shadow-sm hover:shadow-md cursor-pointer transition-shadow">
+          <div class="flex items-start gap-3 w-full sm:w-auto sm:flex-1 min-w-0">
+            <img class="w-[46px] h-[46px] rounded-full object-cover border-[1.5px] border-slate-200 dark:border-slate-600 shrink-0" src="https://i.pravatar.cc/80?img=22" alt="avatar">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <div class="text-[13px] font-semibold text-indigo-600 dark:text-indigo-400">Agus Triyono</div>
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Teknisi • Hari Ini</div>
+                </div>
+                <span class="sm:hidden self-start inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-500 shrink-0"><i class="fas fa-clock"></i> Terlambat</span>
+              </div>
+              <div class="flex gap-5 sm:gap-6 mt-2.5 text-xs">
+                <div><div class="text-slate-500 mb-0.5">Masuk</div><div class="font-bold text-amber-600">08:32</div></div>
+                <div><div class="text-slate-500 mb-0.5">Pulang</div><div class="font-bold text-indigo-600 dark:text-indigo-400">-</div></div>
+              </div>
+              <div class="mt-2.5 text-[11px] text-slate-500 leading-relaxed"><span class="text-slate-400 font-medium">Plan:</span> Cek panel utama, ganti MCB</div>
             </div>
-            <div class="mt-1.5 text-[11px] text-slate-500"><span class="text-slate-400">Plan:</span> Cek panel utama, ganti MCB</div>
           </div>
-          <div class="flex flex-col gap-1.5">
-            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=80&h=80&fit=crop" class="w-[52px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer self-end" onclick="absenOpenLightbox(this.src,'Foto Masuk — Agus 08:32')">
-            <div class="w-[52px] h-[52px] rounded-lg border-[1.5px] border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-400 self-end"><i class="fas fa-camera-slash"></i></div>
+          <div class="flex flex-row sm:flex-col gap-2 pl-[58px] sm:pl-0 w-full sm:w-auto">
+            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=80&h=80&fit=crop" class="w-[80px] sm:w-[100px] h-[48px] sm:h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0 sm:self-end" onclick="absenOpenLightbox(this.src,'Foto Masuk — Agus 08:32')">
+            <div class="w-[80px] sm:w-[100px] h-[48px] sm:h-[52px] rounded-lg border-[1.5px] border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-400 shrink-0 sm:self-end"><i class="fas fa-camera-slash"></i></div>
           </div>
-          <span class="self-start inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-500"><i class="fas fa-clock"></i> Terlambat</span>
+          <span class="hidden sm:inline-flex self-start items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-500 shrink-0"><i class="fas fa-clock"></i> Terlambat</span>
         </div>
 
         <div class="flex items-center gap-2 px-3 py-2 rounded-md mb-3 mt-5 text-[13px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-400">
@@ -267,21 +281,28 @@
           <span class="text-[11px] bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-full font-semibold">1</span>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 flex items-start gap-3 mb-2.5 shadow-sm hover:shadow-md cursor-pointer transition-shadow">
-          <img class="w-[46px] h-[46px] rounded-full object-cover border-[1.5px] border-slate-200 dark:border-slate-600 shrink-0" src="https://i.pravatar.cc/80?img=44" alt="avatar">
-          <div class="flex-1 min-w-0">
-            <div class="text-[13px] font-semibold text-indigo-600 dark:text-indigo-400">Rudi Hermawan</div>
-            <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Teknisi • <span class="text-indigo-600 dark:text-indigo-400 font-semibold">Shift Malam</span></div>
-            <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
-              <div><div class="text-slate-500 mb-px">Masuk</div><div class="font-bold text-indigo-600 dark:text-indigo-400">19:00</div></div>
-              <div><div class="text-slate-500 mb-px">Pulang</div><div class="font-bold text-indigo-600 dark:text-indigo-400">05:00</div></div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-2.5 shadow-sm hover:shadow-md cursor-pointer transition-shadow">
+          <div class="flex items-start gap-3 w-full sm:w-auto sm:flex-1 min-w-0">
+            <img class="w-[46px] h-[46px] rounded-full object-cover border-[1.5px] border-slate-200 dark:border-slate-600 shrink-0" src="https://i.pravatar.cc/80?img=44" alt="avatar">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <div class="text-[13px] font-semibold text-indigo-600 dark:text-indigo-400">Rudi Hermawan</div>
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Teknisi • <span class="text-indigo-600 dark:text-indigo-400 font-semibold">Shift Malam</span></div>
+                </div>
+                <span class="sm:hidden self-start inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 shrink-0"><i class="fas fa-moon"></i> Lembur</span>
+              </div>
+              <div class="flex gap-5 sm:gap-6 mt-2.5 text-xs">
+                <div><div class="text-slate-500 mb-0.5">Masuk</div><div class="font-bold text-indigo-600 dark:text-indigo-400">19:00</div></div>
+                <div><div class="text-slate-500 mb-0.5">Pulang</div><div class="font-bold text-indigo-600 dark:text-indigo-400">05:00</div></div>
+              </div>
             </div>
           </div>
-          <div class="flex flex-col gap-1.5">
-            <img src="https://images.unsplash.com/photo-1565106430482-8f6e74349ca1?w=80&h=80&fit=crop" class="w-[52px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer self-end" onclick="absenOpenLightbox(this.src,'Foto Masuk — Rudi 19:00')">
-            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=80&h=80&fit=crop" class="w-[52px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer self-end" onclick="absenOpenLightbox(this.src,'Foto Pulang — Rudi 05:00')">
+          <div class="flex flex-row sm:flex-col gap-2 pl-[58px] sm:pl-0 w-full sm:w-auto">
+            <img src="https://images.unsplash.com/photo-1565106430482-8f6e74349ca1?w=80&h=80&fit=crop" class="w-[80px] sm:w-[100px] h-[48px] sm:h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0 sm:self-end" onclick="absenOpenLightbox(this.src,'Foto Masuk — Rudi 19:00')">
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=80&h=80&fit=crop" class="w-[80px] sm:w-[100px] h-[48px] sm:h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0 sm:self-end" onclick="absenOpenLightbox(this.src,'Foto Pulang — Rudi 05:00')">
           </div>
-          <span class="self-start inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400"><i class="fas fa-moon"></i> Lembur</span>
+          <span class="hidden sm:inline-flex self-start items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 shrink-0"><i class="fas fa-moon"></i> Lembur</span>
         </div>
 
       </div>
@@ -294,7 +315,7 @@
   <button class="absolute top-5 right-5 w-10 h-10 bg-white/15 border border-white/20 rounded-full text-white text-lg flex items-center justify-center cursor-pointer hover:bg-white/25 transition-colors" onclick="document.getElementById('absenLightbox').classList.remove('!flex')">
     <i class="fas fa-times"></i>
   </button>
-  <img id="absenLightboxImg" src="" alt="" class="max-w-[88vw] max-h-[72vh] rounded-xl object-contain shadow-2xl animate-lbSlideUp">
+  <img id="absenLightboxImg" src="" alt="" class="w-[90vw] md:w-auto max-w-[90vw] max-h-[75vh] rounded-xl object-contain shadow-2xl animate-lbSlideUp">
   <div class="text-white/75 text-[13px] flex items-center gap-2 font-medium" id="absenLightboxCaption">
     <i class="fas fa-camera"></i>
     <span></span>
@@ -304,7 +325,11 @@
 <script>
   /* ── Lightbox ── */
   function absenOpenLightbox(src, caption) {
-    document.getElementById('absenLightboxImg').src = src;
+    let highResSrc = src;
+    if (src.includes('unsplash.com') || src.includes('?')) {
+        highResSrc = src.replace(/w=\d+/, 'w=800').replace(/h=\d+/, 'h=800');
+    }
+    document.getElementById('absenLightboxImg').src = highResSrc;
     document.querySelector('#absenLightboxCaption span').textContent = caption || '';
     document.getElementById('absenLightbox').classList.add('!flex'); // Override hidden using tailwind !flex
   }
@@ -405,7 +430,7 @@
           <div class="grid grid-cols-2 md:grid-cols-[1fr_1fr_2fr]">
             <div class="p-3.5 border-r border-slate-200 dark:border-slate-700">
               <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2"><i class="fas fa-sign-in-alt text-green-600 dark:text-green-500"></i> Masuk</div>
-              <div class="flex items-center gap-2.5">
+              <div class="flex flex-col lg:flex-row items-start lg:items-center gap-2.5 mt-1 lg:mt-0">
                 <div class="text-[32px] font-black font-mono leading-none ${r.late ? 'text-amber-600' : ''}">${r.in}</div>
                 <div class="flex flex-col items-center gap-1">
                   ${r.imgIn ? '<img class="w-[52px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0 hover:scale-105 hover:shadow-lg transition-transform block" src="'+r.imgIn+'" onclick="absenOpenLightbox(this.src,\'Foto Masuk\')">' : '<div class="w-[52px] h-[52px] rounded-lg border-[1.5px] border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-400 shrink-0 text-xs"><i class="fas fa-camera-slash"></i></div>'}
@@ -414,7 +439,7 @@
             </div>
             <div class="p-3.5 md:border-r border-slate-200 dark:border-slate-700">
               <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2"><i class="fas fa-sign-out-alt text-orange-600 dark:text-orange-500"></i> Pulang</div>
-              <div class="flex items-center gap-2.5">
+              <div class="flex flex-col lg:flex-row items-start lg:items-center gap-2.5 mt-1 lg:mt-0">
                 <div class="text-[32px] font-black font-mono leading-none">${r.out}</div>
                 <div class="flex flex-col items-center gap-1">
                   ${r.imgOut ? '<img class="w-[52px] h-[52px] rounded-lg object-cover border-[1.5px] border-slate-200 dark:border-slate-600 cursor-pointer shrink-0 hover:scale-105 hover:shadow-lg transition-transform block" src="'+r.imgOut+'" onclick="absenOpenLightbox(this.src,\'Foto Pulang\')">' : '<div class="w-[52px] h-[52px] rounded-lg border-[1.5px] border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-400 shrink-0 text-xs"><i class="fas fa-camera-slash"></i></div>'}
