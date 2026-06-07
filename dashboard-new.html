@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Staff – PT. Artha Solusi Aditama</title>
+  <meta name="description" content="Portal karyawan PT. Artha Solusi Aditama" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Sidebar slide */
+    #sidebar { transition: transform .3s cubic-bezier(.4,0,.2,1); }
+
+    /* Card hover */
+    .card-lift { transition: box-shadow .2s, transform .2s; }
+    .card-lift:hover { box-shadow: 0 8px 30px rgba(0,0,0,.09); transform: translateY(-2px); }
+
+    /* Active nav */
+    .nav-item { display: flex; align-items: center; gap: .75rem; padding: .625rem .75rem; border-radius: .75rem; font-size: .875rem; font-weight: 500; color: #475569; transition: background .15s, color .15s; }
+    .nav-item:hover { background: #f8fafc; }
+    .nav-item.active { background: #eff6ff; color: #2563eb; font-weight: 600; }
+
+    /* Dropdown options */
+    .dd-opt { display: block; width: 100%; text-align: left; padding: .5rem 1rem; font-size: .875rem; color: #374151; transition: background .15s; cursor: pointer; background: none; border: none; }
+    .dd-opt:hover { background: #f8fafc; }
+
+    /* Modal backdrop */
+    .modal-wrap { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index: 50; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-wrap.open { display: flex; }
+
+    /* Mobile attendance modal - bottom sheet */
+    @media (max-width: 640px) {
+      #attendanceModal.open { align-items: flex-end; padding: 0; }
+      #attendanceModal .modal-inner { border-radius: 1.5rem 1.5rem 0 0; }
+    }
+
+    /* Spin animation */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin .8s linear infinite; }
+
+    /* Slide up */
+    @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .slide-up { animation: slideUp .3s ease-out; }
+
+    /* Pulse dot */
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .pulse-dot { animation: blink 1.4s infinite; }
+
+    /* Stagger */
+    .stagger > *:nth-child(1){ animation-delay:.04s }
+    .stagger > *:nth-child(2){ animation-delay:.09s }
+    .stagger > *:nth-child(3){ animation-delay:.14s }
+    .stagger > *:nth-child(4){ animation-delay:.19s }
+  </style>
+</head>
+<body class="bg-slate-50 text-gray-800 antialiased">
+
+<!-- ═══════════════ OVERLAY (mobile) ═══════════════ -->
+<div id="overlay"
+  class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"
+  onclick="closeSidebar()"></div>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside id="sidebar"
+  class="fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 z-50 flex flex-col shadow-xl"
+  style="transform:translateX(-100%)">
+
+  <!-- Brand -->
+  <div class="flex items-center gap-3 px-5 py-5 border-b border-slate-100">
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow">
+      <i class="fas fa-building text-white text-sm"></i>
+    </div>
+    <div>
+      <p class="text-sm font-bold text-gray-800">ASA Staff Portal</p>
+      <p class="text-xs text-slate-400">PT. Artha Solusi Aditama</p>
+    </div>
+  </div>
+
+  <!-- User pill -->
+  <div class="mx-4 my-4 p-3 bg-blue-50 rounded-xl flex items-center gap-3">
+    <img src="https://i.pravatar.cc/80?img=1" class="w-9 h-9 rounded-full object-cover ring-2 ring-blue-200" alt="Richard" onerror="this.src='https://ui-avatars.com/api/?name=Richard+Cahyadi&background=3b82f6&color=fff'" />
+    <div class="min-w-0">
+      <p class="text-xs font-semibold text-gray-800 truncate">Richard Cahyadi</p>
+      <p class="text-xs text-blue-500">Programmer</p>
+    </div>
+    <span class="ml-auto w-2 h-2 rounded-full bg-green-400 flex-shrink-0"></span>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 px-3 pb-4 overflow-y-auto space-y-0.5">
+    <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Menu Utama</p>
+    <a href="#" class="nav-item active" onclick="setActiveNav(this,event)"><i class="fas fa-home w-4 text-center"></i> Dashboard</a>
+    <a href="#" class="nav-item" onclick="setActiveNav(this,event)"><i class="fas fa-clock w-4 text-center"></i> Absensi</a>
+    <a href="#" class="nav-item" onclick="setActiveNav(this,event)"><i class="fas fa-calendar-alt w-4 text-center"></i> Jadwal Kerja</a>
+    <a href="#" class="nav-item" onclick="setActiveNav(this,event)"><i class="fas fa-file-alt w-4 text-center"></i> Laporan</a>
+    <a href="#" class="nav-item" onclick="setActiveNav(this,event)">
+      <i class="fas fa-tools w-4 text-center"></i> Pinjam Alat
+      <span class="ml-auto bg-orange-100 text-orange-600 text-xs font-bold px-1.5 py-0.5 rounded-full">1</span>
+    </a>
+    <a href="#" class="nav-item" onclick="setActiveNav(this,event)"><i class="fas fa-users w-4 text-center"></i> Tim / Staff</a>
+    <a href="#" class="nav-item" onclick="setActiveNav(this,event)"><i class="fas fa-chart-bar w-4 text-center"></i> Performa</a>
+
+    <p class="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Akun</p>
+    <a href="#" class="nav-item" onclick="setActiveNav(this,event)"><i class="fas fa-user-circle w-4 text-center"></i> Profil Saya</a>
+    <a href="#" class="nav-item" onclick="setActiveNav(this,event)"><i class="fas fa-cog w-4 text-center"></i> Pengaturan</a>
+    <a href="#" class="nav-item" style="color:#ef4444" onclick="event.preventDefault()"><i class="fas fa-sign-out-alt w-4 text-center"></i> Keluar</a>
+  </nav>
+
+  <div class="px-5 py-3 border-t border-slate-100 text-center">
+    <p class="text-[10px] text-slate-300">v2.0.0 · 2026</p>
+  </div>
+</aside>
+
+<!-- ═══════════════ MAIN WRAPPER ═══════════════ -->
+<div id="mainWrap" class="flex flex-col min-h-screen" style="transition:margin .3s">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="sticky top-0 z-30 bg-white border-b border-slate-100 shadow-sm">
+    <div class="flex items-center justify-between px-4 sm:px-6 h-16 gap-3">
+
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" id="burgerBtn"
+          class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors" aria-label="Toggle menu">
+          <i class="fas fa-bars text-slate-600"></i>
+        </button>
+        <div>
+          <h1 class="text-base font-bold text-gray-800">Dashboard</h1>
+          <p class="text-xs text-slate-400 hidden sm:block" id="headerDate">Memuat…</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Search -->
+        <div class="hidden md:flex items-center gap-2 border border-slate-200 bg-slate-50 rounded-xl px-3 py-2">
+          <i class="fas fa-search text-slate-400 text-xs"></i>
+          <input type="search" placeholder="Cari…" class="bg-transparent text-sm text-gray-700 outline-none placeholder-slate-400 w-36" />
+        </div>
+        <!-- Bell -->
+        <div class="relative">
+          <button onclick="togglePanel('notifPanel')" class="relative w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors">
+            <i class="fas fa-bell text-slate-600 text-sm"></i>
+            <span id="notifDot" class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+          <!-- Notif panel -->
+          <div id="notifPanel" class="hidden absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 slide-up overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+              <p class="text-sm font-semibold">Notifikasi</p>
+              <button onclick="clearNotif()" class="text-xs text-blue-500 hover:underline">Tandai semua dibaca</button>
+            </div>
+            <div id="notifList" class="divide-y divide-slate-50 max-h-72 overflow-y-auto">
+              <div class="flex gap-3 px-4 py-3 hover:bg-slate-50">
+                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-green-500 text-xs"></i></div>
+                <div><p class="text-xs font-medium">Absensi terkonfirmasi</p><p class="text-xs text-slate-400">Hari ini, 08:15</p></div>
+              </div>
+              <div class="flex gap-3 px-4 py-3 hover:bg-slate-50">
+                <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-tools text-orange-500 text-xs"></i></div>
+                <div><p class="text-xs font-medium">Alat <b>Bending per 1/2</b> jatuh tempo besok</p><p class="text-xs text-slate-400">Kemarin, 17:00</p></div>
+              </div>
+              <div class="flex gap-3 px-4 py-3 hover:bg-slate-50">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-calendar text-blue-500 text-xs"></i></div>
+                <div><p class="text-xs font-medium">Jadwal baru: AO-076-0326-ASA</p><p class="text-xs text-slate-400">2 hari lalu</p></div>
+              </div>
+              <div class="flex gap-3 px-4 py-3 hover:bg-slate-50">
+                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-birthday-cake text-purple-500 text-xs"></i></div>
+                <div><p class="text-xs font-medium">Ulang tahun <b>Olivin</b> hari ini 🎂</p><p class="text-xs text-slate-400">Hari ini</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Avatar -->
+        <div class="relative">
+          <button onclick="togglePanel('userMenu')" class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-slate-100 transition-colors">
+            <img src="https://i.pravatar.cc/80?img=1" class="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200" alt="Richard" onerror="this.src='https://ui-avatars.com/api/?name=Richard&background=3b82f6&color=fff'" />
+            <span class="text-sm font-medium text-gray-700 hidden sm:block">Richard</span>
+            <i class="fas fa-chevron-down text-slate-400 text-xs hidden sm:block"></i>
+          </button>
+          <div id="userMenu" class="hidden absolute right-0 top-12 w-52 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 slide-up overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-100">
+              <p class="text-sm font-semibold">Richard Cahyadi</p>
+              <p class="text-xs text-slate-400">richard@asa.com</p>
+            </div>
+            <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-slate-50"><i class="fas fa-user-circle w-4 text-slate-400"></i> Profil Saya</a>
+            <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-slate-50"><i class="fas fa-cog w-4 text-slate-400"></i> Pengaturan</a>
+            <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50"><i class="fas fa-sign-out-alt w-4"></i> Keluar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="flex-1 p-4 sm:p-5 xl:p-6 space-y-4">
+
+    <!-- Welcome Banner -->
+    <div class="relative bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-5 flex items-center justify-between text-white overflow-hidden">
+      <div class="absolute -right-4 -top-4 w-32 h-32 bg-white opacity-10 rounded-full"></div>
+      <div class="absolute right-14 -bottom-8 w-24 h-24 bg-white opacity-5 rounded-full"></div>
+      <div class="relative z-10">
+        <p class="text-blue-100 text-sm font-medium">Selamat datang kembali 👋</p>
+        <h2 class="text-xl font-bold mt-0.5">Richard Cahyadi</h2>
+        <p class="text-blue-100 text-xs mt-1" id="bannerDate">—</p>
+      </div>
+      <div class="relative z-10 hidden sm:flex items-center gap-3">
+        <div class="text-right">
+          <p class="text-xs text-blue-200">Status Hari Ini</p>
+          <p class="font-bold text-lg text-green-300">Online</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+          <i class="fas fa-user-check text-white text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-4 stagger">
+
+      <!-- Work Schedule -->
+      <!-- Work Schedule (order-2 mobile, order-1 md+) -->
+      <div class="xl:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up order-2 md:order-1">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center">
+            <i class="fas fa-calendar-check text-red-500"></i>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-gray-800">Work Schedule</p>
+            <p class="text-xs text-slate-400">Jadwal tugas aktif</p>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-100">
+                <th class="pb-2 text-left font-medium">Name</th>
+                <th class="pb-2 text-left font-medium">Date</th>
+                <th class="pb-2 text-left font-medium">AO Number</th>
+                <th class="pb-2 text-left font-medium">Note</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Birthday Today (order-3 mobile, order-2 md+) -->
+      <div class="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up order-3 md:order-2">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 flex items-center justify-center">
+            <i class="fas fa-birthday-cake text-purple-500"></i>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-gray-800">Birthday Today</p>
+            <p class="text-xs text-slate-400" id="bdSubtitle">—</p>
+          </div>
+        </div>
+        <div id="birthdayList" class="space-y-2"></div>
+        <p id="noBirthday" class="hidden text-xs text-slate-400 text-center py-6">🎂 Tidak ada ulang tahun hari ini</p>
+      </div>
+
+      <!-- Attendance Today (order-1 mobile = top, order-3 md+) -->
+      <div class="xl:col-span-3 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up flex flex-col order-1 md:order-3">
+        <div class="flex items-center gap-2.5 mb-3">
+          <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center">
+            <i class="fas fa-user-check text-green-500"></i>
+          </div>
+          <p class="text-sm font-bold text-gray-800">Attendance Today</p>
+        </div>
+        <div class="flex items-center justify-between mb-1">
+          <p id="clockDisplay" class="text-3xl font-extrabold text-gray-800 tabular-nums">00:00</p>
+          <span class="bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-xl">Online</span>
+        </div>
+        <p id="dateDisplay" class="text-xs text-slate-400 mb-4">—</p>
+        <div class="grid grid-cols-2 gap-2 text-center text-xs mb-4">
+          <div class="bg-slate-50 rounded-xl p-2">
+            <p class="font-bold text-gray-800" id="checkInTime">08:15</p>
+            <p class="text-slate-400">Check-in</p>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-2">
+            <p class="font-bold text-gray-800" id="checkOutTime">–</p>
+            <p class="text-slate-400">Check-out</p>
+          </div>
+        </div>
+        <button onclick="openModal('attendanceModal')"
+          class="mt-auto w-full bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+          <i class="fas fa-fingerprint"></i> Open Attendance
+        </button>
+      </div>
+    </div>
+
+    <!-- ROW 2 -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 stagger">
+
+      <!-- Weekly Activity -->
+      <div class="xl:col-span-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up">
+        <!-- Header row: icon+title | legend+date-btn -->
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center">
+              <i class="fas fa-chart-bar text-blue-500"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-gray-800">Weekly Activity</p>
+              <p class="text-xs text-slate-400">Upload project and make report per week based on trends.</p>
+            </div>
+          </div>
+          <!-- Legend + Date button (top-right, matches image) -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col gap-1 text-xs text-slate-600">
+              <span class="flex items-center gap-1.5">
+                <span class="inline-block w-2.5 h-2.5 rounded-full" style="background:#f59e0b"></span>Task
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="inline-block w-2.5 h-2.5 rounded-full" style="background:#22c55e"></span>Working Hours
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="inline-block w-2.5 h-2.5 rounded-full" style="background:#3b82f6"></span>Service Report
+              </span>
+            </div>
+            <div class="relative">
+              <button onclick="togglePanel('periodDd')"
+                class="flex items-center gap-1.5 text-sm text-gray-600 border border-slate-200 rounded-xl px-3 py-1.5 hover:bg-slate-50 transition-colors whitespace-nowrap">
+                <span id="periodLabel">Date</span>
+                <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+              </button>
+              <div id="periodDd" class="hidden absolute right-0 top-10 bg-white border border-slate-100 rounded-xl shadow-xl z-20 py-1 min-w-max slide-up">
+                <button class="dd-opt" onclick="selectPeriod('Minggu Ini')">Minggu Ini</button>
+                <button class="dd-opt" onclick="selectPeriod('Minggu Lalu')">Minggu Lalu</button>
+                <button class="dd-opt" onclick="selectPeriod('Bulan Ini')">Bulan Ini</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:220px; position:relative;">
+          <canvas id="weeklyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Loan Tools -->
+      <div class="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up flex flex-col">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-9 h-9 rounded-xl bg-yellow-100 flex items-center justify-center">
+            <i class="fas fa-wrench text-yellow-500"></i>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-gray-800">Loan Tools</p>
+            <p class="text-xs text-slate-400">Peminjaman alat kerja</p>
+          </div>
+        </div>
+        <div class="overflow-x-auto flex-1">
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-100">
+                <th class="pb-2 text-left font-medium">Nama Alat</th>
+                <th class="pb-2 text-left font-medium">Kode</th>
+                <th class="pb-2 text-left font-medium">Foto</th>
+                <th class="pb-2 text-left font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody id="loanBody"></tbody>
+          </table>
+        </div>
+        <button onclick="openModal('loanModal')"
+          class="mt-4 w-full border border-blue-200 text-blue-600 text-xs font-semibold py-2 rounded-xl hover:bg-blue-50 transition-colors">
+          <i class="fas fa-plus mr-1"></i>Tambah Peminjaman
+        </button>
+      </div>
+    </div>
+
+    <!-- ROW 3 -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 stagger">
+
+      <!-- Top Performance -->
+      <div class="xl:col-span-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
+              <i class="fas fa-trophy text-amber-500"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-gray-800">Top Performance</p>
+              <p class="text-xs text-slate-400">Peringkat performa karyawan terbaik</p>
+            </div>
+          </div>
+          <div class="relative">
+            <button onclick="togglePanel('monthDd')"
+              class="flex items-center gap-1.5 text-sm text-gray-600 border border-slate-200 rounded-xl px-3 py-1.5 hover:bg-slate-50 transition-colors">
+              <span id="monthLabel">Agustus</span>
+              <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+            </button>
+            <div id="monthDd" class="hidden absolute right-0 top-10 bg-white border border-slate-100 rounded-xl shadow-xl z-20 py-1 min-w-max max-h-56 overflow-y-auto slide-up">
+              <!-- filled by JS -->
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="topGrid"></div>
+      </div>
+
+      <!-- Staff Status -->
+      <div class="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
+              <i class="fas fa-users text-indigo-500"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-gray-800">Staff Status</p>
+              <p class="text-xs text-slate-400" id="staffCount">—</p>
+            </div>
+          </div>
+          <button onclick="refreshStaff()"
+            class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors" title="Refresh">
+            <i class="fas fa-sync-alt text-slate-500 text-xs" id="refreshIcon"></i>
+          </button>
+        </div>
+        <div id="staffList" class="space-y-2"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 px-6 border-t border-slate-100 text-xs text-slate-400 text-center">
+    &copy; 2026 PT. Artha Solusi Aditama &middot; Staff Portal v2.0
+  </footer>
+</div>
+
+<!-- ═══════════════ MODAL: ATTENDANCE ═══════════════ -->
+<div id="attendanceModal" class="modal-wrap">
+  <div class="modal-inner bg-white w-full max-w-md rounded-2xl shadow-2xl">
+    <div class="p-6">
+      <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-4 sm:hidden"></div>
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-lg font-bold text-gray-800">Open Attendance</h3>
+        <button onclick="closeModal('attendanceModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+          <i class="fas fa-times text-slate-500 text-sm"></i>
+        </button>
+      </div>
+      <div class="bg-gradient-to-br from-green-50 to-emerald-100 border border-green-200 rounded-2xl p-5 text-center mb-5">
+        <div class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md">
+          <i class="fas fa-fingerprint text-white text-2xl"></i>
+        </div>
+        <p class="text-3xl font-extrabold text-gray-800 tabular-nums" id="modalClock">00:00:00</p>
+        <p class="text-sm text-slate-500 mt-1" id="modalDate">—</p>
+        <span class="mt-2 inline-block bg-green-500 text-white text-xs font-bold px-4 py-1 rounded-full">Status: Online</span>
+      </div>
+      <div class="mb-3">
+        <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Lokasi Kerja</label>
+        <select class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white focus:border-blue-400">
+          <option>Kantor Pusat – Jakarta</option>
+          <option>Work From Home</option>
+          <option>Lokasi Klien</option>
+          <option>Site Project</option>
+        </select>
+      </div>
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Catatan (Opsional)</label>
+        <textarea rows="2" placeholder="Tambahkan catatan…"
+          class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none resize-none focus:border-blue-400"></textarea>
+      </div>
+      <button onclick="confirmAttendance()"
+        class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
+        <i class="fas fa-check-circle"></i> Konfirmasi Absensi
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL: ADD SCHEDULE ═══════════════ -->
+<div id="addScheduleModal" class="modal-wrap">
+  <div class="modal-inner bg-white w-full max-w-md rounded-2xl shadow-2xl">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-lg font-bold text-gray-800">Tambah Jadwal</h3>
+        <button onclick="closeModal('addScheduleModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+          <i class="fas fa-times text-slate-500 text-sm"></i>
+        </button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-600 mb-1 block">Nama</label>
+          <input id="sName" type="text" placeholder="Nama karyawan"
+            class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-600 mb-1 block">Tanggal</label>
+          <input id="sDate" type="date"
+            class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-600 mb-1 block">AO Number</label>
+          <input id="sAO" type="text" placeholder="AO-XXX-XXXX-ASA"
+            class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-600 mb-1 block">Catatan</label>
+          <input id="sNote" type="text" placeholder="Keterangan tugas"
+            class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+        </div>
+      </div>
+      <div class="flex gap-3 mt-5">
+        <button onclick="closeModal('addScheduleModal')"
+          class="flex-1 border border-slate-200 text-slate-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-slate-50 transition-colors">Batal</button>
+        <button onclick="saveSchedule()"
+          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL: LOAN TOOL ═══════════════ -->
+<div id="loanModal" class="modal-wrap">
+  <div class="modal-inner bg-white w-full max-w-md rounded-2xl shadow-2xl">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-lg font-bold text-gray-800">Tambah Peminjaman Alat</h3>
+        <button onclick="closeModal('loanModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+          <i class="fas fa-times text-slate-500 text-sm"></i>
+        </button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-600 mb-1 block">Nama Alat</label>
+          <input id="lName" type="text" placeholder="Nama alat"
+            class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-600 mb-1 block">Kode Alat</label>
+          <input id="lCode" type="text" placeholder="STC-TOQL-XXX-ASA"
+            class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-600 mb-1 block">Status</label>
+          <select id="lStatus"
+            class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400 bg-white">
+            <option value="Borrowed">Borrowed</option>
+            <option value="Available">Available</option>
+            <option value="Returned">Returned</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-5">
+        <button onclick="closeModal('loanModal')"
+          class="flex-1 border border-slate-200 text-slate-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-slate-50 transition-colors">Batal</button>
+        <button onclick="saveLoan()"
+          class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TOAST ═══════════════ -->
+<div id="toast" class="hidden fixed bottom-6 right-4 sm:right-6 z-50 slide-up">
+  <div class="bg-gray-900 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5">
+    <i id="toastIcon" class="fas fa-check-circle text-green-400"></i>
+    <span id="toastMsg">Berhasil!</span>
+  </div>
+</div>
+
+<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+<script>
+/* ──────────── DATA ──────────── */
+var schedules = [
+  { name:'Richard Cahyadi', date:'05 April 2026', ao:'AO-074-0326-ASA', note:'Maintenance Chiller' },
+  { name:'Ridho Pratama',   date:'06 April 2026', ao:'AO-075-0326-ASA', note:'Server Maintenance' },
+  { name:'Abdul Hakim',     date:'07 April 2026', ao:'AO-076-0326-ASA', note:'Client Visit BNI' },
+];
+
+var birthdays = [
+  { name:'Olivin',    dob:'15 September 2003', age:23, img:'https://i.pravatar.cc/60?img=25' },
+  { name:'Sari Dewi', dob:'07 Juni 1995',      age:30, img:'https://i.pravatar.cc/60?img=49' },
+];
+
+var loans = [
+  { name:'Bending per 1/2', code:'STC-TOQL-140-0624-ASA', icon:'fa-tools',    status:'Borrowed'  },
+  { name:'Drill Machine',   code:'STC-TOQL-141-0624-ASA', icon:'fa-cogs',     status:'Available' },
+  { name:'Pipe Cutter',     code:'STC-TOQL-142-0624-ASA', icon:'fa-cut',      status:'Returned'  },
+  { name:'Spirit Level',    code:'STC-TOQL-143-0624-ASA', icon:'fa-ruler',    status:'Available' },
+];
+
+var performers = [
+  { name:'Richard', score:98, stars:5, img:'https://i.pravatar.cc/100?img=1',  rank:'1st', color:'#f59e0b' },
+  { name:'Clareta',  score:92, stars:4, img:'https://i.pravatar.cc/100?img=5',  rank:'2nd', color:'#94a3b8' },
+  { name:'Marvin',  score:87, stars:3, img:'https://i.pravatar.cc/100?img=11', rank:'3rd', color:'#f97316' },
+  { name:'Olivin',  score:81, stars:2, img:'https://i.pravatar.cc/100?img=25', rank:'4th', color:'#cbd5e1' },
+];
+
+var staff = [
+  { name:'Richard Cahyadi', role:'Programmer', status:'Online',  img:'https://i.pravatar.cc/40?img=1'  },
+  { name:'Ridho Pratama',   role:'Programmer', status:'Online',  img:'https://i.pravatar.cc/40?img=3'  },
+  { name:'Abdul Hakim',     role:'Sales',      status:'Online',  img:'https://i.pravatar.cc/40?img=12' },
+  { name:'Zikri Ananda',    role:'Technician', status:'Offline', img:'https://i.pravatar.cc/40?img=18' },
+  { name:'Marvin Sentosa',  role:'Technician', status:'Away',    img:'https://i.pravatar.cc/40?img=7'  },
+  { name:'Clareta Dewi',    role:'HR',         status:'Online',  img:'https://i.pravatar.cc/40?img=5'  },
+];
+
+var months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+
+
+/* ──────────── RENDER SCHEDULE ──────────── */
+function renderSchedule() {
+  var tbody = document.getElementById('scheduleBody');
+  tbody.innerHTML = schedules.map(function(r) {
+    return '<tr class="border-t border-slate-50 hover:bg-slate-50 transition-colors">'
+      + '<td class="py-2.5 pr-2 font-medium text-gray-700 whitespace-nowrap">' + r.name + '</td>'
+      + '<td class="py-2.5 pr-2 text-slate-500 whitespace-nowrap">' + r.date + '</td>'
+      + '<td class="py-2.5 pr-2 text-slate-500 whitespace-nowrap" style="font-size:11px">' + r.ao + '</td>'
+      + '<td class="py-2.5 text-slate-500 whitespace-nowrap">' + r.note + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+/* ──────────── RENDER BIRTHDAYS ──────────── */
+function renderBirthdays() {
+  var list = document.getElementById('birthdayList');
+  var none = document.getElementById('noBirthday');
+  var sub  = document.getElementById('bdSubtitle');
+  if (!birthdays.length) {
+    list.innerHTML = '';
+    none.classList.remove('hidden');
+    sub.textContent = 'Tidak ada';
+    return;
+  }
+  none.classList.add('hidden');
+  sub.textContent = birthdays.length + ' orang berulang tahun';
+  var colors = [
+    { bg:'#faf5ff', border:'#e9d5ff', text:'#7c3aed' },
+    { bg:'#fdf2f8', border:'#fbcfe8', text:'#be185d' },
+  ];
+  list.innerHTML = birthdays.map(function(p, i) {
+    var c = colors[i % colors.length];
+    return '<div class="flex items-center gap-3 p-2.5 rounded-xl border" style="background:' + c.bg + ';border-color:' + c.border + '">'
+      + '<img src="' + p.img + '" class="w-10 h-10 rounded-full object-cover" alt="' + p.name + '" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.name) + '&background=7c3aed&color=fff\'" />'
+      + '<div class="flex-1 min-w-0">'
+        + '<p class="text-sm font-semibold text-gray-800">' + p.name + '</p>'
+        + '<p class="text-xs text-slate-400">' + p.dob + '</p>'
+      + '</div>'
+      + '<div class="text-right flex-shrink-0">'
+        + '<span class="text-xl font-extrabold" style="color:' + c.text + '">' + p.age + '</span>'
+        + '<p class="text-xs text-slate-400">Y.O</p>'
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+/* ──────────── RENDER LOAN TOOLS ──────────── */
+var statusStyle = {
+  'Borrowed':  { bg:'#fff7ed', text:'#c2410c', label:'Borrowed' },
+  'Available': { bg:'#f0fdf4', text:'#15803d', label:'Available' },
+  'Returned':  { bg:'#f8fafc', text:'#64748b', label:'Returned' },
+};
+
+function renderLoans() {
+  var tbody = document.getElementById('loanBody');
+  tbody.innerHTML = loans.map(function(t) {
+    var s = statusStyle[t.status] || statusStyle['Returned'];
+    return '<tr class="border-t border-slate-50 hover:bg-slate-50 transition-colors">'
+      + '<td class="py-2.5 pr-2 font-medium text-gray-700 whitespace-nowrap">' + t.name + '</td>'
+      + '<td class="py-2.5 pr-2 text-slate-400 whitespace-nowrap" style="font-size:10px">' + t.code + '</td>'
+      + '<td class="py-2.5 pr-2">'
+        + '<div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">'
+          + '<i class="fas ' + t.icon + ' text-slate-300" style="font-size:11px"></i>'
+        + '</div>'
+      + '</td>'
+      + '<td class="py-2.5">'
+        + '<span class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap" style="background:' + s.bg + ';color:' + s.text + '">' + s.label + '</span>'
+      + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+/* ──────────── RENDER TOP PERFORMANCE ──────────── */
+function renderTop() {
+  var grid = document.getElementById('topGrid');
+  grid.innerHTML = performers.map(function(p) {
+    var stars = '';
+    for (var i = 0; i < 5; i++) {
+      stars += '<i class="' + (i < p.stars ? 'fas' : 'far') + ' fa-star text-amber-400" style="font-size:10px"></i>';
+    }
+    return '<div class="text-center">'
+      + '<div class="relative mx-auto" style="width:80px;height:96px">'
+        + '<img src="' + p.img + '" class="rounded-2xl object-cover shadow-md" style="width:80px;height:96px" alt="' + p.name + '" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.name) + '&background=3b82f6&color=fff\'" />'
+        + '<div class="absolute -bottom-3 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow" style="background:' + p.color + ';white-space:nowrap">' + p.rank + '</div>'
+      + '</div>'
+      + '<p class="text-xs font-bold text-gray-800 mt-5">' + p.name + '</p>'
+      + '<div class="flex justify-center gap-px mt-1">' + stars + '</div>'
+      + '<p class="text-gray-400 mt-0.5" style="font-size:10px">Score: <b>' + p.score + '</b></p>'
+    + '</div>';
+  }).join('');
+}
+
+/* ──────────── RENDER STAFF ──────────── */
+var statusCfg = {
+  'Online':  { bg:'#f0fdf4', text:'#15803d', dot:'#22c55e' },
+  'Offline': { bg:'#f8fafc', text:'#64748b', dot:'#94a3b8' },
+  'Away':    { bg:'#fffbeb', text:'#b45309', dot:'#f59e0b' },
+};
+
+function renderStaff() {
+  var list = document.getElementById('staffList');
+  list.innerHTML = staff.map(function(s) {
+    var c = statusCfg[s.status] || statusCfg['Offline'];
+    var isPulse = s.status === 'Away' ? ' pulse-dot' : '';
+    return '<div class="flex items-center gap-3">'
+      + '<div class="relative flex-shrink-0">'
+        + '<img src="' + s.img + '" class="w-8 h-8 rounded-full object-cover" alt="' + s.name + '" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(s.name) + '&background=6366f1&color=fff\'" />'
+        + '<span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white' + isPulse + '" style="background:' + c.dot + '"></span>'
+      + '</div>'
+      + '<div class="flex-1 min-w-0">'
+        + '<p class="text-xs font-semibold text-gray-800 truncate">' + s.name + '</p>'
+        + '<p class="text-xs text-slate-400">' + s.role + '</p>'
+      + '</div>'
+      + '<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0" style="background:' + c.bg + ';color:' + c.text + '">' + s.status + '</span>'
+    + '</div>';
+  }).join('');
+  var onlineCount = staff.filter(function(s){ return s.status === 'Online'; }).length;
+  document.getElementById('staffCount').textContent = onlineCount + ' dari ' + staff.length + ' Online';
+}
+
+/* ──────────── RENDER MONTH DROPDOWN ──────────── */
+function renderMonthDd() {
+  var dd = document.getElementById('monthDd');
+  dd.innerHTML = months.map(function(m) {
+    return '<button class="dd-opt" onclick="selectMonth(\'' + m + '\')">' + m + '</button>';
+  }).join('');
+}
+
+/* ──────────── CLOCK ──────────── */
+function updateClock() {
+  var now = new Date();
+  var hh  = String(now.getHours()).padStart(2,'0');
+  var mm  = String(now.getMinutes()).padStart(2,'0');
+  var ss  = String(now.getSeconds()).padStart(2,'0');
+  var timeShort = hh + ':' + mm;
+  var timeFull  = hh + ':' + mm + ':' + ss;
+  var dateStr = now.toLocaleDateString('id-ID', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+
+  document.getElementById('clockDisplay').textContent = timeShort;
+  document.getElementById('dateDisplay').textContent  = dateStr;
+  document.getElementById('headerDate').textContent   = dateStr;
+  document.getElementById('bannerDate').textContent   = dateStr;
+  document.getElementById('modalClock').textContent   = timeFull;
+  document.getElementById('modalDate').textContent    = dateStr;
+}
+
+/* ──────────── CHART ──────────── */
+var myChart;
+
+/* 3-layer stacked data: task (yellow), workingHours (green), serviceReport (blue) */
+var chartData = {
+  'Minggu Ini':  {
+    task:         [5, 5, 4, 5, 5, 5, 3],
+    workingHours: [9, 9, 6, 8, 8,13, 8],
+    serviceReport:[21,26, 9,15,18,22, 5]
+  },
+  'Minggu Lalu': {
+    task:         [4, 5, 3, 5, 4, 5, 4],
+    workingHours: [8,10, 7,10, 7,12, 6],
+    serviceReport:[18,22, 8,18,13,26, 7]
+  },
+  'Bulan Ini': {
+    task:         [5, 5, 5, 4, 5, 5, 4],
+    workingHours: [10, 9, 8,10, 9,14, 7],
+    serviceReport:[22,25,11,16,21,22,10]
+  }
+};
+
+function initChart() {
+  var ctx = document.getElementById('weeklyChart').getContext('2d');
+  var d = chartData['Minggu Ini'];
+  myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Sat','Sun','Mon','Tue','Wed','Thu','Fri'],
+      datasets: [
+        {
+          label: 'Task',
+          data: d.task,
+          backgroundColor: '#f59e0b',
+          stack: 'stack0',
+          borderSkipped: false,
+          borderRadius: 0
+        },
+        {
+          label: 'Service Report',
+          data: d.serviceReport,
+          backgroundColor: '#3b82f6',
+          stack: 'stack0',
+          borderSkipped: false,
+          borderRadius: 0
+        },
+        {
+          label: 'Working Hours',
+          data: d.workingHours,
+          backgroundColor: '#22c55e',
+          stack: 'stack0',
+          borderSkipped: false,
+          /* Only round top of the topmost segment */
+          borderRadius: { topLeft: 5, topRight: 5, bottomLeft: 0, bottomRight: 0 }
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleColor: '#f1f5f9',
+          bodyColor: '#94a3b8',
+          padding: 10,
+          cornerRadius: 10,
+          callbacks: {
+            label: function(ctx) {
+              return ' ' + ctx.dataset.label + ': ' + ctx.parsed.y;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: '#94a3b8', font: { size: 11 } }
+        },
+        y: {
+          stacked: true,
+          grid: { color: '#f1f5f9' },
+          border: { display: false },
+          ticks: { color: '#94a3b8', font: { size: 11 }, stepSize: 10 },
+          max: 50
+        }
+      },
+      barPercentage: 0.55,
+      categoryPercentage: 0.75
+    }
+  });
+}
+
+function updateChart(period) {
+  var d = chartData[period];
+  if (!d) return;
+  myChart.data.datasets[0].data = d.task;
+  myChart.data.datasets[1].data = d.serviceReport;
+  myChart.data.datasets[2].data = d.workingHours;
+  myChart.update();
+  showToast('Data ' + period + ' dimuat', 'info');
+}
+
+/* ──────────── SIDEBAR ──────────── */
+var sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen ? closeSidebar() : openSidebar();
+}
+function openSidebar() {
+  document.getElementById('sidebar').style.transform = 'translateX(0)';
+  document.getElementById('overlay').classList.remove('hidden');
+  sidebarOpen = true;
+}
+function closeSidebar() {
+  document.getElementById('sidebar').style.transform = 'translateX(-100%)';
+  document.getElementById('overlay').classList.add('hidden');
+  sidebarOpen = false;
+}
+
+// On desktop (>=1024px) always show sidebar
+function handleResize() {
+  if (window.innerWidth >= 1024) {
+    document.getElementById('sidebar').style.transform = 'translateX(0)';
+    document.getElementById('mainWrap').style.marginLeft = '256px';
+    document.getElementById('overlay').classList.add('hidden');
+    sidebarOpen = false;
+  } else {
+    if (!sidebarOpen) document.getElementById('sidebar').style.transform = 'translateX(-100%)';
+    document.getElementById('mainWrap').style.marginLeft = '0';
+  }
+}
+window.addEventListener('resize', handleResize);
+
+/* ──────────── NAV ──────────── */
+function setActiveNav(el, e) {
+  e.preventDefault();
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  el.classList.add('active');
+  if (window.innerWidth < 1024) closeSidebar();
+}
+
+/* ──────────── PANELS (notif / user menu) ──────────── */
+function togglePanel(id) {
+  var panels = ['notifPanel','userMenu','periodDd','monthDd'];
+  panels.forEach(function(pid) {
+    if (pid !== id) document.getElementById(pid).classList.add('hidden');
+  });
+  document.getElementById(id).classList.toggle('hidden');
+}
+
+document.addEventListener('click', function(e) {
+  var panels = ['notifPanel','userMenu','periodDd','monthDd'];
+  panels.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (!el.contains(e.target) && !e.target.closest('[onclick*="' + id + '"]') && !e.target.closest('[onclick*="togglePanel"]')) {
+      el.classList.add('hidden');
+    }
+  });
+});
+
+/* ──────────── PERIOD / MONTH ──────────── */
+function selectPeriod(p) {
+  document.getElementById('periodLabel').textContent = p;
+  document.getElementById('periodDd').classList.add('hidden');
+  updateChart(p);
+  showToast('Data ' + p + ' dimuat', 'info');
+}
+
+function selectMonth(m) {
+  document.getElementById('monthLabel').textContent = m;
+  document.getElementById('monthDd').classList.add('hidden');
+  showToast('Performa bulan ' + m + ' dimuat', 'info');
+}
+
+/* ──────────── MODALS ──────────── */
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+/* close modal on backdrop click */
+document.addEventListener('click', function(e) {
+  ['attendanceModal','addScheduleModal','loanModal'].forEach(function(id) {
+    var m = document.getElementById(id);
+    if (e.target === m) m.classList.remove('open');
+  });
+});
+
+/* ESC key */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    ['attendanceModal','addScheduleModal','loanModal'].forEach(function(id) {
+      document.getElementById(id).classList.remove('open');
+    });
+    closeSidebar();
+  }
+});
+
+/* ──────────── ATTENDANCE ──────────── */
+function confirmAttendance() {
+  var now = new Date();
+  var t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('checkInTime').textContent = t;
+  closeModal('attendanceModal');
+  showToast('Absensi berhasil dicatat! ✅', 'success');
+}
+
+/* ──────────── SAVE SCHEDULE ──────────── */
+function saveSchedule() {
+  var name = document.getElementById('sName').value.trim();
+  var date = document.getElementById('sDate').value;
+  var ao   = document.getElementById('sAO').value.trim();
+  var note = document.getElementById('sNote').value.trim();
+  if (!name || !date || !ao) { showToast('Lengkapi semua field wajib!', 'error'); return; }
+  var d = new Date(date);
+  var dateStr = d.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
+  schedules.push({ name:name, date:dateStr, ao:ao, note:note||'-' });
+  renderSchedule();
+  closeModal('addScheduleModal');
+  document.getElementById('sName').value = '';
+  document.getElementById('sDate').value = '';
+  document.getElementById('sAO').value = '';
+  document.getElementById('sNote').value = '';
+  showToast('Jadwal berhasil ditambahkan!', 'success');
+}
+
+/* ──────────── SAVE LOAN ──────────── */
+function saveLoan() {
+  var name   = document.getElementById('lName').value.trim();
+  var code   = document.getElementById('lCode').value.trim();
+  var status = document.getElementById('lStatus').value;
+  if (!name || !code) { showToast('Lengkapi semua field!', 'error'); return; }
+  loans.push({ name:name, code:code, icon:'fa-tools', status:status });
+  renderLoans();
+  closeModal('loanModal');
+  document.getElementById('lName').value = '';
+  document.getElementById('lCode').value = '';
+  showToast('Alat berhasil ditambahkan!', 'success');
+}
+
+/* ──────────── REFRESH STAFF ──────────── */
+function refreshStaff() {
+  var icon = document.getElementById('refreshIcon');
+  icon.classList.add('spin');
+  setTimeout(function() {
+    icon.classList.remove('spin');
+    renderStaff();
+    showToast('Status staff diperbarui', 'success');
+  }, 1200);
+}
+
+/* ──────────── CLEAR NOTIF ──────────── */
+function clearNotif() {
+  document.getElementById('notifDot').style.display = 'none';
+  document.getElementById('notifList').innerHTML =
+    '<p class="text-xs text-slate-400 text-center py-8">Semua notifikasi telah dibaca ✅</p>';
+  showToast('Semua notifikasi dibaca', 'success');
+}
+
+/* ──────────── TOAST ──────────── */
+var toastTimer;
+function showToast(msg, type) {
+  type = type || 'success';
+  var icons = { success:'fa-check-circle text-green-400', error:'fa-exclamation-circle text-red-400', info:'fa-info-circle text-blue-400' };
+  document.getElementById('toastIcon').className = 'fas ' + (icons[type] || icons.success);
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toast').classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ document.getElementById('toast').classList.add('hidden'); }, 3500);
+}
+
+/* ──────────── INIT ──────────── */
+document.addEventListener('DOMContentLoaded', function() {
+  renderSchedule();
+  renderBirthdays();
+  renderLoans();
+  renderTop();
+  renderStaff();
+  renderMonthDd();
+  initChart();
+  updateClock();
+  setInterval(updateClock, 1000);
+  handleResize();
+});
+</script>
+</body>
+</html>
