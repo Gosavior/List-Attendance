@@ -245,9 +245,23 @@
     <!-- ROW 1 -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-4 stagger">
 
+      <!-- Birthday Today -->
+      <div class="xl:col-span-12 md:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up order-1">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 flex items-center justify-center">
+            <i class="fas fa-birthday-cake text-purple-500"></i>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-gray-800">Birthday Today</p>
+            <p class="text-xs text-slate-400" id="bdSubtitle">—</p>
+          </div>
+        </div>
+        <div id="birthdayList" class="space-y-2"></div>
+        <p id="noBirthday" class="hidden text-xs text-slate-400 text-center py-6">🎂 Tidak ada ulang tahun hari ini</p>
+      </div>
+
       <!-- Work Schedule -->
-      <!-- Work Schedule (order-2 mobile, order-1 md+) -->
-      <div class="xl:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up order-2 md:order-1">
+      <div class="xl:col-span-8 md:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up order-2">
         <div class="flex items-center gap-2.5 mb-4">
           <div class="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center">
             <i class="fas fa-calendar-check text-red-500"></i>
@@ -272,23 +286,8 @@
         </div>
       </div>
 
-      <!-- Birthday Today (order-3 mobile, order-2 md+) -->
-      <div class="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up order-3 md:order-2">
-        <div class="flex items-center gap-2.5 mb-4">
-          <div class="w-9 h-9 rounded-xl bg-purple-100 flex items-center justify-center">
-            <i class="fas fa-birthday-cake text-purple-500"></i>
-          </div>
-          <div>
-            <p class="text-sm font-bold text-gray-800">Birthday Today</p>
-            <p class="text-xs text-slate-400" id="bdSubtitle">—</p>
-          </div>
-        </div>
-        <div id="birthdayList" class="space-y-2"></div>
-        <p id="noBirthday" class="hidden text-xs text-slate-400 text-center py-6">🎂 Tidak ada ulang tahun hari ini</p>
-      </div>
-
-      <!-- Attendance Today (order-1 mobile = top, order-3 md+) -->
-      <div class="xl:col-span-3 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up flex flex-col order-1 md:order-3">
+      <!-- Attendance Today -->
+      <div class="xl:col-span-4 md:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up flex flex-col order-3">
         <div class="flex items-center gap-2.5 mb-3">
           <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center">
             <i class="fas fa-user-check text-green-500"></i>
@@ -368,14 +367,19 @@
 
       <!-- Loan Tools -->
       <div class="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up flex flex-col">
-        <div class="flex items-center gap-2.5 mb-4">
-          <div class="w-9 h-9 rounded-xl bg-yellow-100 flex items-center justify-center">
-            <i class="fas fa-wrench text-yellow-500"></i>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-yellow-100 flex items-center justify-center">
+              <i class="fas fa-wrench text-yellow-500"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-gray-800">Loan Tools</p>
+              <p class="text-xs text-slate-400">Peminjaman alat kerja</p>
+            </div>
           </div>
-          <div>
-            <p class="text-sm font-bold text-gray-800">Loan Tools</p>
-            <p class="text-xs text-slate-400">Peminjaman alat kerja</p>
-          </div>
+          <button type="button" class="text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+            Lihat Semua <i class="fas fa-arrow-right text-[10px]"></i>
+          </button>
         </div>
         <div class="overflow-x-auto flex-1">
           <table class="w-full text-xs">
@@ -709,14 +713,20 @@ function renderSchedule() {
   var tbody = document.getElementById('scheduleBody');
   tbody.innerHTML = schedules.map(function(r) {
     return '<tr class="border-t border-slate-50 hover:bg-slate-50 transition-colors">'
-      + '<td class="py-2.5 pr-2 w-[40%] sm:w-auto">'
-        + '<p class="font-semibold text-gray-800 text-xs truncate">' + r.name + '</p>'
-        + '<p class="text-[10px] text-slate-400 sm:hidden mt-0.5">' + r.date + ' • ' + r.ao + '</p>'
+      + '<td class="py-2.5 pr-2 w-[40%] sm:w-auto align-top">'
+        + '<div class="flex items-center gap-1.5 mb-1 sm:hidden">'
+          + '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>'
+          + '<span class="text-[11px] font-bold text-slate-400">' + r.ao + '</span>'
+        + '</div>'
+        + '<p class="font-semibold text-slate-400 sm:text-gray-800 text-xs line-clamp-2 sm:truncate">' + r.name + '</p>'
       + '</td>'
-      + '<td class="py-2.5 pr-2 text-slate-500 whitespace-nowrap text-xs hidden sm:table-cell">' + r.date + '</td>'
-      + '<td class="py-2.5 pr-2 text-slate-500 whitespace-nowrap text-xs hidden sm:table-cell font-mono">' + r.ao + '</td>'
-      + '<td class="py-2.5 text-slate-600 text-xs w-[60%] sm:w-auto">'
-        + '<p class="line-clamp-2 sm:line-clamp-1" title="' + r.note + '">' + r.note + '</p>'
+      + '<td class="py-2.5 pr-2 text-slate-500 whitespace-nowrap text-xs hidden sm:table-cell align-top">' + r.date + '</td>'
+      + '<td class="py-2.5 pr-2 text-slate-500 whitespace-nowrap text-xs hidden sm:table-cell font-mono align-top">' + r.ao + '</td>'
+      + '<td class="py-2.5 text-slate-500 text-xs w-[60%] sm:w-auto align-top">'
+        + '<div class="flex justify-between items-start gap-2">'
+          + '<p class="line-clamp-2 sm:line-clamp-1" title="' + r.note + '">' + r.note + '</p>'
+          + '<p class="text-[10px] text-slate-400 sm:hidden whitespace-nowrap text-right">' + r.date + '</p>'
+        + '</div>'
       + '</td>'
       + '</tr>';
   }).join('');
