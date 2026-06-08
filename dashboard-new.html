@@ -390,26 +390,26 @@
             <tbody id="loanBody"></tbody>
           </table>
         </div>
-        <button onclick="openModal('loanModal')"
-          class="mt-4 w-full border border-blue-200 text-blue-600 text-xs font-semibold py-2 rounded-xl hover:bg-blue-50 transition-colors">
-          <i class="fas fa-plus mr-1"></i>Tambah Peminjaman
-        </button>
       </div>
     </div>
 
-    <!-- ROW 3 -->
+    <!-- ROW 3 : Full-width Leaderboard -->
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 stagger">
 
-      <!-- Top Performance -->
+      <!-- Leaderboard Staff (full width on its own row) -->
       <div class="xl:col-span-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
           <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
-              <i class="fas fa-trophy text-amber-500"></i>
+            <div class="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center">
+              <!-- Medal / ribbon icon -->
+              <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C9.243 2 7 4.243 7 7s2.243 5 5 5 5-2.243 5-5-2.243-5-5-5zm0 8c-1.654 0-3-1.346-3-3s1.346-3 3-3 3 1.346 3 3-1.346 3-3 3z"/>
+                <path d="m7.404 12.051-3.5 6.061A1.001 1.001 0 0 0 4.771 19.5l2.571-.5 1 2.5A1 1 0 0 0 9.2 22h.024a1 1 0 0 0 .861-.5L12 18.441l1.915 3.059a1 1 0 0 0 .861.5H14.8a1 1 0 0 0 .858-1.5l1-2.5 2.571.5a1.001 1.001 0 0 0 .867-1.388l-3.5-6.061A6.977 6.977 0 0 1 12 12a6.977 6.977 0 0 1-4.596-1.949z"/>
+              </svg>
             </div>
             <div>
-              <p class="text-sm font-bold text-gray-800">Top Performance</p>
-              <p class="text-xs text-slate-400">Peringkat performa karyawan terbaik</p>
+              <p class="text-sm font-bold text-gray-800">Leaderboard Staff</p>
+              <p class="text-xs text-slate-400">Best performing staff ranking.</p>
             </div>
           </div>
           <div class="relative">
@@ -423,7 +423,17 @@
             </div>
           </div>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="topGrid"></div>
+
+        <!-- Leaderboard rows -->
+        <div id="leaderboardRows" class="space-y-4"></div>
+
+        <!-- Selengkapnya link -->
+        <div class="flex justify-end mt-4">
+          <button onclick="openLeaderboardModal()"
+            class="text-xs text-blue-500 hover:text-blue-700 font-medium hover:underline transition-colors">
+            Selengkapnya..
+          </button>
+        </div>
       </div>
 
       <!-- Staff Status -->
@@ -455,7 +465,39 @@
   </footer>
 </div>
 
+<!-- ═══════════════ MODAL: LEADERBOARD FULL ═══════════════ -->
+<div id="leaderboardModal" class="modal-wrap">
+  <div class="modal-inner bg-white w-full max-w-lg rounded-2xl shadow-2xl">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h3 class="text-lg font-bold text-gray-800">Leaderboard Staff</h3>
+          <p class="text-xs text-slate-400">Semua peringkat performa karyawan</p>
+        </div>
+        <button onclick="closeModal('leaderboardModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+          <i class="fas fa-times text-slate-500 text-sm"></i>
+        </button>
+      </div>
+      <!-- Table header -->
+      <div class="flex items-center gap-3 pb-2 mb-2 border-b border-slate-100 text-xs text-slate-400 font-semibold">
+        <span class="w-8 flex-shrink-0 text-center">Rank</span>
+        <span class="w-9 flex-shrink-0"></span>
+        <span class="flex-1">Nama / Jabatan</span>
+        <span class="w-8 text-right">Score</span>
+      </div>
+      <div id="leaderboardFull" class="space-y-1"></div>
+      <div class="mt-5 pt-4 border-t border-slate-100 flex justify-end">
+        <button onclick="closeModal('leaderboardModal')"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════ MODAL: ATTENDANCE ═══════════════ -->
+
 <div id="attendanceModal" class="modal-wrap">
   <div class="modal-inner bg-white w-full max-w-md rounded-2xl shadow-2xl">
     <div class="p-6">
@@ -609,10 +651,12 @@ var loans = [
 ];
 
 var performers = [
-  { name:'Richard', score:98, stars:5, img:'https://i.pravatar.cc/100?img=1',  rank:'1st', color:'#f59e0b' },
-  { name:'Clareta',  score:92, stars:4, img:'https://i.pravatar.cc/100?img=5',  rank:'2nd', color:'#94a3b8' },
-  { name:'Marvin',  score:87, stars:3, img:'https://i.pravatar.cc/100?img=11', rank:'3rd', color:'#f97316' },
-  { name:'Olivin',  score:81, stars:2, img:'https://i.pravatar.cc/100?img=25', rank:'4th', color:'#cbd5e1' },
+  { name:'Olivin',   role:'Sales',      score:92, pct:90, img:'https://i.pravatar.cc/60?img=25', rank:'1 st', rankNum:1, barColor:'#22c55e' },
+  { name:'Clareta',  role:'Technician', score:84, pct:72, img:'https://i.pravatar.cc/60?img=5',  rank:'2 nd', rankNum:2, barColor:'#eab308' },
+  { name:'Joen',     role:'Office',     score:76, pct:58, img:'https://i.pravatar.cc/60?img=11', rank:'3 rd', rankNum:3, barColor:'#f97316' },
+  { name:'Felicia',  role:'Technician', score:61, pct:38, img:'https://i.pravatar.cc/60?img=49', rank:'4 th', rankNum:4, barColor:'#ef4444' },
+  { name:'Richard',  role:'Programmer', score:95, pct:98, img:'https://i.pravatar.cc/60?img=1',  rank:'5 th', rankNum:5, barColor:'#3b82f6' },
+  { name:'Marvin',   role:'Technician', score:70, pct:52, img:'https://i.pravatar.cc/60?img=7',  rank:'6 th', rankNum:6, barColor:'#8b5cf6' },
 ];
 
 var staff = [
@@ -700,22 +744,72 @@ function renderLoans() {
   }).join('');
 }
 
-/* ──────────── RENDER TOP PERFORMANCE ──────────── */
+/* ──────────── RENDER LEADERBOARD ──────────── */
 function renderTop() {
-  var grid = document.getElementById('topGrid');
-  grid.innerHTML = performers.map(function(p) {
-    var stars = '';
-    for (var i = 0; i < 5; i++) {
-      stars += '<i class="' + (i < p.stars ? 'fas' : 'far') + ' fa-star text-amber-400" style="font-size:10px"></i>';
-    }
-    return '<div class="text-center">'
-      + '<div class="relative mx-auto" style="width:80px;height:96px">'
-        + '<img src="' + p.img + '" class="rounded-2xl object-cover shadow-md" style="width:80px;height:96px" alt="' + p.name + '" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.name) + '&background=3b82f6&color=fff\'" />'
-        + '<div class="absolute -bottom-3 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow" style="background:' + p.color + ';white-space:nowrap">' + p.rank + '</div>'
+  var container = document.getElementById('leaderboardRows');
+  if (!container) return;
+  /* Show only top 4 in main view */
+  var display = performers.slice(0, 4);
+  container.innerHTML = display.map(function(p) {
+    var rankColors = { 1:'#22c55e', 2:'#eab308', 3:'#f97316', 4:'#ef4444' };
+    var barClr = rankColors[p.rankNum] || p.barColor;
+    return '<div class="flex items-center gap-3 group">'
+      /* Rank label */
+      + '<span class="text-xs font-bold text-slate-500 w-8 flex-shrink-0 text-center" style="font-size:11px">' + p.rank + '</span>'
+      /* Avatar */
+      + '<div class="flex-shrink-0">'
+        + '<img src="' + p.img + '" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" alt="' + p.name + '" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.name) + '&background=3b82f6&color=fff\'"/>'
       + '</div>'
-      + '<p class="text-xs font-bold text-gray-800 mt-5">' + p.name + '</p>'
-      + '<div class="flex justify-center gap-px mt-1">' + stars + '</div>'
-      + '<p class="text-gray-400 mt-0.5" style="font-size:10px">Score: <b>' + p.score + '</b></p>'
+      /* Name + role + bar */
+      + '<div class="flex-1 min-w-0">'
+        + '<div class="flex items-baseline gap-1.5 mb-1">'
+          + '<p class="text-sm font-semibold text-gray-800">' + p.name + '</p>'
+          + '<p class="text-xs text-slate-400">' + p.role + '</p>'
+        + '</div>'
+        /* Progress track */
+        + '<div class="relative w-full bg-slate-100 rounded-full" style="height:10px">'
+          + '<div class="leaderbar absolute left-0 top-0 h-full rounded-full transition-all" data-pct="' + p.pct + '" style="width:0%;background:' + barClr + ';transition:width 1s ease-out"></div>'
+        + '</div>'
+      + '</div>'
+      /* Score badge */
+      + '<span class="flex-shrink-0 text-xs font-bold text-slate-600 w-8 text-right">' + p.score + '</span>'
+    + '</div>';
+  }).join('');
+
+  /* Animate bars after render */
+  setTimeout(function() {
+    var bars = container.querySelectorAll('.leaderbar');
+    bars.forEach(function(bar) {
+      bar.style.width = bar.getAttribute('data-pct') + '%';
+    });
+  }, 80);
+}
+
+function openLeaderboardModal() {
+  openModal('leaderboardModal');
+  /* Re-render all performers in modal */
+  renderLeaderboardFull();
+}
+
+function renderLeaderboardFull() {
+  var container = document.getElementById('leaderboardFull');
+  if (!container) return;
+  container.innerHTML = performers.map(function(p) {
+    var rankColors = { 1:'#22c55e', 2:'#eab308', 3:'#f97316', 4:'#ef4444', 5:'#3b82f6', 6:'#8b5cf6' };
+    var barClr = rankColors[p.rankNum] || p.barColor;
+    return '<div class="flex items-center gap-3 py-2 border-b border-slate-50 last:border-0">'
+      + '<span class="text-xs font-bold text-slate-500 w-8 flex-shrink-0 text-center">' + p.rank + '</span>'
+      + '<img src="' + p.img + '" class="w-9 h-9 rounded-full object-cover flex-shrink-0" alt="' + p.name + '" onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.name) + '&background=3b82f6&color=fff\'"/>'
+      + '<div class="flex-1 min-w-0">'
+        + '<div class="flex items-baseline gap-1.5 mb-1">'
+          + '<p class="text-sm font-semibold text-gray-800">' + p.name + '</p>'
+          + '<p class="text-xs text-slate-400">' + p.role + '</p>'
+        + '</div>'
+        + '<div class="relative w-full bg-slate-100 rounded-full" style="height:9px">'
+          + '<div style="width:' + p.pct + '%;background:' + barClr + ';height:9px;border-radius:9999px"></div>'
+        + '</div>'
+      + '</div>'
+      + '<span class="flex-shrink-0 text-xs font-bold text-slate-700 w-8 text-right">' + p.score + '</span>'
     + '</div>';
   }).join('');
 }
@@ -777,22 +871,22 @@ function updateClock() {
 /* ──────────── CHART ──────────── */
 var myChart;
 
-/* 3-layer stacked data: task (yellow), workingHours (green), serviceReport (blue) */
+/* 3-dataset GROUPED data: task (yellow) | workingHours (green) | serviceReport (blue) */
 var chartData = {
   'Minggu Ini':  {
     task:         [5, 5, 4, 5, 5, 5, 3],
-    workingHours: [9, 9, 6, 8, 8,13, 8],
-    serviceReport:[21,26, 9,15,18,22, 5]
+    workingHours: [8, 7, 6, 7, 7,10, 6],
+    serviceReport:[31,31,31,31,31,31,31]
   },
   'Minggu Lalu': {
     task:         [4, 5, 3, 5, 4, 5, 4],
-    workingHours: [8,10, 7,10, 7,12, 6],
-    serviceReport:[18,22, 8,18,13,26, 7]
+    workingHours: [7, 8, 6, 8, 6, 9, 5],
+    serviceReport:[28,30,25,29,27,33,22]
   },
   'Bulan Ini': {
     task:         [5, 5, 5, 4, 5, 5, 4],
-    workingHours: [10, 9, 8,10, 9,14, 7],
-    serviceReport:[22,25,11,16,21,22,10]
+    workingHours: [9, 8, 7, 8, 8,11, 6],
+    serviceReport:[30,32,28,30,30,34,26]
   }
 };
 
@@ -808,26 +902,22 @@ function initChart() {
           label: 'Task',
           data: d.task,
           backgroundColor: '#f59e0b',
-          stack: 'stack0',
-          borderSkipped: false,
-          borderRadius: 0
-        },
-        {
-          label: 'Service Report',
-          data: d.serviceReport,
-          backgroundColor: '#3b82f6',
-          stack: 'stack0',
-          borderSkipped: false,
-          borderRadius: 0
+          borderRadius: { topLeft:4, topRight:4, bottomLeft:0, bottomRight:0 },
+          borderSkipped: false
         },
         {
           label: 'Working Hours',
           data: d.workingHours,
           backgroundColor: '#22c55e',
-          stack: 'stack0',
-          borderSkipped: false,
-          /* Only round top of the topmost segment */
-          borderRadius: { topLeft: 5, topRight: 5, bottomLeft: 0, bottomRight: 0 }
+          borderRadius: { topLeft:4, topRight:4, bottomLeft:0, bottomRight:0 },
+          borderSkipped: false
+        },
+        {
+          label: 'Service Report',
+          data: d.serviceReport,
+          backgroundColor: '#3b82f6',
+          borderRadius: { topLeft:4, topRight:4, bottomLeft:0, bottomRight:0 },
+          borderSkipped: false
         }
       ]
     },
@@ -851,21 +941,19 @@ function initChart() {
       },
       scales: {
         x: {
-          stacked: true,
           grid: { display: false },
           border: { display: false },
           ticks: { color: '#94a3b8', font: { size: 11 } }
         },
         y: {
-          stacked: true,
           grid: { color: '#f1f5f9' },
           border: { display: false },
           ticks: { color: '#94a3b8', font: { size: 11 }, stepSize: 10 },
           max: 50
         }
       },
-      barPercentage: 0.55,
-      categoryPercentage: 0.75
+      barPercentage: 0.65,
+      categoryPercentage: 0.8
     }
   });
 }
@@ -874,8 +962,8 @@ function updateChart(period) {
   var d = chartData[period];
   if (!d) return;
   myChart.data.datasets[0].data = d.task;
-  myChart.data.datasets[1].data = d.serviceReport;
-  myChart.data.datasets[2].data = d.workingHours;
+  myChart.data.datasets[1].data = d.workingHours;
+  myChart.data.datasets[2].data = d.serviceReport;
   myChart.update();
   showToast('Data ' + period + ' dimuat', 'info');
 }
@@ -962,7 +1050,7 @@ function closeModal(id) {
 
 /* close modal on backdrop click */
 document.addEventListener('click', function(e) {
-  ['attendanceModal','addScheduleModal','loanModal'].forEach(function(id) {
+  ['attendanceModal','addScheduleModal','loanModal','leaderboardModal'].forEach(function(id) {
     var m = document.getElementById(id);
     if (e.target === m) m.classList.remove('open');
   });
@@ -971,7 +1059,7 @@ document.addEventListener('click', function(e) {
 /* ESC key */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    ['attendanceModal','addScheduleModal','loanModal'].forEach(function(id) {
+    ['attendanceModal','addScheduleModal','loanModal','leaderboardModal'].forEach(function(id) {
       document.getElementById(id).classList.remove('open');
     });
     closeSidebar();
