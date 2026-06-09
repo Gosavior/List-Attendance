@@ -262,22 +262,23 @@
 
       <!-- Work Schedule -->
       <div class="xl:col-span-8 md:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 card-lift slide-up order-2">
-        <div class="flex items-center gap-2.5 mb-4">
-          <div class="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center">
-            <i class="fas fa-calendar-check text-red-500"></i>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center">
+              <i class="fas fa-calendar-check text-red-500"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-gray-800">Work Schedule</p>
+              <p class="text-xs text-slate-400">Jadwal tugas aktif</p>
+            </div>
           </div>
-          <div>
-            <p class="text-sm font-bold text-gray-800">Work Schedule</p>
-            <p class="text-xs text-slate-400">Jadwal tugas aktif</p>
-          </div>
+          <span class="text-xs text-slate-400 font-medium" id="scheduleDate">—</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-xs">
             <thead>
               <tr class="text-slate-400 border-b border-slate-100 text-[11px]">
                 <th class="pb-2 text-left font-medium">Name</th>
-                <th class="pb-2 text-left font-medium hidden sm:table-cell">Date</th>
-                <th class="pb-2 text-left font-medium hidden sm:table-cell">AO Number</th>
                 <th class="pb-2 text-left font-medium">Note</th>
               </tr>
             </thead>
@@ -378,19 +379,7 @@
             </div>
           </div>
         </div>
-        <div class="overflow-x-auto flex-1 mb-4">
-          <table class="w-full text-xs">
-            <thead>
-              <tr class="text-slate-400 border-b border-slate-100">
-                <th class="pb-2 text-left font-medium">Nama Alat</th>
-                <th class="pb-2 text-left font-medium">Kode</th>
-                <th class="pb-2 text-left font-medium">Foto</th>
-                <th class="pb-2 text-left font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody id="loanBody"></tbody>
-          </table>
-        </div>
+        <div class="flex-1 mb-4 space-y-2" id="loanBody"></div>
         <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-4 mt-auto">
           <button type="button" class="text-xs font-semibold bg-slate-50 text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5">
             Lihat Semua <i class="fas fa-arrow-right text-[10px]"></i>
@@ -533,7 +522,7 @@
           <div>
             <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-1">Masuk</p>
             <div class="flex gap-2 items-center">
-              <img src="https://i.pravatar.cc/200?img=11" class="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200" alt="Masuk">
+              <img src="https://i.pravatar.cc/200?img=11" class="w-6 h-6 rounded-md object-cover ring-1 ring-slate-200" alt="Masuk">
               <span class="text-sm font-bold text-gray-800 font-mono">08:15</span>
             </div>
           </div>
@@ -541,7 +530,7 @@
           <div>
             <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-1">Pulang</p>
             <div class="flex gap-2 items-center">
-              <img src="https://i.pravatar.cc/200?img=16" class="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200" alt="Pulang">
+              <img src="https://i.pravatar.cc/200?img=16" class="w-6 h-6 rounded-md object-cover ring-1 ring-slate-200" alt="Pulang">
               <span class="text-sm font-bold text-gray-800 font-mono">17:30</span>
             </div>
           </div>
@@ -566,13 +555,9 @@
       </div>
       
       <div class="flex gap-3">
-        <button onclick="closeModal('attendanceModal')"
-          class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
-          <i class="fas fa-times"></i> Tutup
-        </button>
         <button type="button"
-          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm shadow-blue-200">
-          <i class="fas fa-list-ul"></i> Riwayat
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm shadow-blue-200">
+          <i class="fas fa-list-ul"></i> Ringkasan
         </button>
       </div>
     </div>
@@ -674,9 +659,9 @@
 <script>
 /* ──────────── DATA ──────────── */
 var schedules = [
-  { name:'Richard Cahyadi', date:'05 April 2026', ao:'AO-074-0326-ASA', note:'Maintenance Chiller' },
-  { name:'Ridho Pratama',   date:'06 April 2026', ao:'AO-075-0326-ASA', note:'Server Maintenance' },
-  { name:'Abdul Hakim',     date:'07 April 2026', ao:'AO-076-0326-ASA', note:'Client Visit BNI' },
+  { names:['Richard Cahyadi','Thio'], date:'09 April 2026', ao:'AO-074-0326-ASA', note:'Maintenance Chiller' },
+  { names:['Richard Cahyadi'],        date:'09 April 2026', ao:'AO-075-0326-ASA', note:'Server Maintenance'  },
+  { names:['Richard Cahyadi'],        date:'09 April 2026', ao:'AO-076-0326-ASA', note:'Client Visit BNI'    },
 ];
 
 var birthdays = [
@@ -685,10 +670,10 @@ var birthdays = [
 ];
 
 var loans = [
-  { name:'Bending per 1/2', code:'STC-TOQL-140-0624-ASA', icon:'fa-tools',    status:'Borrowed'  },
-  { name:'Drill Machine',   code:'STC-TOQL-141-0624-ASA', icon:'fa-cogs',     status:'Available' },
-  { name:'Pipe Cutter',     code:'STC-TOQL-142-0624-ASA', icon:'fa-cut',      status:'Returned'  },
-  { name:'Spirit Level',    code:'STC-TOQL-143-0624-ASA', icon:'fa-ruler',    status:'Available' },
+  { borrower:'Abdul Hakim',   borrowerImg:'https://i.pravatar.cc/60?img=12', toolName:'Bending per 1/2', code:'STC-TOOL-140-0624-ASA', status:'Borrowed'  },
+  { borrower:'Zikri Ananda',  borrowerImg:'https://i.pravatar.cc/60?img=18', toolName:'Drill Machine',   code:'STC-TOOL-141-0624-ASA', status:'Borrowed'  },
+  { borrower:'Marvin Sentosa',borrowerImg:'https://i.pravatar.cc/60?img=7',  toolName:'Pipe Cutter',     code:'STC-TOOL-142-0624-ASA', status:'Returned'  },
+  { borrower:'Ridho Pratama', borrowerImg:'https://i.pravatar.cc/60?img=3',  toolName:'Spirit Level',    code:'STC-TOOL-143-0624-ASA', status:'Available' },
 ];
 
 var performers = [
@@ -716,23 +701,25 @@ var months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus'
 /* ──────────── RENDER SCHEDULE ──────────── */
 function renderSchedule() {
   var tbody = document.getElementById('scheduleBody');
+  /* Set date in card header from first schedule entry */
+  var dateEl = document.getElementById('scheduleDate');
+  if (dateEl && schedules.length) dateEl.textContent = schedules[0].date;
+
   tbody.innerHTML = schedules.map(function(r) {
-    return '<tr class="border-t border-slate-50 hover:bg-slate-50 transition-colors">'
-      + '<td class="py-2.5 pr-2 w-[40%] sm:w-auto align-top">'
-        + '<div class="flex items-center gap-1.5 mb-1 sm:hidden">'
-          + '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>'
-          + '<span class="text-[11px] font-bold text-slate-400">' + r.ao + '</span>'
-        + '</div>'
-        + '<p class="font-semibold text-slate-400 sm:text-gray-800 text-xs line-clamp-2 sm:truncate">' + r.name + '</p>'
-      + '</td>'
-      + '<td class="py-2.5 pr-2 text-slate-500 whitespace-nowrap text-xs hidden sm:table-cell align-top">' + r.date + '</td>'
-      + '<td class="py-2.5 pr-2 text-slate-500 whitespace-nowrap text-xs hidden sm:table-cell font-mono align-top">' + r.ao + '</td>'
-      + '<td class="py-2.5 text-slate-500 text-xs w-[60%] sm:w-auto align-top">'
-        + '<div class="flex justify-between items-start gap-2">'
-          + '<p class="line-clamp-2 sm:line-clamp-1" title="' + r.note + '">' + r.note + '</p>'
-          + '<p class="text-[10px] text-slate-400 sm:hidden whitespace-nowrap text-right">' + r.date + '</p>'
+    var namesHtml = r.names.map(function(n, i) {
+      return '<span class="text-[11px] text-slate-400">' + n + '</span>';
+    }).join('');
+    return '<tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">'
+      + '<td class="py-3 pr-4 align-top" style="width:55%">'
+        + '<div class="flex items-start gap-2">'
+          + '<span class="w-2 h-2 rounded-full bg-gray-800 flex-shrink-0 mt-1"></span>'
+          + '<div>'
+            + '<p class="text-xs font-bold text-gray-800">' + r.ao + '</p>'
+            + '<div class="flex flex-col mt-0.5">' + namesHtml + '</div>'
+          + '</div>'
         + '</div>'
       + '</td>'
+      + '<td class="py-3 text-slate-400 text-xs align-top">' + r.note + '</td>'
       + '</tr>';
   }).join('');
 }
@@ -772,27 +759,27 @@ function renderBirthdays() {
 
 /* ──────────── RENDER LOAN TOOLS ──────────── */
 var statusStyle = {
-  'Borrowed':  { bg:'#fff7ed', text:'#c2410c', label:'Borrowed' },
+  'Borrowed':  { bg:'#fff7ed', text:'#c2410c', label:'Borrowed'  },
   'Available': { bg:'#f0fdf4', text:'#15803d', label:'Available' },
-  'Returned':  { bg:'#f8fafc', text:'#64748b', label:'Returned' },
+  'Returned':  { bg:'#f8fafc', text:'#64748b', label:'Returned'  },
 };
 
 function renderLoans() {
-  var tbody = document.getElementById('loanBody');
-  tbody.innerHTML = loans.map(function(t) {
+  var container = document.getElementById('loanBody');
+  container.innerHTML = loans.map(function(t) {
     var s = statusStyle[t.status] || statusStyle['Returned'];
-    return '<tr class="border-t border-slate-50 hover:bg-slate-50 transition-colors">'
-      + '<td class="py-2.5 pr-2 font-medium text-gray-700 whitespace-nowrap">' + t.name + '</td>'
-      + '<td class="py-2.5 pr-2 text-slate-400 whitespace-nowrap" style="font-size:10px">' + t.code + '</td>'
-      + '<td class="py-2.5 pr-2">'
-        + '<div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">'
-          + '<i class="fas ' + t.icon + ' text-slate-300" style="font-size:11px"></i>'
-        + '</div>'
-      + '</td>'
-      + '<td class="py-2.5">'
-        + '<span class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap" style="background:' + s.bg + ';color:' + s.text + '">' + s.label + '</span>'
-      + '</td>'
-      + '</tr>';
+    return '<div class="flex items-center gap-3 py-2.5 border-b border-slate-50 last:border-0">'
+      /* Borrower avatar */
+      + '<img src="' + t.borrowerImg + '" class="w-8 h-8 rounded-full object-cover flex-shrink-0 ring-1 ring-slate-200"'
+        + ' onerror="this.src=\'https://ui-avatars.com/api/?name=' + encodeURIComponent(t.borrower) + '&background=3b82f6&color=fff\'" alt="' + t.borrower + '" />'
+      /* Info */
+      + '<div class="flex-1 min-w-0">'
+        + '<p class="text-xs font-semibold text-gray-800 truncate">' + t.borrower + '</p>'
+        + '<p class="text-[10px] text-slate-400 truncate">' + t.toolName + ' · <span class="font-mono">' + t.code + '</span></p>'
+      + '</div>'
+      /* Status badge */
+      + '<span class="text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap" style="background:' + s.bg + ';color:' + s.text + '">' + s.label + '</span>'
+    + '</div>';
   }).join('');
 }
 
