@@ -46,7 +46,7 @@
 
     thead th { position:sticky; top:0; z-index:5; }
 
-    tbody tr { transition:background .12s; }
+    tbody tr { background:#ffffff; transition:background .12s; }
     tbody tr:hover { background:#f8fafc; }
 
     .badge { display:inline-flex; align-items:center; gap:.3rem; font-size:11px; font-weight:600; padding:.22rem .6rem; border-radius:9999px; white-space:nowrap; }
@@ -81,25 +81,6 @@
 
     /* Input focus */
     input:focus, select:focus, textarea:focus { outline:none; border-color:#3b82f6 !important; box-shadow:0 0 0 3px rgba(59,130,246,.1); }
-
-    /* ── Dot Menu Dropdown ── */
-    .dot-btn { width:32px; height:32px; border-radius:8px; background:#f8fafc; border:1px solid #e2e8f0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; color:#475569; font-size:16px; letter-spacing:1px; line-height:1; }
-    .dot-btn:hover { background:#f1f5f9; }
-    .dot-wrap { position:relative; display:inline-block; }
-    .dot-dropdown { display:none; position:absolute; right:0; top:calc(100% + 4px); background:#fff; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,.12); z-index:20; min-width:148px; overflow:hidden; }
-    .dot-dropdown.open { display:block; animation:slideUp .15s ease-out; }
-    .dot-dropdown button { display:flex; align-items:center; gap:8px; width:100%; padding:9px 14px; font-size:12px; font-weight:500; color:#374151; background:transparent; border:none; cursor:pointer; transition:background .12s; text-align:left; }
-    .dot-dropdown button:hover { background:#f8fafc; }
-    .dot-dropdown button.dd-detail:hover { color:#2563eb; background:#eff6ff; }
-    .dot-dropdown button.dd-edit:hover   { color:#d97706; background:#fffbeb; }
-    .dot-dropdown button.dd-delete:hover { color:#dc2626; background:#fef2f2; }
-    .dot-dropdown .dd-divider { height:1px; background:#f1f5f9; margin:2px 0; }
-
-    /* Edit modal: submitted data preview */
-    .submitted-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px; }
-    .submitted-label { font-size:10px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:.05em; margin-bottom:2px; display:block; }
-    .submitted-val { font-size:13px; color:#374151; font-weight:500; }
-    .submitted-photo { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:8px; cursor:pointer; border:1px solid #e2e8f0; }
   </style>
 </head>
 <body class="bg-slate-50 text-gray-800 antialiased">
@@ -218,7 +199,7 @@
             <option value="">Semua Status</option>
             <option>Hadir</option><option>Terlambat</option><option>Alpha</option>
             <option>Izin</option><option>Sakit</option><option>Libur</option>
-            <option>WFH</option><option>Lembur</option>
+            <option>Lembur</option>
           </select>
         </div>
         <div class="flex flex-col gap-1">
@@ -280,7 +261,7 @@
       </div>
 
       <!-- TABLE -->
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto pb-10">
         <table class="w-full text-xs" style="min-width:1100px">
           <thead>
             <!-- Group row -->
@@ -297,7 +278,7 @@
               <th class="th-group-out px-3 py-2 text-center font-bold text-xs" colspan="4">
                 <i class="fas fa-sign-out-alt mr-1"></i>PULANG
               </th>
-              <th class="th-base px-3 py-2 text-center" rowspan="2">Aksi</th>
+              <th class="th-base px-3 py-2 text-center sticky right-0 z-10" rowspan="2" style="box-shadow:-4px 0 12px rgba(0,0,0,0.02);">Aksi</th>
             </tr>
             <tr class="border-b border-slate-200 text-[11px] font-semibold uppercase tracking-wide">
               <!-- Masuk sub-headers -->
@@ -344,21 +325,21 @@
   <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl slide-up overflow-hidden" style="max-height:90vh;overflow-y:auto">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
       <div class="flex items-center gap-3">
-        <div id="detailAvatar" class="w-10 h-10 rounded-full bg-blue-100 flex-shrink-0"></div>
+        <div id="detailAvatar" class="w-11 h-11 rounded-full bg-blue-100 flex-shrink-0"></div>
         <div>
           <h3 class="text-base font-bold text-gray-800" id="detailTitle">Detail Absensi</h3>
           <p class="text-xs text-slate-400" id="detailSubtitle">—</p>
         </div>
       </div>
-      <button onclick="closeModal('detailModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center flex-shrink-0">
-        <i class="fas fa-times text-slate-500 text-sm"></i>
+      <button onclick="closeModal('detailModal')" class="w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-times text-slate-500 hover:text-slate-700 text-sm transition-colors"></i>
       </button>
     </div>
-    <div class="p-6 space-y-5" id="detailContent"></div>
+    <div class="p-6" id="detailContent"></div>
     <div class="px-6 pb-6 flex gap-3">
-      <button onclick="closeModal('detailModal')" class="flex-1 border border-slate-200 text-slate-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-slate-50">Tutup</button>
-      <button onclick="editFromDetail()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl">
-        <i class="fas fa-pencil mr-1"></i>Edit
+      <button onclick="closeModal('detailModal')" class="flex-1 text-slate-400 hover:text-slate-600 text-sm font-semibold py-2.5 transition-colors">Tutup</button>
+      <button onclick="editFromDetail()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors shadow-sm">
+        <i class="fas fa-pencil mr-1"></i>Edit Data
       </button>
     </div>
   </div>
@@ -366,18 +347,14 @@
 
 <!-- ════════════ MODAL: EDIT ════════════ -->
 <div id="editModal" class="modal-wrap">
-  <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl slide-up" style="max-height:90vh;overflow-y:auto">
+  <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl slide-up" style="max-height:90vh;overflow-y:auto">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
-      <div>
-        <h3 class="text-base font-bold text-gray-800">Edit Absensi</h3>
-        <p class="text-xs text-slate-400">Data yang dikirim staff ditampilkan di bawah · Override oleh Admin</p>
-      </div>
+      <h3 class="text-base font-bold text-gray-800">Edit Absensi</h3>
       <button onclick="closeModal('editModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
         <i class="fas fa-times text-slate-500 text-sm"></i>
       </button>
     </div>
-    <div class="p-5 space-y-4">
-
+    <div class="p-6 space-y-4">
       <!-- Staff info (readonly) -->
       <div class="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-3">
         <img id="editAvatar" src="" class="w-10 h-10 rounded-full object-cover flex-shrink-0" alt="" />
@@ -385,132 +362,69 @@
           <p class="text-sm font-bold text-gray-800" id="editNamaDisplay">—</p>
           <p class="text-xs text-slate-400" id="editSubDisplay">—</p>
         </div>
-        <input id="editNama" type="hidden" />
       </div>
 
-      <!-- ══ DATA YANG DIKIRIM STAFF (readonly preview) ══ -->
-      <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="bg-slate-100 px-4 py-2 flex items-center gap-2">
-          <i class="fas fa-user-check text-slate-500 text-xs"></i>
-          <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">Data yang Dikirim Staff</span>
-        </div>
-        <div class="p-4 space-y-4">
-          <!-- MASUK submitted -->
-          <div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full"><i class="fas fa-sign-in-alt mr-1"></i>MASUK</span>
-            </div>
-            <div class="grid grid-cols-3 gap-3">
-              <div class="submitted-box">
-                <span class="submitted-label">Jam Masuk</span>
-                <p class="submitted-val font-mono" id="sv-jamMasuk">—</p>
-              </div>
-              <div class="submitted-box">
-                <span class="submitted-label">Lokasi</span>
-                <p class="submitted-val" id="sv-lokasiMasuk">—</p>
-              </div>
-              <div>
-                <span class="submitted-label block mb-1">Foto Masuk</span>
-                <img id="sv-fotoMasuk" src="" class="submitted-photo" onclick="openLightbox(this.src)" alt="Foto Masuk"
-                  onerror="this.style.display='none';document.getElementById('sv-fotoMasukPh').style.display='flex'" />
-                <div id="sv-fotoMasukPh" class="w-full flex items-center justify-center bg-slate-100 rounded-lg" style="aspect-ratio:16/9;display:none">
-                  <i class="fas fa-image text-slate-300 text-xl"></i>
-                </div>
-              </div>
-            </div>
-            <div class="mt-2 submitted-box">
-              <span class="submitted-label">Rencana Kerja</span>
-              <p class="submitted-val text-sm" id="sv-rencana">—</p>
-            </div>
-          </div>
+      <!-- Status -->
+      <div>
+        <label class="text-xs font-semibold text-slate-500 mb-1 block">Status</label>
+        <select id="editStatus" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+          <option>Hadir</option><option>Terlambat</option><option>Alpha</option>
+          <option>Izin</option><option>Sakit</option><option>Lembur</option>
+        </select>
+      </div>
 
-          <!-- PULANG submitted -->
-          <div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full"><i class="fas fa-sign-out-alt mr-1"></i>PULANG</span>
-            </div>
-            <div class="grid grid-cols-3 gap-3">
-              <div class="submitted-box">
-                <span class="submitted-label">Jam Pulang</span>
-                <p class="submitted-val font-mono" id="sv-jamPulang">—</p>
-              </div>
-              <div class="submitted-box">
-                <span class="submitted-label">Lokasi</span>
-                <p class="submitted-val" id="sv-lokasiPulang">—</p>
-              </div>
-              <div>
-                <span class="submitted-label block mb-1">Foto Pulang</span>
-                <img id="sv-fotoPulang" src="" class="submitted-photo" onclick="openLightbox(this.src)" alt="Foto Pulang"
-                  onerror="this.style.display='none';document.getElementById('sv-fotoPulangPh').style.display='flex'" />
-                <div id="sv-fotoPulangPh" class="w-full flex items-center justify-center bg-slate-100 rounded-lg" style="aspect-ratio:16/9;display:none">
-                  <i class="fas fa-image text-slate-300 text-xl"></i>
-                </div>
-              </div>
-            </div>
-            <div>
-              <span class="submitted-label block mb-1 mt-2">Foto Kerja</span>
-              <img id="sv-fotoKerja" src="" class="w-full object-cover rounded-lg cursor-pointer border border-slate-200" style="max-height:160px" onclick="openLightbox(this.src)" alt="Foto Kerja"
-                onerror="this.style.display='none';document.getElementById('sv-fotoKerjaPh').style.display='flex'" />
-              <div id="sv-fotoKerjaPh" class="w-full flex items-center justify-center bg-slate-100 rounded-lg" style="height:80px;display:none">
-                <i class="fas fa-image text-slate-300 text-xl"></i>
-              </div>
-            </div>
-          </div>
+      <!-- Divider MASUK -->
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-px bg-green-100"></div>
+        <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full"><i class="fas fa-sign-in-alt mr-1"></i>MASUK</span>
+        <div class="flex-1 h-px bg-green-100"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Jam Masuk</label>
+          <input id="editCheckIn" type="time" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Lokasi Masuk</label>
+          <select id="editLokasiMasuk" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            <option>Kantor Pusat</option><option>WFH</option><option>Site Project</option><option>Lokasi Klien</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-slate-500 mb-1 block">Rencana Kerja</label>
+        <textarea id="editRencana" rows="2" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm resize-none"></textarea>
+      </div>
+
+      <!-- Divider PULANG -->
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-px bg-blue-100"></div>
+        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full"><i class="fas fa-sign-out-alt mr-1"></i>PULANG</span>
+        <div class="flex-1 h-px bg-blue-100"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Jam Pulang</label>
+          <input id="editCheckOut" type="time" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Lokasi Pulang</label>
+          <select id="editLokasiPulang" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            <option>Kantor Pusat</option><option>WFH</option><option>Site Project</option><option>Lokasi Klien</option>
+          </select>
         </div>
       </div>
 
-      <!-- ══ ADMIN OVERRIDE ══ -->
-      <div class="rounded-xl border border-amber-200 overflow-hidden">
-        <div class="bg-amber-50 px-4 py-2 flex items-center gap-2">
-          <i class="fas fa-shield-halved text-amber-500 text-xs"></i>
-          <span class="text-xs font-bold text-amber-700 uppercase tracking-wide">Override Admin</span>
-          <span class="text-[10px] text-amber-500 ml-1">(kosongkan jika tidak ada perubahan)</span>
-        </div>
-        <div class="p-4 space-y-3">
-          <div>
-            <label class="text-xs font-semibold text-slate-500 mb-1 block">Status Kehadiran</label>
-            <select id="editStatus" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
-              <option>Hadir</option><option>Terlambat</option><option>Alpha</option>
-              <option>Izin</option><option>Sakit</option><option>WFH</option><option>Lembur</option>
-            </select>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-xs font-semibold text-slate-500 mb-1 block">Koreksi Jam Masuk</label>
-              <input id="editCheckIn" type="time" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-slate-500 mb-1 block">Koreksi Jam Pulang</label>
-              <input id="editCheckOut" type="time" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-xs font-semibold text-slate-500 mb-1 block">Koreksi Lokasi Masuk</label>
-              <select id="editLokasiMasuk" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
-                <option>Kantor Pusat</option><option>WFH</option><option>Site Project</option><option>Lokasi Klien</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-slate-500 mb-1 block">Koreksi Lokasi Pulang</label>
-              <select id="editLokasiPulang" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
-                <option>Kantor Pusat</option><option>WFH</option><option>Site Project</option><option>Lokasi Klien</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-500 mb-1 block">Catatan Admin</label>
-            <textarea id="editKeterangan" rows="2" placeholder="Tambahkan catatan koreksi…" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm resize-none"></textarea>
-          </div>
-        </div>
+      <div>
+        <label class="text-xs font-semibold text-slate-500 mb-1 block">Keterangan (Admin)</label>
+        <textarea id="editKeterangan" rows="2" placeholder="Catatan opsional dari admin" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm resize-none"></textarea>
       </div>
-
     </div>
-    <div class="flex gap-3 px-5 pb-5">
+    <div class="flex gap-3 px-6 pb-6">
       <button onclick="closeModal('editModal')" class="flex-1 border border-slate-200 text-slate-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-slate-50">Batal</button>
-      <button onclick="saveEdit()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-2.5 rounded-xl">
-        <i class="fas fa-shield-halved mr-1"></i>Simpan Override
-      </button>
+      <button onclick="saveEdit()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl">Simpan Perubahan</button>
     </div>
   </div>
 </div>
@@ -541,7 +455,7 @@
         <label class="text-xs font-semibold text-slate-500 mb-1 block">Status</label>
         <select id="addStatus" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
           <option>Hadir</option><option>Terlambat</option><option>Alpha</option>
-          <option>Izin</option><option>Sakit</option><option>WFH</option><option>Lembur</option>
+          <option>Izin</option><option>Sakit</option><option>Lembur</option>
         </select>
       </div>
 
@@ -615,6 +529,21 @@
   </div>
 </div>
 
+<!-- ════════════ MODAL: GALLERY ════════════ -->
+<div id="galleryModal" class="modal-wrap">
+  <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl slide-up">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+      <h3 class="text-base font-bold text-gray-800">Foto Kerja</h3>
+      <button onclick="closeModal('galleryModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+        <i class="fas fa-times text-slate-500 text-sm"></i>
+      </button>
+    </div>
+    <div class="p-6">
+      <div id="galleryContent" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast" class="hidden fixed bottom-6 right-4 sm:right-6 z-50 slide-up">
   <div class="bg-gray-900 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5">
@@ -663,10 +592,9 @@ var lokasiList = ['Kantor Pusat','Site Project','WFH','Lokasi Klien'];
 var allAttendance = [];
 
 function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function rndInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
 function generateDummy() {
-  var statuses   = ['Hadir','Hadir','Hadir','Hadir','Hadir','Terlambat','Alpha','Izin','Sakit','WFH','Lembur'];
+  var statuses   = ['Hadir','Hadir','Hadir','Hadir','Hadir','Terlambat','Alpha','Izin','Sakit','Lembur'];
   var checkins   = ['07:45','07:50','07:55','08:00','08:05','08:10','08:15','08:20'];
   var lateins    = ['08:35','08:40','08:50','09:05','09:20','09:45','10:00'];
   var checkouts  = ['17:00','17:10','17:15','17:20','17:25','17:30'];
@@ -691,16 +619,20 @@ function generateDummy() {
       var fotoMasuk = null, fotoPulang = null, fotoKerja = null;
       var seed = s.id * 100 + day;
 
-      if (st === 'Hadir' || st === 'WFH') {
+      var fkCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 photos
+      var fkArr = [];
+      for(var k=0; k<fkCount; k++) fkArr.push('https://picsum.photos/seed/' + (seed*10+k) + '/300/200');
+
+      if (st === 'Hadir') {
         ci = rnd(checkins);
         co = rnd(checkouts);
         dur = calcDur(ci, co);
-        lokasiMasuk  = st === 'WFH' ? 'WFH' : rnd(lokasiList);
+        lokasiMasuk  = rnd(lokasiList);
         lokasiPulang = lokasiMasuk;
         rencana = rnd(rencanaList);
         fotoMasuk  = 'https://i.pravatar.cc/200?img=' + (s.id + (day % 10));
         fotoPulang = 'https://i.pravatar.cc/200?img=' + ((s.id + 5) % 70 + 1);
-        fotoKerja  = 'https://picsum.photos/seed/' + seed + '/300/200';
+        fotoKerja  = fkArr;
       } else if (st === 'Terlambat') {
         ci = rnd(lateins);
         co = rnd(checkouts);
@@ -710,7 +642,7 @@ function generateDummy() {
         rencana = rnd(rencanaList);
         fotoMasuk  = 'https://i.pravatar.cc/200?img=' + (s.id + (day % 8));
         fotoPulang = 'https://i.pravatar.cc/200?img=' + ((s.id + 3) % 70 + 1);
-        fotoKerja  = 'https://picsum.photos/seed/' + (seed+1) + '/300/200';
+        fotoKerja  = fkArr;
       } else if (st === 'Lembur') {
         ci = rnd(checkins);
         co = rnd(lateouts);
@@ -720,7 +652,7 @@ function generateDummy() {
         rencana = rnd(rencanaList);
         fotoMasuk  = 'https://i.pravatar.cc/200?img=' + (s.id + (day % 6));
         fotoPulang = 'https://i.pravatar.cc/200?img=' + ((s.id + 7) % 70 + 1);
-        fotoKerja  = 'https://picsum.photos/seed/' + (seed+2) + '/300/200';
+        fotoKerja  = fkArr;
       }
 
       allAttendance.push({
@@ -732,17 +664,14 @@ function generateDummy() {
         divisi       : s.divisi,
         img          : s.img,
         status       : st,
-        /* MASUK */
         jamMasuk     : ci,
         fotoMasuk    : fotoMasuk,
         lokasiMasuk  : lokasiMasuk,
         rencanaKerja : rencana,
-        /* PULANG */
         jamPulang    : co,
         fotoPulang   : fotoPulang,
         lokasiPulang : lokasiPulang,
         fotoKerja    : fotoKerja,
-        /* extra */
         durasi       : dur,
         keterangan   : '',
       });
@@ -801,8 +730,11 @@ function applyFilters() {
     return true;
   });
 
-  /* Default sort: newest first */
-  filtered.sort(function(a,b){ return a.tanggal < b.tanggal ? 1 : -1; });
+  filtered.sort(function(a,b) {
+    if (a.divisi !== b.divisi) return a.divisi < b.divisi ? -1 : 1;
+    if (a.tanggal !== b.tanggal) return a.tanggal < b.tanggal ? 1 : -1;
+    return a.nama < b.nama ? -1 : 1;
+  });
   currentPage = 1;
   renderStats(filtered);
   renderTable();
@@ -816,13 +748,35 @@ function resetFilters() {
   applyFilters();
 }
 
-/* ─── STATUS CONFIG ─── */
 var statusBadge = { Hadir:'badge-hadir',Terlambat:'badge-terlambat',Alpha:'badge-alpha',Izin:'badge-izin',Sakit:'badge-sakit',Libur:'badge-libur',WFH:'badge-wfh',Lembur:'badge-lembur' };
 var statusIcon  = { Hadir:'fa-circle-check',Terlambat:'fa-clock',Alpha:'fa-user-slash',Izin:'fa-file-alt',Sakit:'fa-heartbeat',Libur:'fa-calendar-times',WFH:'fa-house-laptop',Lembur:'fa-business-time' };
 
-function thumbHtml(url, label) {
-  if (!url) return '<div class="thumb-ph"><i class="fas fa-image text-slate-300" style="font-size:13px"></i></div>';
-  return '<img src="' + url + '" class="thumb" alt="' + (label||'Foto') + '" onclick="openLightbox(\'' + url + '\')" onerror="this.outerHTML=\'<div class=\\\"thumb-ph\\\"><i class=\\\"fas fa-image text-slate-300\\\" style=\\\"font-size:13px\\\"></i></div>\'" />';
+function thumbHtml(urls, label) {
+  if (!urls || urls.length === 0) return '<div class="thumb-ph"><i class="fas fa-image text-slate-300" style="font-size:13px"></i></div>';
+  if (typeof urls === 'string') urls = [urls];
+  var html = '<div class="flex items-center -space-x-2 w-max px-1 py-0.5">';
+  for (var i=0; i<Math.min(urls.length, 3); i++) {
+    html += '<img src="' + urls[i] + '" class="thumb ring-2 ring-white" style="position:relative; z-index:'+(3-i)+'" alt="' + (label||'Foto') + '" onclick="openLightbox(\'' + urls[i] + '\')" onerror="this.outerHTML=\'<div class=&quot;thumb-ph ring-2 ring-white&quot; style=&quot;position:relative; z-index:'+(3-i)+'&quot;><i class=&quot;fas fa-image text-slate-300&quot; style=&quot;font-size:13px&quot;></i></div>\'" />';
+  }
+  if (urls.length > 3) {
+    html += '<div class="thumb ring-2 ring-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500" style="position:relative; z-index:0">+' + (urls.length - 3) + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function thumbGalleryHtml(urls, id) {
+  if (!urls || urls.length === 0) return '<div class="thumb-ph"><i class="fas fa-image text-slate-300" style="font-size:13px"></i></div>';
+  if (typeof urls === 'string') urls = [urls];
+  
+  var html = '<div class="flex items-center gap-2">';
+  html += '<img src="' + urls[0] + '" class="thumb ring-1 ring-slate-200" alt="Foto Kerja" onclick="openLightbox(\'' + urls[0] + '\')" onerror="this.outerHTML=\'<div class=&quot;thumb-ph ring-1 ring-slate-200&quot;><i class=&quot;fas fa-image text-slate-300&quot; style=&quot;font-size:13px&quot;></i></div>\'" />';
+  
+  if (urls.length > 1) {
+    html += '<button onclick="openGallery(' + id + ')" class="h-9 px-2.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors flex items-center gap-1.5 whitespace-nowrap"><i class="fas fa-images text-slate-400"></i> +' + (urls.length - 1) + ' Foto</button>';
+  }
+  html += '</div>';
+  return html;
 }
 
 /* ─── TABLE RENDER ─── */
@@ -854,12 +808,9 @@ function renderTable() {
     var ic = statusIcon[r.status]  || 'fa-question';
     var hasData = (r.jamMasuk !== '—');
 
-    return '<tr class="border-t border-slate-50">'
-      /* # */
+    return '<tr class="border-t border-slate-50 relative">'
       +'<td class="px-3 py-2.5 text-xs text-slate-400">'+(start+i+1)+'</td>'
-      /* Tanggal */
       +'<td class="px-3 py-2.5 text-xs text-slate-600 whitespace-nowrap">'+r.tanggalDisplay+'</td>'
-      /* Staff */
       +'<td class="px-3 py-2.5">'
         +'<div class="flex items-center gap-2">'
           +'<img src="'+r.img+'" class="w-7 h-7 rounded-full object-cover flex-shrink-0" alt="'+r.nama+'" '
@@ -868,7 +819,6 @@ function renderTable() {
             +'<p class="text-[10px] text-slate-400">'+r.divisi+'</p></div>'
         +'</div>'
       +'</td>'
-      /* Status */
       +'<td class="px-3 py-2.5"><span class="badge '+bc+'"><i class="fas '+ic+'"></i>'+r.status+'</span></td>'
 
       /* ── MASUK ── */
@@ -883,19 +833,23 @@ function renderTable() {
       +'<td class="px-3 py-2.5 font-mono text-xs '+(hasData?'text-gray-800':'text-slate-300')+'">'+r.jamPulang+'</td>'
       +'<td class="px-3 py-2.5">'+thumbHtml(r.fotoPulang,'Foto Pulang')+'</td>'
       +'<td class="px-3 py-2.5 text-xs text-slate-500 whitespace-nowrap">'+r.lokasiPulang+'</td>'
-      +'<td class="px-3 py-2.5">'+thumbHtml(r.fotoKerja,'Foto Kerja')+'</td>'
+      +'<td class="px-3 py-2.5">'+thumbGalleryHtml(r.fotoKerja, r.id)+'</td>'
 
-      /* Aksi — dot menu */
-      +'<td class="px-3 py-2.5 text-center">'
-        +'<div class="dot-wrap" id="wrap-'+r.id+'">'
-          +'<button class="dot-btn" onclick="toggleDotMenu(event,'+r.id+')">&#8942;</button>'
-          +'<div class="dot-dropdown" id="dd-'+r.id+'">'
-            +'<button class="dd-detail" onclick="closeDd();viewDetail('+r.id+')"><i class="fas fa-eye" style="color:#3b82f6;width:14px"></i> Lihat Detail</button>'
-            +'<div class="dd-divider"></div>'
-            +'<button class="dd-edit" onclick="closeDd();editRow('+r.id+')"><i class="fas fa-pen" style="color:#d97706;width:14px"></i> Edit Data</button>'
-            +'<div class="dd-divider"></div>'
-            +'<button class="dd-delete" onclick="closeDd();deleteRow('+r.id+')"><i class="fas fa-trash" style="color:#dc2626;width:14px"></i> Hapus</button>'
-          +'</div>'
+      /* Aksi — 3 Dot Menu */
+      +'<td class="px-3 py-2.5 text-center relative sticky right-0 bg-inherit z-10" style="box-shadow:-4px 0 12px rgba(0,0,0,0.02);">'
+        +'<button onclick="toggleDotMenu(event, '+r.id+')" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500 focus:outline-none transition-colors">'
+          +'<i class="fas fa-ellipsis-v"></i>'
+        +'</button>'
+        +'<div id="dotMenu-'+r.id+'" class="hidden absolute right-6 top-2 mt-8 w-36 bg-white border border-slate-100 rounded-xl shadow-lg z-50 text-left overflow-hidden py-1">'
+          +'<button onclick="viewDetail('+r.id+')" class="w-full px-4 py-2 text-xs text-left text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">'
+            +'<i class="fas fa-eye w-4 text-center mr-1"></i> Detail'
+          +'</button>'
+          +'<button onclick="editRow('+r.id+')" class="w-full px-4 py-2 text-xs text-left text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">'
+            +'<i class="fas fa-pencil w-4 text-center mr-1"></i> Edit'
+          +'</button>'
+          +'<button onclick="deleteRow('+r.id+')" class="w-full px-4 py-2 text-xs text-left text-red-600 hover:bg-red-50 transition-colors border-t border-slate-50 mt-1 pt-2">'
+            +'<i class="fas fa-trash w-4 text-center mr-1"></i> Hapus'
+          +'</button>'
         +'</div>'
       +'</td>'
     +'</tr>';
@@ -924,95 +878,128 @@ function goPage(p) {
   renderTable();
 }
 
+/* ─── DOT MENU ─── */
+var activeDotMenu = null;
+function toggleDotMenu(e, id) {
+  e.stopPropagation();
+  var menu = document.getElementById('dotMenu-' + id);
+  if (activeDotMenu && activeDotMenu !== menu) {
+    activeDotMenu.classList.add('hidden');
+  }
+  if (menu.classList.contains('hidden')) {
+    menu.classList.remove('hidden');
+    activeDotMenu = menu;
+  } else {
+    menu.classList.add('hidden');
+    activeDotMenu = null;
+  }
+}
+
+document.addEventListener('click', function(e) {
+  if (activeDotMenu && !e.target.closest('td.relative')) {
+    activeDotMenu.classList.add('hidden');
+    activeDotMenu = null;
+  }
+});
+
 /* ─── DETAIL MODAL ─── */
 function viewDetail(id) {
+  if (activeDotMenu) activeDotMenu.classList.add('hidden');
   var r = allAttendance.find(function(x){ return x.id===id; });
   if (!r) return;
   editingId = id;
 
-  /* Avatar */
-  document.getElementById('detailAvatar').innerHTML = '<img src="'+r.img+'" class="w-10 h-10 rounded-full object-cover" '
+  document.getElementById('detailAvatar').innerHTML = '<img src="'+r.img+'" class="w-11 h-11 rounded-full object-cover" '
     +'onerror="this.src=\'https://ui-avatars.com/api/?name='+encodeURIComponent(r.nama)+'&background=3b82f6&color=fff\'" />';
   document.getElementById('detailTitle').textContent   = r.nama;
-  document.getElementById('detailSubtitle').textContent = r.divisi + ' · ' + r.tanggalDisplay;
+  document.getElementById('detailSubtitle').innerHTML = '<span class="font-bold text-gray-800">' + r.divisi + '</span> <span class="mx-1 inline-block border-l-[1.5px] border-slate-400 h-3 align-middle"></span> <span class="font-medium text-gray-800">' + r.tanggalDisplay + '</span>';
 
   var bc = statusBadge[r.status] || 'badge-libur';
   var ic = statusIcon[r.status]  || 'fa-question';
   var hasData = r.jamMasuk !== '—';
 
-  function photoCard(url, label) {
-    if (!url) {
-      return '<div class="bg-slate-50 rounded-xl flex items-center justify-center" style="aspect-ratio:4/3">'
-        +'<div class="text-center"><i class="fas fa-image text-slate-200 text-3xl mb-2 block"></i><p class="text-xs text-slate-300">Tidak ada foto</p></div></div>';
+  function photoCard(urls, label) {
+    if (!urls || urls.length === 0) {
+      return '<div class="bg-white/50 rounded-xl flex items-center justify-center w-36 h-24 sm:w-44 sm:h-28 border border-green-100">'
+        +'<div class="text-center"><i class="fas fa-image text-slate-200 text-xl mb-1 block"></i><p class="text-[10px] text-slate-400">Kosong</p></div></div>';
     }
-    return '<img src="'+url+'" class="detail-photo" alt="'+label+'" onclick="openLightbox(\''+url+'\')" '
-      +'onerror="this.outerHTML=\'<div class=\\\"bg-slate-50 rounded-xl flex items-center justify-center\\\" style=\\\"aspect-ratio:4/3\\\"><p class=\\\"text-xs text-slate-300\\\">Gagal memuat</p></div>\'" />';
+    if (typeof urls === 'string') urls = [urls];
+    var u = urls[0];
+    return '<img src="'+u+'" class="w-36 h-24 sm:w-44 sm:h-28 object-cover rounded-xl shadow-sm cursor-pointer hover:opacity-90 transition-opacity" alt="'+label+'" onclick="openLightbox(\''+u+'\')" '
+      +'onerror="this.outerHTML=\'<div class=&quot;w-36 h-24 sm:w-44 sm:h-28 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-200&quot;><p class=&quot;text-[10px] text-slate-300&quot;>Err</p></div>\'" />';
+  }
+
+  function photoCardActivity(urls, label) {
+    if (!urls || urls.length === 0) return '';
+    if (typeof urls === 'string') urls = [urls];
+    var html = '<div class="flex flex-wrap gap-3 mt-3">';
+    urls.forEach(function(u) {
+      html += '<img src="'+u+'" class="w-24 h-16 sm:w-32 sm:h-20 object-cover rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity" alt="'+label+'" onclick="openLightbox(\''+u+'\')" '
+        +'onerror="this.outerHTML=\'<div class=&quot;w-24 h-16 sm:w-32 sm:h-20 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-200&quot;><p class=&quot;text-[10px] text-slate-300&quot;>Err</p></div>\'" />';
+    });
+    html += '</div>';
+    return html;
   }
 
   var html = ''
-    /* Status & Tanggal */
-    +'<div class="flex items-center justify-between">'
-      +'<span class="badge '+bc+' text-sm"><i class="fas '+ic+'"></i>'+r.status+'</span>'
-      +'<span class="text-xs text-slate-400">'+r.tanggalDisplay+'</span>'
+    +'<div class="mb-4">'
+      +'<span class="badge '+bc+' text-xs px-3 py-1"><i class="fas '+ic+' mr-1"></i>'+r.status+'</span>'
     +'</div>';
 
   if (hasData) {
     html += ''
-      /* MASUK section */
-      +'<div class="bg-green-50 rounded-xl p-4">'
-        +'<div class="flex items-center gap-2 mb-3">'
-          +'<span class="text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full"><i class="fas fa-sign-in-alt mr-1"></i>MASUK</span>'
-          +'<span class="text-xs text-slate-400 ml-auto">'+r.lokasiMasuk+'</span>'
+      +'<div class="bg-[#f2fdf5] rounded-xl p-4 mb-4">'
+        +'<div class="flex items-center justify-between mb-4">'
+          +'<span class="text-[10px] font-bold text-green-500 bg-green-100/60 px-3 py-1 rounded-full uppercase tracking-widest">MASUK</span>'
+          +'<span class="text-[10px] text-slate-500 font-semibold">Lokasi</span>'
         +'</div>'
-        +'<div class="grid grid-cols-2 gap-4">'
+        +'<div class="grid grid-cols-2 gap-4 mb-2">'
           +'<div>'
-            +'<p class="text-xs text-green-600 font-semibold mb-1">Jam Masuk</p>'
-            +'<p class="text-2xl font-extrabold text-gray-800 font-mono">'+r.jamMasuk+'</p>'
+            +'<p class="text-xs text-green-400 mb-1">Jam Masuk</p>'
+            +'<p class="text-2xl font-medium text-slate-600">'+r.jamMasuk+'</p>'
           +'</div>'
           +'<div>'
-            +'<p class="text-xs text-green-600 font-semibold mb-1">Foto Masuk</p>'
+            +'<p class="text-xs text-green-400 mb-1">Foto Masuk</p>'
             +photoCard(r.fotoMasuk, 'Foto Masuk')
           +'</div>'
         +'</div>'
-        +'<div class="mt-3">'
-          +'<p class="text-xs text-green-600 font-semibold mb-1"><i class="fas fa-tasks mr-1"></i>Rencana Kerja</p>'
-          +'<p class="text-sm text-gray-700 bg-white rounded-lg px-3 py-2">'+r.rencanaKerja+'</p>'
+        +'<div class="mt-4">'
+          +'<p class="text-xs text-green-400 mb-1">Rencana Kerja</p>'
+          +'<div class="bg-white rounded-lg px-4 py-2.5 text-sm text-slate-500 min-h-[40px] shadow-sm border border-green-50">'+r.rencanaKerja+'</div>'
         +'</div>'
       +'</div>'
-
-      /* PULANG section */
-      +'<div class="bg-blue-50 rounded-xl p-4">'
-        +'<div class="flex items-center gap-2 mb-3">'
-          +'<span class="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full"><i class="fas fa-sign-out-alt mr-1"></i>PULANG</span>'
-          +'<span class="text-xs text-slate-400 ml-auto">'+r.lokasiPulang+'</span>'
+      +'<div class="bg-[#f0f5ff] rounded-xl p-4 mb-4">'
+        +'<div class="flex items-center justify-between mb-4">'
+          +'<span class="text-[10px] font-bold text-blue-500 bg-blue-100/60 px-3 py-1 rounded-full uppercase tracking-widest"><i class="fas fa-sign-out-alt mr-1"></i>PULANG</span>'
+          +'<span class="text-[10px] text-slate-500 font-semibold">Lokasi</span>'
         +'</div>'
-        +'<div class="grid grid-cols-2 gap-4 mb-3">'
+        +'<div class="grid grid-cols-2 gap-4">'
           +'<div>'
-            +'<p class="text-xs text-blue-600 font-semibold mb-1">Jam Pulang</p>'
-            +'<p class="text-2xl font-extrabold text-gray-800 font-mono">'+r.jamPulang+'</p>'
-            +'<p class="text-xs text-slate-400 mt-1">Durasi: <b>'+r.durasi+'</b></p>'
+            +'<p class="text-xs text-blue-400 mb-1">Jam Pulang</p>'
+            +'<p class="text-2xl font-medium text-slate-600">'+r.jamPulang+'</p>'
+            +'<p class="text-[11px] text-slate-400 mt-1">Durasi: '+r.durasi+'</p>'
           +'</div>'
           +'<div>'
-            +'<p class="text-xs text-blue-600 font-semibold mb-1">Foto Pulang</p>'
+            +'<p class="text-xs text-blue-400 mb-1">Foto Pulang</p>'
             +photoCard(r.fotoPulang, 'Foto Pulang')
           +'</div>'
         +'</div>'
-        +'<div>'
-          +'<p class="text-xs text-blue-600 font-semibold mb-1"><i class="fas fa-camera mr-1"></i>Foto Kerja</p>'
-          +photoCard(r.fotoKerja, 'Foto Kerja')
+      +'</div>'
+      +'<div class="my-6 border-t-[1.5px] border-slate-200"></div>'
+      +'<div>'
+        +'<div class="flex items-center gap-2 mb-3">'
+          +'<i class="fas fa-clipboard-list text-gray-800 text-lg"></i>'
+          +'<p class="text-base font-semibold text-gray-800">Activity</p>'
         +'</div>'
+        +'<div class="bg-white border-[1.5px] border-gray-800 rounded-xl p-4 min-h-[90px] mb-4 text-sm text-gray-700 shadow-sm">'
+          +(r.keterangan ? r.keterangan : '')
+        +'</div>'
+        +photoCardActivity(r.fotoKerja, 'Foto Kerja')
       +'</div>';
   } else {
     html += '<div class="bg-slate-50 rounded-xl p-6 text-center">'
       +'<i class="fas fa-calendar-times text-slate-300 text-3xl mb-2 block"></i>'
       +'<p class="text-sm text-slate-400">Tidak ada data kehadiran untuk hari ini</p>'
-    +'</div>';
-  }
-
-  if (r.keterangan) {
-    html += '<div class="border border-slate-100 rounded-xl p-3">'
-      +'<p class="text-xs font-semibold text-slate-400 mb-1">Keterangan</p>'
-      +'<p class="text-sm text-gray-700">'+r.keterangan+'</p>'
     +'</div>';
   }
 
@@ -1027,10 +1014,16 @@ function editFromDetail() {
 
 /* ─── EDIT ─── */
 function editRow(id) {
+  if (activeDotMenu) activeDotMenu.classList.add('hidden');
   var r = allAttendance.find(function(x){ return x.id===id; });
   if (!r) return;
   editingId = id;
-  document.getElementById('editNama').value        = r.nama + ' — ' + r.tanggalDisplay;
+  
+  // Set Staff info details
+  document.getElementById('editAvatar').src = r.img;
+  document.getElementById('editNamaDisplay').textContent = r.nama;
+  document.getElementById('editSubDisplay').textContent = r.divisi + ' · ' + r.tanggalDisplay;
+
   document.getElementById('editStatus').value      = r.status;
   document.getElementById('editCheckIn').value     = r.jamMasuk === '—' ? '' : r.jamMasuk;
   document.getElementById('editLokasiMasuk').value = r.lokasiMasuk !== '—' ? r.lokasiMasuk : 'Kantor Pusat';
@@ -1062,6 +1055,7 @@ function saveEdit() {
 
 /* ─── DELETE ─── */
 function deleteRow(id) {
+  if (activeDotMenu) activeDotMenu.classList.add('hidden');
   var r = allAttendance.find(function(x){ return x.id===id; });
   if (!r) return;
   deletingId = id;
@@ -1132,22 +1126,32 @@ function exportCSV() {
   showToast('CSV berhasil diexport 📄', 'success');
 }
 
-/* ─── REFRESH ─── */
 function refreshData() {
   var ic = document.getElementById('refreshIcon');
   ic.classList.add('spin');
   setTimeout(function(){ ic.classList.remove('spin'); applyFilters(); showToast('Data diperbarui','success'); }, 900);
 }
 
-/* ─── LIGHTBOX ─── */
+function openGallery(id) {
+  if (activeDotMenu) activeDotMenu.classList.add('hidden');
+  var r = allAttendance.find(function(x){ return x.id===id; });
+  if (!r || !r.fotoKerja) return;
+  var urls = typeof r.fotoKerja === 'string' ? [r.fotoKerja] : r.fotoKerja;
+  var html = '';
+  urls.forEach(function(u) {
+    html += '<img src="'+u+'" class="w-full aspect-[4/3] object-cover rounded-xl shadow-sm cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(\''+u+'\')" onerror="this.outerHTML=\'<div class=&quot;w-full aspect-[4/3] bg-slate-50 rounded-xl flex items-center justify-center border border-slate-200&quot;><p class=&quot;text-[10px] text-slate-300&quot;>Err</p></div>\'" />';
+  });
+  document.getElementById('galleryContent').innerHTML = html;
+  openModal('galleryModal');
+}
+
 function openLightbox(src) {
   document.getElementById('lightboxImg').src = src;
   document.getElementById('lightbox').classList.add('open');
 }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
-document.addEventListener('keydown', function(e){ if(e.key==='Escape') { closeLightbox(); ['detailModal','editModal','addManualModal','deleteModal'].forEach(function(id){closeModal(id);}); closeSidebar(); } });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') { closeLightbox(); ['detailModal','editModal','addManualModal','deleteModal','galleryModal'].forEach(function(id){closeModal(id);}); closeSidebar(); if(activeDotMenu) activeDotMenu.classList.add('hidden'); } });
 
-/* ─── SIDEBAR ─── */
 var sidebarOpen = false;
 function toggleSidebar(){ sidebarOpen ? closeSidebar() : openSidebar(); }
 function openSidebar(){ document.getElementById('sidebar').style.transform='translateX(0)'; document.getElementById('overlay').classList.remove('hidden'); sidebarOpen=true; }
@@ -1158,16 +1162,13 @@ function handleResize(){
 }
 window.addEventListener('resize',handleResize);
 
-/* ─── MODAL ─── */
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-document.addEventListener('click',function(e){ ['detailModal','editModal','addManualModal','deleteModal'].forEach(function(id){ var m=document.getElementById(id); if(e.target===m) m.classList.remove('open'); }); });
+document.addEventListener('click',function(e){ ['detailModal','editModal','addManualModal','deleteModal','galleryModal'].forEach(function(id){ var m=document.getElementById(id); if(e.target===m) m.classList.remove('open'); }); });
 
-/* ─── TOAST ─── */
 var toastTimer;
 function showToast(msg,type){ type=type||'success'; var icons={success:'fa-check-circle text-green-400',error:'fa-exclamation-circle text-red-400',info:'fa-info-circle text-blue-400'}; document.getElementById('toastIcon').className='fas '+(icons[type]||icons.success); document.getElementById('toastMsg').textContent=msg; var t=document.getElementById('toast'); t.classList.remove('hidden'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.add('hidden'); },3200); }
 
-/* ─── INIT ─── */
 document.addEventListener('DOMContentLoaded', function() {
   generateDummy();
   populateStaffDropdown();
