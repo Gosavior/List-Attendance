@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – Daftar Absensi | PT. Artha Solusi Aditama</title>
+  <meta name="description" content="Halaman admin untuk melihat dan mengelola daftar absensi seluruh staff." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','system-ui','sans-serif'] } } } }
+  </script>
+
+  <style>
+    body { font-family:'Inter',system-ui,sans-serif; }
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:#f1f5f9; }
+    ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:99px; }
+    ::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+
+    #sidebar { transition:transform .3s cubic-bezier(.4,0,.2,1); }
+    .nav-item { display:flex; align-items:center; gap:.75rem; padding:.6rem .75rem; border-radius:.75rem; font-size:.875rem; font-weight:500; color:#475569; transition:background .15s,color .15s; }
+    .nav-item:hover { background:#f8fafc; }
+    .nav-item.active { background:#eff6ff; color:#2563eb; font-weight:600; }
+
+    .card-lift { transition:box-shadow .2s,transform .2s; }
+    .card-lift:hover { box-shadow:0 6px 24px rgba(0,0,0,.07); transform:translateY(-1px); }
+
+    .modal-wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,.58); backdrop-filter:blur(4px); z-index:50; align-items:center; justify-content:center; padding:1rem; }
+    .modal-wrap.open { display:flex; }
+
+    @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .slide-up { animation:slideUp .25s ease-out; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .spin { animation:spin .7s linear infinite; }
+
+    /* Grouped table header */
+    .th-group-in  { background:#f0fdf4; color:#15803d; }
+    .th-group-out { background:#eff6ff; color:#1d4ed8; }
+    .th-base      { background:#f8fafc; color:#64748b; }
+
+    thead th { position:sticky; top:0; z-index:5; }
+
+    tbody tr { transition:background .12s; }
+    tbody tr:hover { background:#f8fafc; }
+
+    .badge { display:inline-flex; align-items:center; gap:.3rem; font-size:11px; font-weight:600; padding:.22rem .6rem; border-radius:9999px; white-space:nowrap; }
+    .badge-hadir    { background:#dcfce7; color:#15803d; }
+    .badge-terlambat{ background:#fef9c3; color:#a16207; }
+    .badge-alpha    { background:#fee2e2; color:#b91c1c; }
+    .badge-izin     { background:#e0f2fe; color:#0369a1; }
+    .badge-sakit    { background:#f3e8ff; color:#7c3aed; }
+    .badge-libur    { background:#f1f5f9; color:#64748b; }
+    .badge-wfh      { background:#fff7ed; color:#c2410c; }
+    .badge-lembur   { background:#fce7f3; color:#be185d; }
+
+    .stat-gradient-hadir    { background:linear-gradient(135deg,#22c55e,#16a34a); }
+    .stat-gradient-terlambat{ background:linear-gradient(135deg,#eab308,#ca8a04); }
+    .stat-gradient-alpha    { background:linear-gradient(135deg,#ef4444,#dc2626); }
+    .stat-gradient-izin     { background:linear-gradient(135deg,#3b82f6,#2563eb); }
+    .stat-gradient-total    { background:linear-gradient(135deg,#6366f1,#4f46e5); }
+
+    /* Photo thumbnail - diperbesar */
+    .thumb { width:54px; height:54px; object-fit:cover; border-radius:.6rem; border:1.5px solid #e2e8f0; cursor:pointer; transition:opacity .15s,transform .15s; }
+    .thumb:hover { opacity:.85; transform:scale(1.05); }
+    .thumb-ph { width:54px; height:54px; border-radius:.6rem; background:#f1f5f9; border:1.5px dashed #cbd5e1; display:flex; align-items:center; justify-content:center; }
+
+    /* Stacked Photos Component */
+    .photo-stack { position:relative; width:54px; height:54px; cursor:pointer; display:inline-block; }
+    .photo-stack-img { position:absolute; width:54px; height:54px; object-fit:cover; border-radius:.6rem; border:1.5px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform .2s ease, opacity .2s ease; }
+    .photo-stack-img:nth-child(1) { z-index:3; top:0; left:0; }
+    .photo-stack-img:nth-child(2) { z-index:2; top:-3px; left:4px; transform:scale(0.94); opacity:0.9; }
+    .photo-stack-img:nth-child(3) { z-index:1; top:-6px; left:8px; transform:scale(0.88); opacity:0.7; }
+    
+    .photo-stack:hover .photo-stack-img:nth-child(1) { transform:translateY(-2px); }
+    .photo-stack:hover .photo-stack-img:nth-child(2) { transform:translateY(-3px) translateX(2px) scale(0.94); }
+    .photo-stack:hover .photo-stack-img:nth-child(3) { transform:translateY(-4px) translateX(4px) scale(0.88); }
+    
+    .photo-stack-indicator { position:absolute; z-index:4; bottom:-5px; right:-5px; background:#2563eb; color:white; font-size:9px; font-weight:800; border-radius:99px; padding:1px 4px; border:1.5px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
+
+    /* Lightbox */
+    #lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:100; align-items:center; justify-content:center; cursor:pointer; }
+    #lightbox.open { display:flex; }
+    #lightbox img { max-width:90vw; max-height:85vh; border-radius:1rem; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+
+    /* Detail photo */
+    .detail-photo { width:100%; height:120px; object-fit:cover; object-position:center; border-radius:.6rem; cursor:pointer; transition:opacity .15s; }
+    .detail-photo:hover { opacity:.9; }
+    
+    /* Face match / pulang photo — diperbarui agar tidak terpotong (contain) */
+    .face-match-photo { 
+      width: 100%; 
+      height: auto; 
+      max-height: 160px; 
+      object-fit: contain; 
+      object-position: center; 
+      border-radius:.75rem; 
+      cursor:pointer; 
+      transition:opacity .15s,transform .15s; 
+      border:2px solid #dcfce7;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+      background-color: #f8fafc; 
+    }
+    .face-match-photo:hover { opacity:.9; transform:scale(1.01); }
+    .face-match-photo.blue-border { border-color:#bfdbfe; }
+
+    /* Input focus */
+    input:focus, select:focus, textarea:focus { outline:none; border-color:#3b82f6 !important; box-shadow:0 0 0 3px rgba(59,130,246,.1); }
+
+    /* Dropdown Titik 3 Menu */
+    .dot-btn { width:32px; height:32px; border-radius:8px; background:#f8fafc; border:1px solid #e2e8f0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; color:#475569; font-size:16px; font-weight:bold; line-height:1; }
+    .dot-btn:hover { background:#f1f5f9; }
+    .dot-wrap { position:relative; display:inline-block; }
+    .dot-dropdown { display:none; position:absolute; right:0; top:calc(100% + 4px); background:#fff; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,.12); z-index:40; min-width:150px; overflow:hidden; }
+    .dot-dropdown.open { display:block; animation:slideUp .15s ease-out; }
+    .dot-dropdown button { display:flex; align-items:center; gap:10px; width:100%; padding:10px 14px; font-size:12px; font-weight:500; color:#374151; background:transparent; border:none; cursor:pointer; transition:background .12s; text-align:left; }
+    .dot-dropdown button:hover { background:#f8fafc; }
+    .dot-dropdown button.dd-detail:hover { color:#2563eb; background:#eff6ff; }
+    .dot-dropdown button.dd-edit:hover   { color:#d97706; background:#fffbeb; }
+    .dot-dropdown button.dd-delete:hover { color:#dc2626; background:#fef2f2; }
+    .dot-dropdown .dd-divider { height:1px; background:#f1f5f9; margin:2px 0; }
+
+    /* Edit modal variables preview */
+    .submitted-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px; }
+    .submitted-label { font-size:10px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:.05em; margin-bottom:2px; display:block; }
+    .submitted-val { font-size:13px; color:#374151; font-weight:500; }
+  </style>
+</head>
+<body class="bg-slate-50 text-gray-800 antialiased">
+
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="Foto Preview" />
+</div>
+
+<div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="closeSidebar()"></div>
+
+<aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 z-50 flex flex-col shadow-xl" style="transform:translateX(-100%)">
+  <div class="flex items-center gap-3 px-5 py-5 border-b border-slate-100">
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow">
+      <i class="fas fa-building text-white text-sm"></i>
+    </div>
+    <div>
+      <p class="text-sm font-bold text-gray-800">ASA Admin</p>
+      <p class="text-xs text-slate-400">PT. Artha Solusi Aditama</p>
+    </div>
+  </div>
+  <div class="mx-4 my-4 p-3 bg-red-50 rounded-xl flex items-center gap-3">
+    <img src="https://i.pravatar.cc/80?img=8" class="w-9 h-9 rounded-full ring-2 ring-red-200" alt="Admin"
+      onerror="this.src='https://ui-avatars.com/api/?name=Admin&background=dc2626&color=fff'" />
+    <div class="min-w-0">
+      <p class="text-xs font-semibold text-gray-800 truncate">Administrator</p>
+      <p class="text-xs text-red-500">Super Admin</p>
+    </div>
+    <span class="ml-auto w-2 h-2 rounded-full bg-green-400 flex-shrink-0"></span>
+  </div>
+  <nav class="flex-1 px-3 pb-4 overflow-y-auto space-y-0.5">
+    <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Menu Admin</p>
+    <a href="#" class="nav-item"><i class="fas fa-home w-4 text-center"></i> Dashboard</a>
+    <a href="#" class="nav-item active"><i class="fas fa-clipboard-check w-4 text-center"></i> Daftar Absensi</a>
+    <a href="#" class="nav-item"><i class="fas fa-users w-4 text-center"></i> Manajemen Staff</a>
+    <a href="#" class="nav-item"><i class="fas fa-calendar-alt w-4 text-center"></i> Jadwal Kerja</a>
+    <a href="#" class="nav-item"><i class="fas fa-tools w-4 text-center"></i> Alat & Inventaris</a>
+    <a href="#" class="nav-item"><i class="fas fa-money-bill-wave w-4 text-center"></i> Payroll</a>
+    <a href="#" class="nav-item"><i class="fas fa-chart-bar w-4 text-center"></i> Laporan</a>
+    <a href="#" class="nav-item"><i class="fas fa-umbrella-beach w-4 text-center"></i> Cuti & Izin</a>
+    <p class="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Sistem</p>
+    <a href="#" class="nav-item"><i class="fas fa-cog w-4 text-center"></i> Pengaturan</a>
+    <a href="#" class="nav-item" style="color:#ef4444"><i class="fas fa-sign-out-alt w-4 text-center"></i> Keluar</a>
+  </nav>
+  <div class="px-5 py-3 border-t border-slate-100 text-center">
+    <p class="text-[10px] text-slate-300">v2.0.0 · 2026</p>
+  </div>
+</aside>
+
+<div id="mainWrap" class="flex flex-col min-h-screen" style="transition:margin .3s">
+
+  <header class="sticky top-0 z-30 bg-white border-b border-slate-100 shadow-sm">
+    <div class="flex items-center justify-between px-4 sm:px-6 h-16 gap-3">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+          <i class="fas fa-bars text-slate-600"></i>
+        </button>
+        <div>
+          <h1 class="text-base font-bold text-gray-800">Daftar Absensi</h1>
+          <p class="text-xs text-slate-400 hidden sm:block" id="headerDate">—</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-2 border border-slate-200 bg-slate-50 rounded-xl px-3 py-2">
+          <i class="fas fa-search text-slate-400 text-xs"></i>
+          <input type="search" id="globalSearch" placeholder="Cari nama / divisi…" oninput="applyFilters()"
+            class="bg-transparent text-sm text-gray-700 outline-none placeholder-slate-400 w-40" />
+        </div>
+        <button class="relative w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+          <i class="fas fa-bell text-slate-600 text-sm"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <div class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-slate-100 cursor-pointer">
+          <img src="https://i.pravatar.cc/80?img=8" class="w-8 h-8 rounded-full ring-1 ring-slate-200" alt="Admin" />
+          <span class="text-sm font-medium text-gray-700 hidden sm:block">Admin</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 p-4 sm:p-5 xl:p-6 space-y-5">
+
+    <div class="flex items-center gap-2 text-xs text-slate-400">
+      <a href="#" class="hover:text-blue-500">Dashboard</a>
+      <i class="fas fa-chevron-right text-[9px]"></i>
+      <span class="text-gray-600 font-medium">Daftar Absensi</span>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3" id="statCards"></div>
+
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+      <div class="flex flex-wrap gap-3 items-end">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-500">Dari Tanggal</label>
+          <input type="date" id="filterFrom" onchange="applyFilters()" class="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-500">Sampai Tanggal</label>
+          <input type="date" id="filterTo" onchange="applyFilters()" class="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-500">Status</label>
+          <select id="filterStatus" onchange="applyFilters()" class="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white">
+            <option value="">Semua Status</option>
+            <option>Hadir</option><option>Terlambat</option><option>Alpha</option>
+            <option>Izin</option><option>Sakit</option><option>Libur</option>
+            <option>WFH</option><option>Lembur</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-500">Divisi</label>
+          <select id="filterDivisi" onchange="applyFilters()" class="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white">
+            <option value="">Semua Divisi</option>
+            <option>Programmer</option><option>Technician</option><option>Sales</option>
+            <option>HR</option><option>Finance</option><option>Office</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1 flex-1 min-w-[150px] md:hidden">
+          <label class="text-xs font-semibold text-slate-500">Cari</label>
+          <input type="search" id="mobileSearch" placeholder="Nama…" oninput="applyFilters()" class="border border-slate-200 rounded-xl px-3 py-2 text-sm w-full" />
+        </div>
+        <div class="flex items-end gap-2 ml-auto flex-wrap">
+          <button onclick="resetFilters()" class="flex items-center gap-1.5 border border-slate-200 text-slate-600 text-sm font-medium px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors">
+            <i class="fas fa-rotate-left text-xs"></i> Reset
+          </button>
+          <button onclick="exportCSV()" class="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-3 py-2 rounded-xl transition-colors">
+            <i class="fas fa-file-csv text-xs"></i> Export CSV
+          </button>
+          <button onclick="openModal('addManualModal')" class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-3 py-2 rounded-xl transition-colors">
+            <i class="fas fa-plus text-xs"></i> Tambah Manual
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-clipboard-list text-blue-600"></i>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-gray-800">Rekap Absensi Staff</p>
+            <p class="text-xs text-slate-400" id="tableSubtitle">Memuat data…</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="perPage" onchange="renderTable()" class="border border-slate-200 rounded-xl px-2 py-1.5 text-xs bg-white">
+            <option value="10">10/hal</option>
+            <option value="25" selected>25/hal</option>
+            <option value="50">50/hal</option>
+          </select>
+          <button onclick="refreshData()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+            <i class="fas fa-sync-alt text-slate-500 text-xs" id="refreshIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="hidden lg:block overflow-x-auto">
+        <table class="w-full text-xs" style="min-width:1100px">
+          <thead>
+            <tr class="border-b border-slate-200">
+              <th class="th-base px-3 py-2 text-left" rowspan="2">#</th>
+              <th class="th-base px-3 py-2 text-left" rowspan="2">Tanggal</th>
+              <th class="th-base px-3 py-2 text-left" rowspan="2">Staff</th>
+              <th class="th-base px-3 py-2 text-left" rowspan="2">Status</th>
+              <th class="th-group-in px-3 py-2 text-center font-bold text-xs" colspan="4">
+                <i class="fas fa-sign-in-alt mr-1"></i>MASUK
+              </th>
+              <th class="th-group-out px-3 py-2 text-center font-bold text-xs" colspan="4">
+                <i class="fas fa-sign-out-alt mr-1"></i>PULANG
+              </th>
+              <th class="th-base px-3 py-2 text-center" rowspan="2">Aksi</th>
+            </tr>
+            <tr class="border-b border-slate-200 text-[11px] font-semibold uppercase tracking-wide">
+              <th class="th-group-in px-3 py-2 text-left">Jam</th>
+              <th class="th-group-in px-3 py-2 text-left">Foto</th>
+              <th class="th-group-in px-3 py-2 text-left">Lokasi</th>
+              <th class="th-group-in px-3 py-2 text-left">Rencana Kerja</th>
+              <th class="th-group-out px-3 py-2 text-left">Jam</th>
+              <th class="th-group-out px-3 py-2 text-left">Foto Pulang</th>
+              <th class="th-group-out px-3 py-2 text-left">Lokasi</th>
+              <th class="th-group-out px-3 py-2 text-left">Foto Aktivitas</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Mobile view cards -->
+      <div id="attendanceCards" class="lg:hidden divide-y divide-slate-100 bg-white"></div>
+
+      <div id="emptyState" class="hidden text-center py-16">
+        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-clipboard-list text-slate-300 text-2xl"></i>
+        </div>
+        <p class="text-sm font-semibold text-gray-400">Tidak ada data ditemukan</p>
+        <p class="text-xs text-slate-300 mt-1">Coba ubah filter atau kata kunci pencarian</p>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-t border-slate-100">
+        <p class="text-xs text-slate-400" id="paginationInfo">—</p>
+        <div class="flex items-center gap-1" id="paginationBtns"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 px-6 border-t border-slate-100 text-xs text-slate-400 text-center">
+    &copy; 2026 PT. Artha Solusi Aditama &middot; Admin Panel v2.0
+  </footer>
+</div>
+
+<div id="detailModal" class="modal-wrap">
+  <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl slide-up overflow-hidden" style="max-height:90vh;overflow-y:auto">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+      <div class="flex items-center gap-3">
+        <div id="detailAvatar" class="w-10 h-10 rounded-full bg-blue-100 flex-shrink-0"></div>
+        <div>
+          <h3 class="text-base font-bold text-gray-800" id="detailTitle">Detail Absensi</h3>
+          <p class="text-xs text-slate-400" id="detailSubtitle">—</p>
+        </div>
+      </div>
+      <button onclick="closeModal('detailModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-times text-slate-500 text-sm"></i>
+      </button>
+    </div>
+    <div class="p-6 space-y-4" id="detailContent"></div>
+    <div class="px-6 pb-6 flex gap-3">
+      <button onclick="closeModal('detailModal')" class="flex-1 border border-slate-200 text-slate-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-slate-50">Tutup</button>
+      <button onclick="editFromDetail()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl">
+        <i class="fas fa-pencil mr-1"></i>Edit
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="editModal" class="modal-wrap">
+  <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl slide-up" style="max-height:90vh;overflow-y:auto">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+      <div>
+        <h3 class="text-base font-bold text-gray-800">Edit / Override Absensi</h3>
+        <p class="text-xs text-slate-400">Pembaruan data absensi staff dengan otorisasi Administrator</p>
+      </div>
+      <button onclick="closeModal('editModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+        <i class="fas fa-times text-slate-500 text-sm"></i>
+      </button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-3">
+        <div id="editAvatarWrap"></div>
+        <div>
+          <p class="text-sm font-bold text-gray-800" id="editNamaDisplay">—</p>
+          <p class="text-xs text-slate-400" id="editSubDisplay">—</p>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-amber-200 overflow-hidden">
+        <div class="bg-amber-50 px-4 py-2 flex items-center gap-2">
+          <i class="fas fa-shield-halved text-amber-500 text-xs"></i>
+          <span class="text-xs font-bold text-amber-700 uppercase tracking-wide">Override Parameter Admin</span>
+        </div>
+        <div class="p-4 space-y-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-500 mb-1 block">Status Kehadiran</label>
+            <select id="editStatus" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+              <option>Hadir</option><option>Terlambat</option><option>Alpha</option>
+              <option>Izin</option><option>Sakit</option><option>WFH</option><option>Lembur</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-500 mb-1 block">Koreksi Jam Masuk</label>
+              <input id="editCheckIn" type="time" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-500 mb-1 block">Koreksi Jam Pulang</label>
+              <input id="editCheckOut" type="time" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-500 mb-1 block">Koreksi Lokasi Masuk</label>
+              <select id="editLokasiMasuk" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+                <option>Kantor Pusat</option><option>WFH</option><option>Site Project</option><option>Lokasi Klien</option><option>—</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-500 mb-1 block">Koreksi Lokasi Pulang</label>
+              <select id="editLokasiPulang" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+                <option>Kantor Pusat</option><option>WFH</option><option>Site Project</option><option>Lokasi Klien</option><option>—</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 mb-1 block">Rencana / Aktivitas Kerja</label>
+            <textarea id="editRencana" rows="2" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm resize-none"></textarea>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 mb-1 block">Catatan Tambahan Admin</label>
+            <textarea id="editKeterangan" rows="2" placeholder="Masukkan alasan penyesuaian data atau keterangan…" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm resize-none"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-3 px-5 pb-5">
+      <button onclick="closeModal('editModal')" class="flex-1 border border-slate-200 text-slate-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-slate-50">Batal</button>
+      <button onclick="saveEdit()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-2.5 rounded-xl">
+        <i class="fas fa-save mr-1"></i>Simpan Perubahan
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="addManualModal" class="modal-wrap">
+  <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl slide-up" style="max-height:90vh;overflow-y:auto">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+      <h3 class="text-base font-bold text-gray-800">Tambah Absensi Manual</h3>
+      <button onclick="closeModal('addManualModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center">
+        <i class="fas fa-times text-slate-500 text-sm"></i>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Tanggal</label>
+          <input id="addDate" type="date" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Staff</label>
+          <select id="addStaff" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-slate-500 mb-1 block">Status</label>
+        <select id="addStatus" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+          <option>Hadir</option><option>Terlambat</option><option>Alpha</option>
+          <option>Izin</option><option>Sakit</option><option>WFH</option><option>Lembur</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-px bg-green-100"></div>
+        <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full"><i class="fas fa-sign-in-alt mr-1"></i>MASUK</span>
+        <div class="flex-1 h-px bg-green-100"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Jam Masuk</label>
+          <input id="addCheckIn" type="time" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Lokasi Masuk</label>
+          <select id="addLokasiMasuk" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            <option>Kantor Pusat</option><option>WFH</option><option>Site Project</option><option>Lokasi Klien</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-slate-500 mb-1 block">Rencana Kerja</label>
+        <textarea id="addRencana" rows="2" placeholder="Tulis rencana kerja…" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm resize-none"></textarea>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-px bg-blue-100"></div>
+        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full"><i class="fas fa-sign-out-alt mr-1"></i>PULANG</span>
+        <div class="flex-1 h-px bg-blue-100"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Jam Pulang</label>
+          <input id="addCheckOut" type="time" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 mb-1 block">Lokasi Pulang</label>
+          <select id="addLokasiPulang" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            <option>Kantor Pusat</option><option>WFH</option><option>Site Project</option><option>Lokasi Klien</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-slate-500 mb-1 block">Keterangan / Catatan</label>
+        <textarea id="addKeterangan" rows="2" placeholder="Opsional…" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm resize-none"></textarea>
+      </div>
+    </div>
+    <div class="flex gap-3 px-6 pb-6">
+      <button onclick="closeModal('addManualModal')" class="flex-1 border border-slate-200 text-slate-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-slate-50">Batal</button>
+      <button onclick="saveManual()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div id="galleryModal" class="modal-wrap">
+  <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl slide-up flex flex-col" style="max-height:85vh">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+      <div>
+        <h3 class="text-base font-bold text-gray-800">Dokumentasi Aktivitas Kerja</h3>
+        <p class="text-xs text-slate-400" id="gallerySubtitle">—</p>
+      </div>
+      <button onclick="closeModal('galleryModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-times text-slate-500 text-sm"></i>
+      </button>
+    </div>
+    <div class="p-6 overflow-y-auto flex-1 bg-slate-50">
+      <div id="galleryContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+    </div>
+    <div class="px-6 py-3.5 border-t border-slate-100 bg-white flex justify-end">
+      <button onclick="closeModal('galleryModal')" class="border border-slate-200 text-slate-600 text-sm font-semibold px-5 py-2 rounded-xl hover:bg-slate-50 transition-colors">Tutup Galeri</button>
+    </div>
+  </div>
+</div>
+
+<div id="deleteModal" class="modal-wrap">
+  <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl slide-up">
+    <div class="p-6 text-center">
+      <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-trash-alt text-red-500 text-xl"></i>
+      </div>
+      <h3 class="text-base font-bold text-gray-800 mb-1">Hapus Rekor Absensi?</h3>
+      <p class="text-sm text-slate-500 mb-5" id="deleteConfirmText">Tindakan ini permanen dan menghapus rekap dari database harian.</p>
+      <div class="flex gap-3">
+        <button onclick="closeModal('deleteModal')" class="flex-1 border border-slate-200 text-slate-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-slate-50">Batal</button>
+        <button onclick="confirmDelete()" class="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2.5 rounded-xl">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="hidden fixed bottom-6 right-4 sm:right-6 z-50 slide-up">
+  <div class="bg-gray-900 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5">
+    <i id="toastIcon" class="fas fa-check-circle text-green-400"></i>
+    <span id="toastMsg">Berhasil!</span>
+  </div>
+</div>
+
+<script>
+/* ─── GLOBAL CONFIGS & LISTS ─── */
+var staffList = [
+  { id:1, nama:'Richard Cahyadi',   divisi:'Programmer', img:'https://i.pravatar.cc/60?img=11' },
+  { id:2, nama:'Ridho Pratama',     divisi:'Programmer', img:'https://i.pravatar.cc/60?img=3'  },
+  { id:3, nama:'Abdul Hakim',       divisi:'Sales',      img:'https://i.pravatar.cc/60?img=12' },
+  { id:4, nama:'Zikri Ananda',      divisi:'Technician', img:'https://i.pravatar.cc/60?img=18' },
+  { id:5, nama:'Marvin Sentosa',    divisi:'Technician', img:'https://i.pravatar.cc/60?img=7'  },
+  { id:6, nama:'Clareta Dewi',      divisi:'HR',         img:'https://i.pravatar.cc/60?img=5'  },
+  { id:7, nama:'Olivin Pratiwi',    divisi:'Sales',      img:'https://i.pravatar.cc/60?img=25' },
+  { id:8, nama:'Joen Simanjuntak',  divisi:'Office',     img:'https://i.pravatar.cc/60?img=14' },
+  { id:9, nama:'Felicia Anggraeni', divisi:'Technician', img:'https://i.pravatar.cc/60?img=49' },
+  { id:10, nama:'Budi Santoso',      divisi:'Finance',    img:'https://i.pravatar.cc/60?img=33' }
+];
+
+var rencanaList = [
+  'Pengerjaan proyek sistem monitoring HVAC',
+  'Meeting klien PT. Wijaya Karya',
+  'Maintenance server rutin bulanan',
+  'Development sprint minggu ke-3',
+  'Training karyawan baru',
+  'Site survey gedung baru',
+  'Review laporan keuangan bulanan',
+  'Instalasi AC unit di lantai 3',
+  'Presentasi proposal teknis',
+  'Troubleshooting sistem jaringan internal'
+];
+
+var lokasiList = ['Kantor Pusat','Site Project','WFH','Lokasi Klien'];
+var allAttendance = [];
+var filtered = [];
+var currentPage = 1;
+var editingId = null;
+var deletingId = null;
+
+function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function rndInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+/* DUMMY GENERATOR */
+function generateDummy() {
+  var statuses = ['Hadir','Hadir','Hadir','Hadir','Terlambat','Alpha','Izin','Sakit','WFH','Lembur'];
+  var checkins = ['07:45','07:50','07:55','08:00','08:05'];
+  var lateins  = ['08:35','08:50','09:15','09:40'];
+  var checkouts = ['17:00','17:10','17:25','17:30'];
+  var today = new Date();
+  var id = 1;
+
+  for (var day = 15; day >= 0; day--) {
+    var d = new Date(today);
+    d.setDate(d.getDate() - day);
+    var dow = d.getDay();
+    var dateStr = d.toISOString().split('T')[0];
+    var displayDate = d.toLocaleDateString('id-ID', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+    var isWeekend = (dow === 0 || dow === 6);
+
+    staffList.forEach(function(s) {
+      var st = isWeekend ? 'Libur' : rnd(statuses);
+      var ci = '—', co = '—', dur = '—';
+      var locIn = '—', locOut = '—';
+      var rencana = '—';
+      var fIn = null, fOut = null, fKerja = [];
+      var seed = s.id * 100 + day;
+
+      if (st === 'Hadir' || st === 'WFH' || st === 'Terlambat' || st === 'Lembur') {
+        ci = (st === 'Terlambat') ? rnd(lateins) : rnd(checkins);
+        co = rnd(checkouts);
+        dur = calcDur(ci, co);
+        locIn = (st === 'WFH') ? 'WFH' : rnd(lokasiList);
+        locOut = locIn;
+        rencana = rnd(rencanaList);
+        fIn = 'https://i.pravatar.cc/150?img=' + (s.id + (day % 15));
+        fOut = 'https://i.pravatar.cc/150?img=' + ((s.id + 7) % 60);
+        var countPhotos = rndInt(1, 4);
+        for(var p = 0; p < countPhotos; p++) {
+          fKerja.push('https://picsum.photos/seed/' + (seed + p * 15) + '/400/300');
+        }
+      }
+
+      allAttendance.push({
+        id: id++,
+        tanggal: dateStr,
+        tanggalDisplay: displayDate,
+        staffId: s.id,
+        nama: s.nama,
+        divisi: s.divisi,
+        img: s.img,
+        status: st,
+        jamMasuk: ci,
+        fotoMasuk: fIn,
+        lokasiMasuk: locIn,
+        rencanaKerja: rencana,
+        jamPulang: co,
+        fotoPulang: fOut,
+        lokasiPulang: locOut,
+        fotoKerja: fKerja,
+        durasi: dur,
+        keterangan: ''
+      });
+    });
+  }
+}
+
+function calcDur(ci, co) {
+  if (ci === '—' || co === '—') return '—';
+  var a = ci.split(':'), b = co.split(':');
+  var diff = (parseInt(b[0])*60+parseInt(b[1])) - (parseInt(a[0])*60+parseInt(a[1]));
+  if (diff <= 0) return '—';
+  return Math.floor(diff/60) + 'j ' + (diff%60 > 0 ? diff%60+'m' : '');
+}
+
+/* CARDS STATS RENDER */
+function renderStats(data) {
+  var c = { Hadir:0, Terlambat:0, Alpha:0, Izin:0, Sakit:0, Libur:0, WFH:0, Lembur:0 };
+  data.forEach(function(r){ if(c[r.status]!==undefined) c[r.status]++; });
+  var defs = [
+    { label:'Total Record',  val:data.length,     icon:'fa-list-check',   grad:'stat-gradient-total' },
+    { label:'Hadir / WFH',   val:c.Hadir + c.WFH, icon:'fa-circle-check', grad:'stat-gradient-hadir' },
+    { label:'Terlambat',     val:c.Terlambat,     icon:'fa-clock',        grad:'stat-gradient-terlambat' },
+    { label:'Alpha',         val:c.Alpha,         icon:'fa-user-slash',   grad:'stat-gradient-alpha' },
+    { label:'Izin / Sakit',  val:c.Izin+c.Sakit,  icon:'fa-file-medical', grad:'stat-gradient-izin' }
+  ];
+  document.getElementById('statCards').innerHTML = defs.map(function(d){
+    return '<div class="' + d.grad + ' text-white rounded-2xl p-4 flex items-center gap-3 shadow-sm card-lift">'
+      +'<div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0">'
+        +'<i class="fas '+d.icon+'"></i></div>'
+      +'<div><p class="text-2xl font-extrabold">'+d.val+'</p><p class="text-xs opacity-80">'+d.label+'</p></div>'
+    +'</div>';
+  }).join('');
+}
+
+/* FILTERS LOGIC */
+function applyFilters() {
+  var from = document.getElementById('filterFrom').value;
+  var to = document.getElementById('filterTo').value;
+  var status = document.getElementById('filterStatus').value;
+  var divisi = document.getElementById('filterDivisi').value;
+  var q = ((document.getElementById('globalSearch').value||'') + (document.getElementById('mobileSearch')?document.getElementById('mobileSearch').value:'')).toLowerCase();
+
+  filtered = allAttendance.filter(function(r) {
+    if (from && r.tanggal < from) return false;
+    if (to && r.tanggal > to) return false;
+    if (status && r.status !== status) return false;
+    if (divisi && r.divisi !== divisi) return false;
+    if (q && !r.nama.toLowerCase().includes(q) && !r.divisi.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  filtered.sort(function(a,b){ return a.tanggal < b.tanggal ? 1 : -1; });
+  currentPage = 1;
+  renderStats(filtered);
+  renderTable();
+}
+
+function resetFilters() {
+  ['filterFrom','filterTo','filterStatus','filterDivisi','globalSearch','mobileSearch'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  applyFilters();
+}
+
+var statusBadge = { Hadir:'badge-hadir',Terlambat:'badge-terlambat',Alpha:'badge-alpha',Izin:'badge-izin',Sakit:'badge-sakit',Libur:'badge-libur',WFH:'badge-wfh',Lembur:'badge-lembur' };
+var statusIcon  = { Hadir:'fa-circle-check',Terlambat:'fa-clock',Alpha:'fa-user-slash',Izin:'fa-file-alt',Sakit:'fa-heartbeat',Libur:'fa-calendar-times',WFH:'fa-house-laptop',Lembur:'fa-business-time' };
+
+/* Safe HTML Render for Thumbnails */
+function thumbHtml(url, label) {
+  if (!url) return '<div class="thumb-ph"><i class="fas fa-image text-slate-300" style="font-size:13px"></i></div>';
+  return '<img src="'+url+'" class="thumb" alt="'+label+'" onclick="openLightbox(\''+url+'\')" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';" /><div class="thumb-ph" style="display:none;"><i class="fas fa-image text-slate-300" style="font-size:13px"></i></div>';
+}
+
+/* Render Stacked Photos Component */
+function renderFotoStack(id, fotoArr) {
+  if (!fotoArr || !fotoArr.length) {
+    return '<div class="thumb-ph"><i class="fas fa-image text-slate-300" style="font-size:13px"></i></div>';
+  }
+  if (fotoArr.length === 1) {
+    return thumbHtml(fotoArr[0], 'Foto Aktivitas');
+  }
+  var maxVisible = Math.min(fotoArr.length, 3);
+  var html = '<div class="photo-stack" onclick="openGalleryModal('+id+')" title="Klik untuk melihat '+fotoArr.length+' foto">';
+  for (var i = 0; i < maxVisible; i++) {
+    html += '<img src="'+fotoArr[i]+'" class="photo-stack-img" style="z-index:'+(3-i)+';" alt="Aktivitas '+i+'" />';
+  }
+  html += '<div class="photo-stack-indicator">+' + fotoArr.length + '</div>';
+  html += '</div>';
+  return html;
+}
+
+/* OPEN GALLERY MODAL */
+function openGalleryModal(recordId) {
+  var r = allAttendance.find(function(x){ return x.id === recordId; });
+  if (!r || !r.fotoKerja || !r.fotoKerja.length) return;
+
+  document.getElementById('gallerySubtitle').textContent = r.nama + ' · ' + r.tanggalDisplay;
+  var html = r.fotoKerja.map(function(url, idx) {
+    return '<div class="relative group">'
+      +'<img src="'+url+'" class="w-full aspect-video object-cover rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:opacity-90 transition-all" onclick="openLightbox(\''+url+'\')" alt="Foto '+idx+'"/>'
+      +'<span class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-md font-medium">Foto '+(idx+1)+'</span>'
+    +'</div>';
+  }).join('');
+  
+  document.getElementById('galleryContainer').innerHTML = html;
+  openModal('galleryModal');
+}
+
+/* TABLE MAIN RENDER */
+function renderTable() {
+  var perPage = parseInt(document.getElementById('perPage').value);
+  var total = filtered.length;
+  var pages = Math.ceil(total / perPage) || 1;
+  if (currentPage > pages) currentPage = pages;
+
+  var start = (currentPage-1)*perPage;
+  var end = Math.min(start+perPage, total);
+  var slice = filtered.slice(start, end);
+
+  var tbody = document.getElementById('attendanceBody');
+  var mobileContainer = document.getElementById('attendanceCards');
+  var empty = document.getElementById('emptyState');
+
+  if (!slice.length) {
+    tbody.innerHTML = '';
+    if (mobileContainer) mobileContainer.innerHTML = '';
+    empty.classList.remove('hidden');
+    document.getElementById('paginationInfo').textContent = 'Tidak ada data';
+    document.getElementById('paginationBtns').innerHTML = '';
+    document.getElementById('tableSubtitle').textContent = '0 record ditemukan';
+    return;
+  }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = slice.map(function(r, i) {
+    var bc = statusBadge[r.status] || 'badge-libur';
+    var ic = statusIcon[r.status]  || 'fa-question';
+
+    return '<tr class="border-t border-slate-100">'
+      +'<td class="px-3 py-3 text-slate-400 font-medium">'+(start+i+1)+'</td>'
+      +'<td class="px-3 py-3 text-slate-600 font-medium whitespace-nowrap">'+r.tanggalDisplay+'</td>'
+      +'<td class="px-3 py-3">'
+        +'<div class="flex items-center gap-2.5">'
+          +'<img src="'+r.img+'" class="w-7 h-7 rounded-full object-cover flex-shrink-0 ring-1 ring-slate-100" alt="Avatar" />'
+          +'<div><p class="text-xs font-bold text-gray-800 whitespace-nowrap">'+r.nama+'</p>'
+            +'<p class="text-[10px] text-slate-400 font-medium">'+r.divisi+'</p></div>'
+        +'</div>'
+      +'</td>'
+      +'<td class="px-3 py-3"><span class="badge '+bc+'"><i class="fas '+ic+'"></i>'+r.status+'</span></td>'
+      +'<td class="px-3 py-3 font-mono text-gray-700 font-semibold">'+r.jamMasuk+'</td>'
+      +'<td class="px-3 py-3">'+thumbHtml(r.fotoMasuk, 'Foto Masuk')+'</td>'
+      +'<td class="px-3 py-3 text-slate-500 font-medium whitespace-nowrap">'+r.lokasiMasuk+'</td>'
+      +'<td class="px-3 py-3 text-slate-500 max-w-[150px] font-medium truncate" title="'+r.rencanaKerja+'">'+r.rencanaKerja+'</td>'
+      +'<td class="px-3 py-3 font-mono text-gray-700 font-semibold">'+r.jamPulang+'</td>'
+      +'<td class="px-3 py-3">'+thumbHtml(r.fotoPulang, 'Foto Pulang')+'</td>'
+      +'<td class="px-3 py-3 text-slate-500 font-medium whitespace-nowrap">'+r.lokasiPulang+'</td>'
+      +'<td class="px-3 py-3 align-middle">'+renderFotoStack(r.id, r.fotoKerja)+'</td>'
+      +'<td class="px-3 py-3 text-center">'
+        +'<div class="dot-wrap" id="wrap-'+r.id+'">'
+          +'<button class="dot-btn" onclick="toggleDotMenu(event, '+r.id+')">&#8942;</button>'
+          +'<div class="dot-dropdown" id="dd-'+r.id+'">'
+            +'<button class="dd-detail" onclick="viewDetail('+r.id+')"><i class="fas fa-eye text-blue-500 w-4"></i> Lihat Detail</button>'
+            +'<div class="dd-divider"></div>'
+            +'<button class="dd-edit" onclick="editRow('+r.id+')"><i class="fas fa-pen text-amber-500 w-4"></i> Edit Data</button>'
+            +'<div class="dd-divider"></div>'
+            +'<button class="dd-delete" onclick="deleteRow('+r.id+')"><i class="fas fa-trash text-red-500 w-4"></i> Hapus</button>'
+          +'</div>'
+        +'</div>'
+      +'</td>'
+    +'</tr>';
+  }).join('');
+
+  if (mobileContainer) {
+    mobileContainer.innerHTML = slice.map(function(r) {
+      var bc = statusBadge[r.status] || 'badge-libur';
+      var ic = statusIcon[r.status]  || 'fa-question';
+
+      return '<div class="p-4 space-y-3 hover:bg-slate-50/50 transition-colors">'
+        +'<div class="flex items-start justify-between gap-2">'
+          +'<div class="flex items-center gap-2.5">'
+            +'<img src="'+r.img+'" class="w-9 h-9 rounded-full object-cover flex-shrink-0 ring-2 ring-slate-100" alt="Avatar" />'
+            +'<div>'
+              +'<p class="text-xs font-bold text-gray-800">'+r.nama+'</p>'
+              +'<p class="text-[10px] text-slate-400 font-medium">'+r.divisi+'</p>'
+            +'</div>'
+          +'</div>'
+          +'<div class="text-right">'
+            +'<span class="badge '+bc+' text-[10px]"><i class="fas '+ic+'"></i>'+r.status+'</span>'
+            +'<p class="text-[10px] text-slate-400 font-medium mt-1">'+r.tanggalDisplay+'</p>'
+          +'</div>'
+        +'</div>'
+        
+        +'<div class="grid grid-cols-2 gap-3 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100 text-[11px]">'
+          +'<div class="space-y-1.5 border-r border-slate-200/60 pr-2">'
+            +'<div class="flex items-center gap-1 text-[10px] font-bold text-green-700">'
+              +'<i class="fas fa-sign-in-alt"></i> MASUK'
+            +'</div>'
+            +'<div class="flex items-center gap-2">'
+              +thumbHtml(r.fotoMasuk, 'Foto Masuk')
+              +'<div>'
+                +'<p class="font-mono font-bold text-gray-800">'+r.jamMasuk+'</p>'
+                +'<p class="text-[9px] text-slate-400 truncate max-w-[100px]" title="'+r.lokasiMasuk+'">'+r.lokasiMasuk+'</p>'
+              +'</div>'
+            +'</div>'
+          +'</div>'
+          +'<div class="space-y-1.5 pl-1">'
+            +'<div class="flex items-center gap-1 text-[10px] font-bold text-blue-700">'
+              +'<i class="fas fa-sign-out-alt"></i> PULANG'
+            +'</div>'
+            +'<div class="flex items-center gap-2">'
+              +thumbHtml(r.fotoPulang, 'Foto Pulang')
+              +'<div>'
+                +'<p class="font-mono font-bold text-gray-800">'+r.jamPulang+'</p>'
+                +'<p class="text-[9px] text-slate-400 truncate max-w-[100px]" title="'+r.lokasiPulang+'">'+r.lokasiPulang+'</p>'
+              +'</div>'
+            +'</div>'
+          +'</div>'
+        +'</div>'
+        
+        +((r.rencanaKerja !== '—' || (r.fotoKerja && r.fotoKerja.length)) 
+          ? ('<div class="flex items-center justify-between gap-3 text-[11px] px-1 text-slate-500">'
+              +'<div class="truncate flex-1" title="'+r.rencanaKerja+'">'
+                +'<span class="font-semibold text-slate-700">Rencana: </span>'+r.rencanaKerja
+              +'</div>'
+              +(r.fotoKerja && r.fotoKerja.length ? ('<div class="flex-shrink-0">'+renderFotoStack(r.id, r.fotoKerja)+'</div>') : '')
+             +'</div>')
+          : '')
+
+        +'<div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">'
+          +'<button onclick="viewDetail('+r.id+')" class="flex items-center gap-1 text-slate-600 hover:text-blue-600 font-semibold px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors text-[11px]">'
+            +'<i class="fas fa-eye"></i> Detail'
+          +'</button>'
+          +'<button onclick="editRow('+r.id+')" class="flex items-center gap-1 text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 font-semibold px-3 py-1.5 rounded-lg transition-colors text-[11px]">'
+            +'<i class="fas fa-pen"></i> Edit'
+          +'</button>'
+          +'<button onclick="deleteRow('+r.id+')" class="flex items-center gap-1 text-red-600 hover:text-red-700 font-semibold px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition-colors text-[11px]">'
+            +'<i class="fas fa-trash"></i> Hapus'
+          +'</button>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+  }
+
+  document.getElementById('tableSubtitle').textContent = total + ' record · tampil '+(start+1)+'–'+end;
+  document.getElementById('paginationInfo').textContent = 'Hal '+ currentPage +' / '+pages+' ('+total+' data)';
+
+  var btns = '';
+  btns += '<button onclick="goPage('+(currentPage-1)+')" '+(currentPage===1?'disabled':'')+' class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50 disabled:opacity-40 text-xs"><i class="fas fa-chevron-left text-slate-400"></i></button>';
+  var sp = Math.max(1,currentPage-2), ep = Math.min(pages,sp+4);
+  if (ep-sp<4) sp=Math.max(1,ep-4);
+  for (var p=sp; p<=ep; p++){
+    var act = p===currentPage;
+    btns+='<button onclick="goPage('+p+')" class="w-8 h-8 rounded-lg border flex items-center justify-center text-xs font-semibold '+(act?'bg-blue-600 border-blue-600 text-white':'border-slate-200 text-slate-600 hover:bg-slate-50')+'">'+p+'</button>';
+  }
+  btns += '<button onclick="goPage('+(currentPage+1)+')" '+(currentPage===pages?'disabled':'')+' class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50 disabled:opacity-40 text-xs"><i class="fas fa-chevron-right text-slate-400"></i></button>';
+  document.getElementById('paginationBtns').innerHTML = btns;
+}
+
+function goPage(p) {
+  var perPage = parseInt(document.getElementById('perPage').value);
+  var pages = Math.ceil(filtered.length/perPage)||1;
+  if (p<1||p>pages) return;
+  currentPage = p;
+  renderTable();
+}
+
+/* ─── DROPDOWN MANAGEMENT ─── */
+function toggleDotMenu(e, id) {
+  e.stopPropagation();
+  var allDropdowns = document.querySelectorAll('.dot-dropdown');
+  allDropdowns.forEach(function(dd) {
+    if(dd.id !== 'dd-'+id) dd.classList.remove('open');
+  });
+  var target = document.getElementById('dd-'+id);
+  if(target) target.classList.toggle('open');
+}
+
+document.addEventListener('click', function() {
+  var allDropdowns = document.querySelectorAll('.dot-dropdown');
+  allDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+});
+
+/* ─── AKSI: LIHAT DETAIL ─── */
+function viewDetail(id) {
+  var r = allAttendance.find(function(x){ return x.id===id; });
+  if (!r) return;
+  editingId = id;
+
+  document.getElementById('detailAvatar').innerHTML = '<img src="'+r.img+'" class="w-10 h-10 rounded-full object-cover ring-2 ring-slate-100" />';
+  document.getElementById('detailTitle').textContent = r.nama;
+  document.getElementById('detailSubtitle').textContent = r.divisi;
+
+  var bc = statusBadge[r.status] || 'badge-libur';
+  var ic = statusIcon[r.status]  || 'fa-question';
+  var hasData = r.jamMasuk !== '—';
+
+  var html = '<div class="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-2.5 border border-slate-100">'
+    +'<span class="badge '+bc+' text-xs py-1 px-3"><i class="fas '+ic+' mr-1"></i>'+r.status+'</span>'
+    +'<span class="text-xs font-semibold text-slate-500"><i class="fas fa-calendar-day mr-1 text-slate-400"></i>'+r.tanggalDisplay+'</span>'
+    +'</div>';
+
+  if (hasData) {
+
+    /* SECTION LOG MASUK */
+    html += '<div class="bg-green-50/60 rounded-xl p-3 border border-green-100/70 space-y-2.5">'
+      +'<div class="flex items-center justify-between border-b border-green-100/50 pb-2">'
+        +'<span class="text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full"><i class="fas fa-sign-in-alt mr-1.5"></i>LOG MASUK</span>'
+        +'<span class="text-xs text-slate-400 font-semibold"><i class="fas fa-location-dot mr-1"></i>'+r.lokasiMasuk+'</span>'
+      +'</div>'
+
+      +'<div class="grid grid-cols-2 gap-3 items-start">'
+
+        +'<div class="space-y-3">'
+          +'<div>'
+            +'<p class="text-[10px] uppercase font-bold text-green-600 tracking-wider mb-0.5">Jam Masuk</p>'
+            +'<p class="text-2xl font-extrabold text-gray-800 font-mono tracking-tight">'+r.jamMasuk+'</p>'
+          +'</div>'
+          +'<div class="bg-white/80 rounded-lg px-3 py-2 border border-green-100">'
+            +'<p class="text-[10px] uppercase font-bold text-green-600 tracking-wider mb-1"><i class="fas fa-tasks mr-1"></i>Rencana Komitmen</p>'
+            +'<p class="text-xs text-gray-700 font-medium leading-relaxed">'+r.rencanaKerja+'</p>'
+          +'</div>'
+        +'</div>'
+
+        +'<div>'
+          +'<p class="text-[10px] uppercase font-bold text-green-600 tracking-wider mb-1.5">Kamera Face Match</p>'
+          +(r.fotoMasuk
+            ? '<img src="'+r.fotoMasuk+'" class="face-match-photo" alt="Foto Masuk" onclick="openLightbox(\''+r.fotoMasuk+'\')" />'
+            : '<div style="height:140px" class="w-full bg-slate-100 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-300"><i class="fas fa-camera text-2xl mb-1"></i><p class="text-[10px] font-medium">Tidak ada foto</p></div>'
+          )
+        +'</div>'
+
+      +'</div>'
+    +'</div>';
+
+    /* SECTION LOG PULANG */
+    var fotoKerjaCount = r.fotoKerja ? r.fotoKerja.length : 0;
+    var fotoKerjaFirst = (fotoKerjaCount > 0) ? r.fotoKerja[0] : null;
+
+    var galleryItems = '';
+    if (fotoKerjaCount > 0) {
+      galleryItems = '<div class="mt-2 grid grid-cols-4 gap-1.5">'
+        + r.fotoKerja.map(function(u, idx){
+            return '<div class="relative group cursor-pointer" onclick="openLightbox(\''+u+'\')">'
+              +'<img src="'+u+'" class="h-12 w-full object-cover rounded-lg border border-slate-200 group-hover:opacity-85 transition-opacity" alt="Foto '+(idx+1)+'"/>'
+              +'<span class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><i class="fas fa-expand text-white drop-shadow text-xs"></i></span>'
+            +'</div>';
+          }).join('')
+        +'</div>';
+    } else {
+      galleryItems = '<p class="text-[11px] text-slate-300 italic mt-1">Tidak ada foto aktivitas terlampir</p>';
+    }
+
+    html += '<div class="bg-blue-50/60 rounded-xl p-3 border border-blue-100/70 space-y-2.5">'
+      +'<div class="flex items-center justify-between border-b border-blue-100/50 pb-2">'
+        +'<span class="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full"><i class="fas fa-sign-out-alt mr-1.5"></i>LOG PULANG</span>'
+        +'<span class="text-xs text-slate-400 font-semibold"><i class="fas fa-location-dot mr-1"></i>'+r.lokasiPulang+'</span>'
+      +'</div>'
+
+      +'<div class="grid grid-cols-2 gap-3 items-start">'
+
+        +'<div class="space-y-3">'
+          +'<div>'
+            +'<p class="text-[10px] uppercase font-bold text-blue-600 tracking-wider mb-0.5">Jam Pulang</p>'
+            +'<p class="text-2xl font-extrabold text-gray-800 font-mono tracking-tight">'+r.jamPulang+'</p>'
+            +'<p class="text-[11px] font-semibold text-slate-400 mt-1"><i class="fas fa-hourglass-half mr-1 text-blue-400"></i>Durasi: <span class="text-blue-600">'+r.durasi+'</span></p>'
+          +'</div>'
+        +'</div>'
+
+        +'<div>'
+          +'<p class="text-[10px] uppercase font-bold text-blue-600 tracking-wider mb-1.5">Foto Pulang</p>'
+          +(r.fotoPulang
+            ? '<img src="'+r.fotoPulang+'" style="border-color:#bfdbfe" class="face-match-photo" alt="Foto Pulang" onclick="openLightbox(\''+r.fotoPulang+'\')" />'
+            : '<div style="height:140px" class="w-full bg-slate-100 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-300"><i class="fas fa-camera text-2xl mb-1"></i><p class="text-[10px] font-medium">Tidak ada foto</p></div>'
+          )
+        +'</div>'
+
+      +'</div>'
+
+      +'<div class="bg-white rounded-lg p-2.5 border border-blue-100">'
+        +'<p class="text-[10px] uppercase font-bold text-blue-600 tracking-wider mb-0.5"><i class="fas fa-images mr-1"></i>Semua Dokumentasi Aktivitas <span class="text-blue-400 font-normal normal-case">('+fotoKerjaCount+' foto · klik untuk perbesar)</span></p>'
+        +galleryItems
+      +'</div>'
+
+    +'</div>';
+
+  } else {
+    html += '<div class="bg-slate-50 border border-slate-100 rounded-xl py-8 text-center text-slate-400">'
+      +'<i class="fas fa-user-clock text-3xl mb-2 block text-slate-300"></i>'
+      +'<p class="text-xs font-medium">Staff tidak melakukan log absen ('+r.status+')</p>'
+      +'</div>';
+  }
+
+  if (r.keterangan) {
+    html += '<div class="bg-amber-50/50 border border-amber-100 rounded-xl p-3">'
+      +'<p class="text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-0.5"><i class="fas fa-comment-dots mr-1"></i>Catatan Admin</p>'
+      +'<p class="text-xs text-amber-800 font-medium">'+r.keterangan+'</p>'
+      +'</div>';
+  }
+
+  document.getElementById('detailContent').innerHTML = html;
+  openModal('detailModal');
+}
+
+function editFromDetail() {
+  closeModal('detailModal');
+  if (editingId) editRow(editingId);
+}
+
+/* ─── AKSI: EDIT DATA ─── */
+function editRow(id) {
+  var r = allAttendance.find(function(x){ return x.id===id; });
+  if (!r) return;
+  editingId = id;
+
+  document.getElementById('editAvatarWrap').innerHTML = '<img src="'+r.img+'" class="w-10 h-10 rounded-full object-cover ring-2 ring-slate-100" />';
+  document.getElementById('editNamaDisplay').textContent = r.nama;
+  document.getElementById('editSubDisplay').textContent = r.divisi + ' · Rekap Tanggal: ' + r.tanggalDisplay;
+
+  document.getElementById('editStatus').value = r.status;
+  document.getElementById('editCheckIn').value = r.jamMasuk === '—' ? '' : r.jamMasuk;
+  document.getElementById('editLokasiMasuk').value = r.lokasiMasuk;
+  document.getElementById('editRencana').value = r.rencanaKerja === '—' ? '' : r.rencanaKerja;
+  document.getElementById('editCheckOut').value = r.jamPulang === '—' ? '' : r.jamPulang;
+  document.getElementById('editLokasiPulang').value = r.lokasiPulang;
+  document.getElementById('editKeterangan').value = r.keterangan || '';
+
+  openModal('editModal');
+}
+
+function saveEdit() {
+  if (!editingId) return;
+  var idx = allAttendance.findIndex(function(x){ return x.id===editingId; });
+  if (idx < 0) return;
+
+  var ci = document.getElementById('editCheckIn').value || '—';
+  var co = document.getElementById('editCheckOut').value || '—';
+
+  allAttendance[idx].status = document.getElementById('editStatus').value;
+  allAttendance[idx].jamMasuk = ci;
+  allAttendance[idx].lokasiMasuk = document.getElementById('editLokasiMasuk').value;
+  allAttendance[idx].rencanaKerja = document.getElementById('editRencana').value.trim() || '—';
+  allAttendance[idx].jamPulang = co;
+  allAttendance[idx].lokasiPulang = document.getElementById('editLokasiPulang').value;
+  allAttendance[idx].durasi = calcDur(ci, co);
+  allAttendance[idx].keterangan = document.getElementById('editKeterangan').value.trim();
+
+  closeModal('editModal');
+  applyFilters();
+  showToast('Otorisasi override data berhasil disimpan ✅', 'success');
+  editingId = null;
+}
+
+/* ─── AKSI: HAPUS RECORD ─── */
+function deleteRow(id) {
+  var r = allAttendance.find(function(x){ return x.id===id; });
+  if (!r) return;
+  deletingId = id;
+  document.getElementById('deleteConfirmText').innerHTML = 'Apakah Anda yakin ingin menghapus rekor absensi harian milik <b class="text-gray-800">' + r.nama + '</b> pada <b>' + r.tanggalDisplay + '</b>?';
+  openModal('deleteModal');
+}
+
+function confirmDelete() {
+  if (!deletingId) return;
+  allAttendance = allAttendance.filter(function(x){ return x.id !== deletingId; });
+  deletingId = null;
+  closeModal('deleteModal');
+  applyFilters();
+  showToast('Rekor absensi berhasil dihapus secara permanen', 'info');
+}
+
+/* MANUAL ADD INTERFACE */
+function populateStaffDropdown() {
+  var sel = document.getElementById('addStaff');
+  sel.innerHTML = '<option value="">-- Pilih Staff --</option>'
+    + staffList.map(function(s){ return '<option value="'+s.id+'">'+s.nama+' ('+s.divisi+')</option>'; }).join('');
+}
+
+function saveManual() {
+  var date = document.getElementById('addDate').value;
+  var sid = parseInt(document.getElementById('addStaff').value);
+  var status = document.getElementById('addStatus').value;
+  if (!date || !sid || !status) { showToast('Mohon lengkapi Tanggal, Nama Staff dan Status!', 'error'); return; }
+  
+  var s = staffList.find(function(x){ return x.id===sid; });
+  if (!s) return;
+
+  var ci = document.getElementById('addCheckIn').value || '—';
+  var co = document.getElementById('addCheckOut').value || '—';
+  var d = new Date(date);
+  var newId = allAttendance.reduce(function(m,r){ return r.id>m?r.id:m; }, 0) + 1;
+
+  allAttendance.unshift({
+    id: newId, 
+    tanggal: date,
+    tanggalDisplay: d.toLocaleDateString('id-ID',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}),
+    staffId: s.id, nama: s.nama, divisi: s.divisi, img: s.img, status: status,
+    jamMasuk: ci, fotoMasuk: null,
+    lokasiMasuk: document.getElementById('addLokasiMasuk').value,
+    rencanaKerja: document.getElementById('addRencana').value.trim() || '—',
+    jamPulang: co, fotoPulang: null,
+    lokasiPulang: document.getElementById('addLokasiPulang').value,
+    fotoKerja: [], durasi: calcDur(ci,co),
+    keterangan: document.getElementById('addKeterangan').value.trim()
+  });
+
+  ['addCheckIn','addCheckOut','addRencana','addKeterangan'].forEach(function(id){ document.getElementById(id).value=''; });
+  closeModal('addManualModal');
+  applyFilters();
+  showToast('Absensi manual berhasil ditambahkan ✅', 'success');
+}
+
+/* EXPORT SYSTEM */
+function exportCSV() {
+  var hdr = ['No','Tanggal','Nama','Divisi','Status','Jam Masuk','Lokasi Masuk','Rencana Kerja','Jam Pulang','Lokasi Pulang','Durasi'];
+  var rows = filtered.map(function(r,i){
+    return [i+1, r.tanggalDisplay, r.nama, r.divisi, r.status, r.jamMasuk, r.lokasiMasuk, '"'+r.rencanaKerja+'"', r.jamPulang, r.lokasiPulang, r.durasi].join(',');
+  });
+  var csv = [hdr.join(',')].concat(rows).join('\n');
+  var blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'rekap-absensi-'+new Date().toISOString().split('T')[0]+'.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV berhasil diunduh 📄', 'success');
+}
+
+function refreshData() {
+  var ic = document.getElementById('refreshIcon'); ic.classList.add('spin');
+  setTimeout(function(){ ic.classList.remove('spin'); applyFilters(); showToast('Data rekap disinkronisasi','success'); }, 800);
+}
+
+/* UTILS: LIGHTBOX */
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+/* MODALS CONTROLLER */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-wrap').forEach(function(m) {
+  m.addEventListener('click', function(e) { if(e.target === m) closeModal(m.id); });
+});
+
+document.addEventListener('keydown', function(e){ 
+  if(e.key === 'Escape') { 
+    closeLightbox(); 
+    ['detailModal','editModal','addManualModal','galleryModal','deleteModal'].forEach(function(id){ closeModal(id); });
+    closeSidebar(); 
+  } 
+});
+
+/* SIDEBAR REACTION */
+var sidebarOpen = false;
+function toggleSidebar(){ sidebarOpen ? closeSidebar() : openSidebar(); }
+function openSidebar(){ document.getElementById('sidebar').style.transform='translateX(0)'; document.getElementById('overlay').classList.remove('hidden'); sidebarOpen=true; }
+function closeSidebar(){ document.getElementById('sidebar').style.transform='translateX(-100%)'; document.getElementById('overlay').classList.add('hidden'); sidebarOpen=false; }
+function handleResize(){
+  if(window.innerWidth>=1024){ document.getElementById('sidebar').style.transform='translateX(0)'; document.getElementById('mainWrap').style.marginLeft='256px'; document.getElementById('overlay').classList.add('hidden'); sidebarOpen=false; }
+  else { if(!sidebarOpen) document.getElementById('sidebar').style.transform='translateX(-100%)'; document.getElementById('mainWrap').style.marginLeft='0'; }
+}
+window.addEventListener('resize', handleResize);
+
+/* TOAST CONTROLLER */
+var toastTimer;
+function showToast(msg,type){ 
+  type=type||'success'; 
+  var icons={success:'fa-check-circle text-green-400', error:'fa-exclamation-circle text-red-400', info:'fa-info-circle text-blue-400'}; 
+  document.getElementById('toastIcon').className='fas '+(icons[type]||icons.success); 
+  document.getElementById('toastMsg').textContent=msg; 
+  var t=document.getElementById('toast'); t.classList.remove('hidden'); 
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.add('hidden'); },3000); 
+}
+
+/* INITIALIZATION */
+document.addEventListener('DOMContentLoaded', function() {
+  generateDummy();
+  populateStaffDropdown();
+
+  var today = new Date(), week = new Date(today);
+  week.setDate(week.getDate()-7);
+  document.getElementById('filterFrom').value = week.toISOString().split('T')[0];
+  document.getElementById('filterTo').value = today.toISOString().split('T')[0];
+  document.getElementById('addDate').value = today.toISOString().split('T')[0];
+  document.getElementById('headerDate').textContent = today.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+
+  applyFilters();
+  handleResize();
+});
+</script>
+</body>
+</html>
